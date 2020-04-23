@@ -1,7 +1,7 @@
 kind: ConfigMap
 metadata:
   name: gateway-config
-  namespace: '{{ meta.namespace }}'
+  namespace: {{ meta.namespace }}
 apiVersion: v1
 data:
   traefik-dynamic-config.yml: |

@@ -18,7 +18,7 @@
         labels:
           app: minio
         name: minio
-        namespace: "{{ namespace }}"
+        namespace: "{{ meta.namespace }}"
       data:
         initialize: "{{ lookup('template', '_helper_create_bucket.txt') | string }}"
 
