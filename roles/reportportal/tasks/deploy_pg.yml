@@ -1,0 +1,19 @@
+- name: Create postgresql statefulset
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'pg-statefulset.yaml.j2') | from_yaml }}"
+
+- name: Create postgresql secret
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'pg-secret.yaml.j2') | from_yaml }}"
+
+- name: Create postgresql service
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'pg-service.yaml.j2') | from_yaml }}"
+
+- name: Create postgresql headless service
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'pg-service-headless.yaml.j2') | from_yaml }}"

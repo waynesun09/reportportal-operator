@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: reportportal
+  name: analyzer
+  namespace: '{{ meta.namespace }}'
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: analyzer
+  serviceName: analyzer
+  template:
+    metadata:
+      labels:
+        component: analyzer
+    spec:
+      containers:
+      - env:
+        - name: RP_AMQP_PASS
+          valueFrom:
+            secretKeyRef:
+              key: rabbitmq-password
+              name: {{ rabbitmq_secret }}
+        - name: AMQP_URL
+          value: amqp://{{rabbitmq_user}}:$(RP_AMQP_PASS)@{{ rabbitmq_host}}:{{ rabbitmq_port}}/
+        - name: AMQP_EXCHANGE_NAME
+          value: analyzer-default
+        - name: ES_HOSTS
+          value: http://{{ es_host }}:{{ es_port }}
+        image: {{ analyzer_image }}
+        imagePullPolicy: IfNotPresent
+        name: analyzer
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 100m
+            memory: 512Mi
+          requests:
+            cpu: 100m
+            memory: 256Mi

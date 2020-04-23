@@ -1,0 +1,5 @@
+---
+- version: v1alpha1
+  group: rp5.reportportal.io
+  kind: ReportPortal
+  role: /opt/ansible/roles/reportportal

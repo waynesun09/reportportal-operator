@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: reportportal
+  name: analyzer
+  namespace: '{{ meta.namespace }}'
+spec:
+  ports:
+  - name: headless
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    component: analyzer
+  type: ClusterIP

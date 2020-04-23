@@ -1,0 +1,38 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels:
+    app: reportportal
+  name: migrations
+  namespace: '{{ meta.namespace }}'
+spec:
+  template:
+    metadata:
+      labels:
+        component: migrations
+    spec:
+      restartPolicy: Never
+      containers:
+      - env:
+        - name: POSTGRES_SERVER
+          value: {{ rp_db_host }}
+        - name: POSTGRES_DB
+          value: {{ rp_db }}
+        - name: POSTGRES_PORT
+          value: "{{ rp_db_port }}"
+        - name: POSTGRES_USER
+          value: {{ rp_db_user }}
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: postgresql-password
+              name: {{ rp_db_secret }}
+        image: {{ migration_image }}
+        name: migrations
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi
+          requests:
+            cpu: 100m
+            memory: 64Mi

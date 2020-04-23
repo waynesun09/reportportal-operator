@@ -1,0 +1,41 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: reportportal
+  name: ui
+  namespace: '{{ meta.namespace }}'
+spec:
+  replicas: {{ ui_replicas }}
+  selector:
+    matchLabels:
+      component: ui
+  template:
+    metadata:
+      labels:
+        component: ui
+    spec:
+      containers:
+      - env:
+        - name: RP_SERVER_PORT
+          value: "8080"
+        image: {{ ui_image }}
+        name: ui
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 3
+        resources:
+          limits:
+            cpu: 200m
+            memory: 128Mi
+          requests:
+            cpu: 100m
+            memory: 64Mi

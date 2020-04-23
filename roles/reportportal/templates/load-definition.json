@@ -1,0 +1,48 @@
+{
+  "users": [
+    {
+      "name": "management",
+      "password": "{{ rabbitmq_password }}",
+      "tags": "management"
+    },
+    {
+      "name": "{{ rabbitmq_user }}",
+      "password": "{{ rabbitmq_password }}",
+      "tags": "administrator"
+    }
+  ],
+  "vhosts": [
+    {
+      "name": "/"
+    },
+    {
+      "name": "analyzer"
+    }
+  ],
+  "permissions": [
+    {
+      "user": "{{ rabbitmq_user }}",
+      "vhost": "/",
+      "configure": ".*",
+      "read": ".*",
+      "write": ".*"
+    },
+    {
+      "user": "{{ rabbitmq_user }}",
+      "vhost": "analyzer",
+      "configure": ".*",
+      "read": ".*",
+      "write": ".*"
+    }
+  ],
+  "parameters": [
+  ],
+  "policies": [
+  ],
+  "queues": [
+  ],
+  "exchanges": [
+  ],
+  "bindings": [
+  ]
+}

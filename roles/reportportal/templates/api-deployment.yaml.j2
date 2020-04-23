@@ -1,0 +1,93 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: reportportal
+  name: api
+  namespace: '{{ meta.namespace }}'
+spec:
+  replicas: {{ api_replicas }}
+  selector:
+    matchLabels:
+      component: api
+  template:
+    metadata:
+      labels:
+        component: api
+    spec:
+      containers:
+      - env:
+        - name: LOGGING_LEVEL_ORG_HIBERNATE_SQL
+          value: info
+        - name: RP_REQUESTLOGGING
+          value: "false"
+        - name: RP_AMQP_QUEUES
+          value: "{{ rp_amqp_queues }}"
+        - name: RP_AMQP_QUEUESPERPOD
+          value: "{{ rp_amqp_queuesperpod }}"
+        - name: JAVA_OPTS
+          value: -Djava.security.egd=file:/dev/./urandom -XX:+UseG1GC -XX:MinRAMPercentage=60.0
+            -XX:InitiatingHeapOccupancyPercent=70 -XX:MaxRAMPercentage=90.0 -XX:+HeapDumpOnOutOfMemoryError
+            -XX:HeapDumpPath=/tmp
+        - name: RP_AMQP_HOST
+          value: {{ rabbitmq_host }}
+        - name: RP_AMQP_PORT
+          value: "{{ rabbitmq_port }}"
+        - name: RP_AMQP_USER
+          value: {{ rabbitmq_user }}
+        - name: RP_AMQP_PASS
+          valueFrom:
+            secretKeyRef:
+              key: rabbitmq-password
+              name: {{ rabbitmq_secret }}
+        - name: RP_AMQP_APIPORT
+          value: "{{ rabbitmq_apiport }}"
+        - name: RP_AMQP_APIUSER
+          value: {{ rabbitmq_apiuser }}
+        - name: RP_AMQP_APIPASS
+          valueFrom:
+            secretKeyRef:
+              key: rabbitmq-password
+              name: {{ rabbitmq_secret }}
+        - name: RP_DB_HOST
+          value: {{ rp_db_host }}
+        - name: RP_DB_PORT
+          value: "{{ rp_db_port }}"
+        - name: RP_DB_USER
+          value: {{ rp_db_user }}
+        - name: RP_DB_PASS
+          valueFrom:
+            secretKeyRef:
+              key: postgresql-password
+              name: {{ rp_db_secret }}
+        - name: RP_BINARYSTORE_TYPE
+          value: minio
+        - name: RP_BINARYSTORE_MINIO_ENDPOINT
+          value: {{ minio_endpoint }}
+        - name: RP_BINARYSTORE_MINIO_ACCESSKEY
+          value: {{ accesskey }}
+        - name: RP_BINARYSTORE_MINIO_SECRETKEY
+          value: {{ secretkey }}
+        image: {{ api_image }}
+        imagePullPolicy: IfNotPresent
+        name: api
+        ports:
+        - containerPort: 8585
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 20
+          httpGet:
+            path: /health
+            port: 8585
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 20
+          successThreshold: 1
+          timeoutSeconds: 3
+        resources:
+          limits:
+            cpu: "1"
+            memory: 2Gi
+          requests:
+            cpu: 500m
+            memory: 1Gi

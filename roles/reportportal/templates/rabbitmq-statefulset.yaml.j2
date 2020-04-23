@@ -1,0 +1,182 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: rabbitmq
+  name: {{ rabbitmq_name }}
+  namespace: {{ meta.namespace }}
+spec:
+  podManagementPolicy: OrderedReady
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rabbitmq
+  serviceName: {{ rabbitmq_name }}-headless
+  template:
+    metadata:
+      labels:
+        app: rabbitmq
+    spec:
+      containers:
+      - command:
+        - bash
+        - -ec
+        - |
+          mkdir -p /opt/bitnami/rabbitmq/.rabbitmq/
+          mkdir -p /opt/bitnami/rabbitmq/etc/rabbitmq/
+          touch /opt/bitnami/rabbitmq/var/lib/rabbitmq/.start
+          #persist the erlang cookie in both places for server and cli tools
+          echo $RABBITMQ_ERL_COOKIE > /opt/bitnami/rabbitmq/var/lib/rabbitmq/.erlang.cookie
+          cp /opt/bitnami/rabbitmq/var/lib/rabbitmq/.erlang.cookie /opt/bitnami/rabbitmq/.rabbitmq/
+          #change permission so only the user has access to the cookie file
+          chmod 600 /opt/bitnami/rabbitmq/.rabbitmq/.erlang.cookie /opt/bitnami/rabbitmq/var/lib/rabbitmq/.erlang.cookie
+          #copy the mounted configuration to both places
+          cp  /opt/bitnami/rabbitmq/conf/* /opt/bitnami/rabbitmq/etc/rabbitmq
+          # Apply resources limits
+          ulimit -n "${RABBITMQ_ULIMIT_NOFILES}"
+          #replace the default password that is generated
+          sed -i "/CHANGEME/cdefault_pass=${RABBITMQ_PASSWORD//\\/\\\\}" /opt/bitnami/rabbitmq/etc/rabbitmq/rabbitmq.conf
+          exec rabbitmq-server
+        env:
+        - name: BITNAMI_DEBUG
+          value: "false"
+        - name: MY_POD_IP
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: status.podIP
+        - name: MY_POD_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.name
+        - name: MY_POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        - name: K8S_SERVICE_NAME
+          value: {{ rabbitmq_name }}-headless
+        - name: K8S_ADDRESS_TYPE
+          value: hostname
+        - name: RABBITMQ_NODENAME
+          value: rabbit@$(MY_POD_NAME).$(K8S_SERVICE_NAME).$(MY_POD_NAMESPACE).svc.cluster.local
+        - name: K8S_HOSTNAME_SUFFIX
+          value: .$(K8S_SERVICE_NAME).$(MY_POD_NAMESPACE).svc.cluster.local
+        - name: RABBITMQ_LOGS
+          value: '-'
+        - name: RABBITMQ_ULIMIT_NOFILES
+          value: "65536"
+        - name: RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS
+          value: +S 2:1
+        - name: RABBITMQ_USE_LONGNAME
+          value: "true"
+        - name: RABBITMQ_ERL_COOKIE
+          valueFrom:
+            secretKeyRef:
+              key: rabbitmq-erlang-cookie
+              name: {{ rabbitmq_name }}
+        - name: RABBITMQ_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: rabbitmq-password
+              name: {{ rabbitmq_name }}
+        image: {{ rabbitmq_image }}
+        livenessProbe:
+          exec:
+            command:
+            - sh
+            - -c
+            - rabbitmq-api-check "http://rabbitmq:$RABBITMQ_PASSWORD@127.0.0.1:15672/api/healthchecks/node"
+              '{"status":"ok"}'
+          failureThreshold: 6
+          initialDelaySeconds: 120
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 20
+        name: rabbitmq
+        ports:
+        - containerPort: 4369
+          name: epmd
+          protocol: TCP
+        - containerPort: {{ rabbitmq_port }}
+          name: amqp
+          protocol: TCP
+        - containerPort: 25672
+          name: dist
+          protocol: TCP
+        - containerPort: {{ rabbitmq_apiport }}
+          name: stats
+          protocol: TCP
+        readinessProbe:
+          exec:
+            command:
+            - sh
+            - -c
+            - rabbitmq-health-check "http://rabbitmq:$RABBITMQ_PASSWORD@127.0.0.1:15672/api/healthchecks/node"
+              '{"status":"ok"}'
+          failureThreshold: 3
+          initialDelaySeconds: 10
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 20
+        volumeMounts:
+        - mountPath: /opt/bitnami/rabbitmq/conf
+          name: config-volume
+        - mountPath: /usr/local/sbin/rabbitmq-api-check
+          name: healthchecks
+          subPath: rabbitmq-api-check
+        - mountPath: /usr/local/sbin/rabbitmq-health-check
+          name: healthchecks
+          subPath: rabbitmq-health-check
+        - mountPath: /opt/bitnami/rabbitmq/var/lib/rabbitmq
+          name: data
+        - mountPath: /app
+          name: load-definition-volume
+          readOnly: true
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      serviceAccount: {{ rabbitmq_name }}
+      serviceAccountName: {{ rabbitmq_name }}
+      terminationGracePeriodSeconds: 10
+      volumes:
+      - configMap:
+          defaultMode: 420
+          items:
+          - key: rabbitmq.conf
+            path: rabbitmq.conf
+          - key: enabled_plugins
+            path: enabled_plugins
+          name: {{ rabbitmq_name }}-config
+        name: config-volume
+      - configMap:
+          defaultMode: 420
+          items:
+          - key: rabbitmq-health-check
+            mode: 111
+            path: rabbitmq-health-check
+          - key: rabbitmq-api-check
+            mode: 111
+            path: rabbitmq-api-check
+          name: {{ rabbitmq_name }}-healthchecks
+        name: healthchecks
+      - name: load-definition-volume
+        secret:
+          defaultMode: 420
+          secretName: load-definition
+  updateStrategy:
+    type: RollingUpdate
+  volumeClaimTemplates:
+  - metadata:
+      labels:
+        app: rabbitmq
+      name: data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: {{ rabbitmq_volume_size }}
+      volumeMode: Filesystem

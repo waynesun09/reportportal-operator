@@ -1,0 +1,108 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: minio
+  name: minio
+  namespace: {{ meta.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: minio
+  strategy:
+    rollingUpdate:
+      maxSurge: "100%"
+      maxUnavailable: 0
+    type: RollingUpdate
+{% if (s3_enabled or azure_enabled or gcs_enabled or oss_enabled) %}
+  replicas: {{ cloud_replicas }}
+{% endif %}
+  template:
+    metadata:
+      labels:
+        app: minio
+      name: minio
+    spec:
+      containers:
+      - command:
+        - /bin/sh
+        - -ce
+{% if s3_enabled %}
+        - /usr/bin/docker-entrypoint.sh minio -C {{ config_path }} gateway s3 {{ s3_endpoint}}
+{% elif azure_enabled %}
+        - /usr/bin/docker-entrypoint.sh minio -C {{ config_path }} gateway azure
+{% elif gcs_enabled %}
+        - /usr/bin/docker-entrypoint.sh minio -C {{ config_path }} gateway gcs {{ gcs_projectid}}
+{% elif oss_enabled %}
+        - /usr/bin/docker-entrypoint.sh minio -C {{ config_path }} gateway oss {{ oss_endpoint}}
+{% else %}
+        - /usr/bin/docker-entrypoint.sh minio -C {{ config_path }} server {{ mount_path }}
+{% endif %}
+        env:
+        - name: MINIO_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: accesskey
+              name: minio
+        - name: MINIO_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: secretkey
+              name: minio
+        - name: MINIO_BROWSER
+          value: "on"
+        image: {{ minio_image }}
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /minio/health/live
+            port: service
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: minio
+        ports:
+        - containerPort: 9000
+          name: service
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /minio/health/ready
+            port: service
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 15
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources:
+          requests:
+            cpu: 250m
+            memory: 256Mi
+        volumeMounts:
+{% if not (gcs_enabled or azure_enabled or s3_enabled) %}
+        - mountPath: /export
+          name: export
+{% endif %}
+{% if gcs_enabled %}
+        - name: minio-user
+          mountPath: "/etc/credentials"
+          readOnly: true
+{% endif %}
+        - mountPath: /data/.minio/
+          name: minio-config-dir
+      serviceAccountName: minio
+      volumes:
+      - name: export
+        persistentVolumeClaim:
+          claimName: minio
+      - name: minio-user
+        secret:
+          defaultMode: 420
+          secretName: minio
+      - emptyDir: {}
+        name: minio-config-dir

@@ -1,0 +1,19 @@
+galaxy_info:
+  role_name: reportportal
+  author: Wayne Sun
+  description: Deploy ReportPortal v5 services and dependencies on OpenShift
+  company: Red Hat
+  license: Apache
+  min_ansible_version: 2.9
+
+  platforms:
+  - name: Fedora
+    versions:
+    - 31
+  - name: EL
+    versions:
+    - 8
+
+  galaxy_tags: [k8s, openshift, reportportal]
+
+dependencies: []

@@ -1,0 +1,64 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: reportportal
+  name: uat
+  namespace: '{{ meta.namespace }}'
+spec:
+  replicas: {{ uat_replicas }}
+  selector:
+    matchLabels:
+      component: uat
+  template:
+    metadata:
+      labels:
+        component: uat
+    spec:
+      containers:
+      - env:
+        - name: JAVA_OPTS
+          value: -Djava.security.egd=file:/dev/./urandom -XX:MinRAMPercentage=60.0
+            -XX:MaxRAMPercentage=90.0
+        - name: RP_SESSION_LIVE
+          value: "43200"
+        - name: RP_DB_HOST
+          value: {{ rp_db_host }}
+        - name: RP_DB_PORT
+          value: "{{ rp_db_port }}"
+        - name: RP_DB_USER
+          value: {{ rp_db_user }}
+        - name: RP_DB_PASS
+          valueFrom:
+            secretKeyRef:
+              key: postgresql-password
+              name: {{ rp_db_secret }}
+        - name: RP_BINARYSTORE_TYPE
+          value: minio
+        - name: RP_BINARYSTORE_MINIO_ENDPOINT
+          value: {{ minio_endpoint }}
+        - name: RP_BINARYSTORE_MINIO_ACCESSKEY
+          value: {{ accesskey }}
+        - name: RP_BINARYSTORE_MINIO_SECRETKEY
+          value: {{ secretkey }}
+        image: {{ uat_image }}
+        name: uat
+        ports:
+        - containerPort: 9999
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 5
+          httpGet:
+            path: /health
+            port: 9999
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 3
+        resources:
+          limits:
+            cpu: 500m
+            memory: 2Gi
+          requests:
+            cpu: 100m
+            memory: 512Mi

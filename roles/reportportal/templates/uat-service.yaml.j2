@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    infoEndpoint: /info
+    service: uat
+  labels:
+    app: reportportal
+  name: uat
+  namespace: '{{ meta.namespace }}'
+spec:
+  ports:
+  - name: headless
+    port: 9999
+    protocol: TCP
+    targetPort: 9999
+  selector:
+    component: uat
+  type: ClusterIP

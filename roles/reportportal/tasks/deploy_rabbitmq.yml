@@ -1,0 +1,49 @@
+- name: Create rabbitmq serviceaccount
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'rabbitmq-serviceaccount.yaml.j2') | from_yaml }}"
+
+- name: Create rabbitmq statefulset
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'rabbitmq-statefulset.yaml.j2') | from_yaml }}"
+
+- name: Create rabbitmq service
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'rabbitmq-service.yaml.j2') | from_yaml }}"
+
+- name: Create rabbitmq headless service
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'rabbitmq-service-headless.yaml.j2') | from_yaml }}"
+
+- name: Create rabbitmq configmap
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'rabbitmq-configmap.yaml.j2') | from_yaml }}"
+
+- name: Create rabbitmq healthcheck configmap
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'rabbitmq-healthchecks-configmap.yaml.j2') | from_yaml }}"
+
+- name: Create rabbitmq definition secret
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'rabbitmq-definition-secret.yaml.j2') | from_yaml }}"
+
+- name: Create rabbitmq secret
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'rabbitmq-secret.yaml.j2') | from_yaml }}"
+
+- name: Create rabbitmq role
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'rabbitmq-role.yaml.j2') | from_yaml }}"
+
+- name: Create rabbitmq rolebinding
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'rabbitmq-rolebinding.yaml.j2') | from_yaml }}"

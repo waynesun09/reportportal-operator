@@ -1,0 +1,115 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: postgresql
+  name: postgresql
+  namespace: {{ meta.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgresql
+      role: master
+  serviceName: postgresql-headless
+  template:
+    metadata:
+      labels:
+        app: postgresql
+        role: master
+      name: postgresql
+    spec:
+      containers:
+      - env:
+        - name: BITNAMI_DEBUG
+          value: "false"
+        - name: POSTGRESQL_PORT_NUMBER
+          value: "{{ rp_db_port }}"
+        - name: POSTGRESQL_VOLUME_DIR
+          value: /bitnami/postgresql
+        - name: PGDATA
+          value: /bitnami/postgresql/data
+        - name: POSTGRES_USER
+          value: {{ rp_db_user }}
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: postgresql-password
+              name: postgresql
+        - name: POSTGRES_DB
+          value: {{ rp_db }}
+        - name: POSTGRESQL_ENABLE_LDAP
+          value: "no"
+        image: {{ pg_image }}
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - exec pg_isready -U "{{ rp_db_user }}" -d "{{ rp_db }}" -h 127.0.0.1 -p {{ rp_db_port }}
+          failureThreshold: 6
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+        name: postgresql
+        ports:
+        - containerPort: {{ rp_db_port }}
+          name: tcp-postgresql
+          protocol: TCP
+        readinessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - -e
+            - |
+              exec pg_isready -U "{{ rp_db_user }}" -d "{{ rp_db }}" -h 127.0.0.1 -p {{ rp_db_port }}
+              [ -f /opt/bitnami/postgresql/tmp/.initialized ] || [ -f /bitnami/postgresql/.initialized ]
+          failureThreshold: 6
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+        resources:
+          requests:
+            cpu: 250m
+            memory: 256Mi
+        securityContext: {}
+        volumeMounts:
+        - mountPath: /dev/shm
+          name: dshm
+        - mountPath: /bitnami/postgresql
+          name: data
+      initContainers:
+      - command:
+        - sh
+        - -c
+        - if [ -d "/bitnami/postgresql/data" ]; then chmod 700 /bitnami/postgresql/data;
+          fi
+        image: busybox
+        imagePullPolicy: Always
+        name: update-bitnami-data-dir-mode
+        resources: {}
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - emptyDir:
+          medium: Memory
+          sizeLimit: 1Gi
+        name: dshm
+  updateStrategy:
+    type: RollingUpdate
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: {{ db_storage_size }}
+      volumeMode: Filesystem

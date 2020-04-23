@@ -1,0 +1,11 @@
+apiVersion: rp5.reportportal.io/v1alpha1
+kind: ReportPortal
+metadata:
+  name: example-reportportal
+spec:
+  # You cluster default router hostname
+  app_domain:
+  ui_replicas: 3
+  api_replicas: 3
+  index_replicas: 3
+  gateway_replicas: 3

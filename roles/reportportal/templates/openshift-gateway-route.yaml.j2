@@ -1,0 +1,21 @@
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  labels:
+    app: reportportal
+  name: reportportal
+  namespace: '{{ meta.namespace }}'
+spec:
+{% if app_domain %}
+  host: 'reportportal-{{ meta.namespace }}.{{ app_domain }}'
+{% endif %}
+  port:
+    targetPort: http
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
+  to:
+    kind: Service
+    name: gateway
+    weight: 100
+  wildcardPolicy: None

@@ -1,0 +1,38 @@
+- name: Create minio service account
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'minio-serviceaccount.yaml.j2') | from_yaml }}"
+
+- name: Create minio deployment
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'minio-deployment.yaml.j2') | from_yaml }}"
+
+- name: Create minio configmap
+  k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        labels:
+          app: minio
+        name: minio
+        namespace: "{{ namespace }}"
+      data:
+        initialize: "{{ lookup('template', '_helper_create_bucket.txt') | string }}"
+
+- name: Create minio pvc
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'minio-pvc.yaml.j2') | from_yaml }}"
+
+- name: Create minio secret
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'minio-secret.yaml.j2') | from_yaml }}"
+
+- name: Create minio service
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'minio-service.yaml.j2') | from_yaml }}"
