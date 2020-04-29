@@ -58,9 +58,8 @@ Prepare and update the CR yaml file:
       index_replicas: 3
       gateway_replicas: 3
 
-    With the parameters, you could input your cluster router host name for app_domain which will be used to create your app route name.
-
-    And also replicas for RP services components. All parameters descriptions could be in the `roles/reportportal/README.md`
+With the parameters, you could input your cluster router host name for app_domain which will be used to create your app route name.
+And also replicas for RP services components. All parameters descriptions could be in the `roles/reportportal/README.md`
 
 Create new CR instance:
 
@@ -88,7 +87,7 @@ If you have specified the app_domain in your example, the ReportPortal instance 
 Deploy with OLM
 ---------------
 
-Ongoing
+With OpenShift 4.3 and CodeReady Containers the Operator Lifecycle Mangement Operator is installed by default.
 
 Development
 -----------
