@@ -1,5 +1,5 @@
 scorecard:
-  version: v1alpha1
+  version: v1alpha2
   output: text
   bundle: deploy/olm-catalog/reportportal-operator/0.0.1/metadata
   plugins:
