@@ -243,7 +243,7 @@ Then update the CSV descriptions, spec and validations.
 
 ### Package operator application
 
-Use operator-courier to package and push the operator application to quay.io
+Use `operator-courier` to package and push the operator application to quay.io
 
 Check [Pre-Requisites](https://github.com/operator-framework/community-operators/blob/772ef722f32042d1f865bdf9a74fe3339ed56b88/docs/testing-operators.md#pre-requisites) to check and push the application to quay.io
 
