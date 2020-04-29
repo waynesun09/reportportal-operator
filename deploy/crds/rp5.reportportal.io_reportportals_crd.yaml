@@ -14,8 +14,56 @@ spec:
     status: {}
   validation:
     openAPIV3Schema:
-      type: object
-      x-kubernetes-preserve-unknown-fields: true
+      properties:
+        apiVersion:
+          description: 'APIVersion defines the versioned schema of this representation
+            of an object. Servers should convert recognized schemas to the latest
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources'
+          type: string
+        kind:
+          description: 'Kind is a string value representing the REST resource this
+            object represents. Servers may infer this from the endpoint the client
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds'
+          type: string
+        metadata:
+          description: Metadata definition for the ReportPortal object
+          type: object
+        spec:
+          description: Specification of the desired behavior of the ReportPortal Operator.
+          properties:
+            app_domain:
+              description: Clustser default sub domain hostname for the apps, if specified route will be created with $namespace-reportportal.$app_domain
+              type: string
+            ui_replicas:
+              description: Replicas number for service-ui component
+              type: integer
+            api_replicas:
+              description: Replicas number for service-api component
+              type: integer
+            index_replicas:
+              description: Replicas number for service-index component
+              type: integer
+            gateway_replicas:
+              description: Replicas number for gateway component
+              type: integer
+        status:
+          description: Status results of an instance of ReportPortal
+          properties:
+            conditions:
+              description: The resulting conditions when a ReportPortal is instantiated
+              items:
+                properties:
+                  status:
+                    type: string
+                  type:
+                    type: string
+                  reason:
+                    type: string
+                  lastTransitionTime:
+                    type: string
+                type: object
+              type: array
+          type: object
   versions:
   - name: v1alpha1
     served: true
