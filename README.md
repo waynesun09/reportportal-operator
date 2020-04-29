@@ -213,7 +213,7 @@ Check the doc [Testing Operator Deployment on OpenShift](https://github.com/oper
 
 This operator is build with [operator-sdk](https://github.com/operator-framework/operator-sdk "operator-sdk") and ansible galaxy role [reportportal-openshift](https://github.com/waynesun09/reportportal-openshift "reportportal-openshift").
 
-Note: Make sure you've installed the lastest operator-sdk as it change rapidly.
+Note: Make sure you've installed the lastest operator-sdk as it changes rapidly.
 
 Please read the Operator SDK doc to understand how the operator is built with the sdk.
 
@@ -223,7 +223,7 @@ For update the ansible role, check and update in `roles/reportportal`.
 
 Then follow the [Ansible user guide](https://github.com/operator-framework/operator-sdk/blob/master/doc/ansible/user-guide.md "Ansible User Guide for Operator SDK") doc with build and test the operator.
 
-After the ansible operator is created, follow guide [Manage the operator using the Operator Lifecycle Manager](https://github.com/operator-framework/getting-started#manage-the-operator-using-the-operator-lifecycle-manager) craete the Operator manifest. Which will generate the CSV package file.
+After the ansible operator is created, follow guide [Manage the operator using the Operator Lifecycle Manager](https://github.com/operator-framework/getting-started#manage-the-operator-using-the-operator-lifecycle-manager) create the Operator manifest. Which will generate the CSV package file.
 
 ### Generate CSV
 
@@ -245,7 +245,7 @@ Then update the CSV descriptions, spec and validations.
 
 Use operator-courier to package and push the operator application to quay.io
 
-Check [Pre-Requisites](https://github.com/operator-framework/community-operators/blob/772ef722f32042d1f865bdf9a74fe3339ed56b88/docs/testing-operators.md#pre-requisites Pre-Requisites) to check and push the application to quay.io
+Check [Pre-Requisites](https://github.com/operator-framework/community-operators/blob/772ef722f32042d1f865bdf9a74fe3339ed56b88/docs/testing-operators.md#pre-requisites) to check and push the application to quay.io
 
 Then follow the guide with testing.
 
