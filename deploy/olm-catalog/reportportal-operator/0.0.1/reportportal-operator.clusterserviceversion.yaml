@@ -25,7 +25,7 @@ metadata:
       ReportPortal Operator for instantiating the Report Portal services and
       required dependencies.
     certified: "false"
-    containerImage: quay.io/waynesun09/reportportal-operator:v0.0.1
+    containerImage: quay.io/waynesun09/rp5-operator:v0.0.1
     createdAt: 2020-04-23 20:09:00
     repository: https://github.com/waynesun09/reportportal-operator
     support: waynesun09
@@ -67,7 +67,7 @@ spec:
                 - /usr/local/bin/ao-logs
                 - /tmp/ansible-operator/runner
                 - stdout
-                image: quay.io/waynesun09/reportportal-operator:v0.0.1
+                image: quay.io/waynesun09/rp5-operator:v0.0.1
                 imagePullPolicy: Always
                 name: ansible
                 resources: {}
@@ -88,7 +88,7 @@ spec:
                   value: reportportal-operator
                 - name: ANSIBLE_GATHERING
                   value: explicit
-                image: quay.io/waynesun09/reportportal-operator:v0.0.1
+                image: quay.io/waynesun09/rp5-operator:v0.0.1
                 imagePullPolicy: Always
                 name: operator
                 resources: {}
