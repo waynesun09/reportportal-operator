@@ -242,18 +242,6 @@ spec:
           - update
           - watch
         - apiGroups:
-          - extensions
-          resources:
-          - deployments
-          verbs:
-          - create
-          - delete
-          - get
-          - list
-          - patch
-          - update
-          - watch
-        - apiGroups:
           - policy
           resources:
           - poddisruptionbudgets
