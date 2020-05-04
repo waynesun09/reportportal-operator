@@ -4,8 +4,8 @@ metadata:
   name: example-reportportal
 spec:
   # You cluster default router hostname
-  app_domain:
-  ui_replicas: 3
-  api_replicas: 3
-  index_replicas: 3
-  gateway_replicas: 3
+  app_domain: apps.test-example.com
+  ui_replicas: 1
+  api_replicas: 1
+  index_replicas: 1
+  gateway_replicas: 1
