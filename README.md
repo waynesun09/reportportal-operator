@@ -123,7 +123,7 @@ If you want deploy via CLI, check [Deploy with OLM via CLI](docs/deploy_cli.md)
 
 ## Development
 
-Check [Development Doc]((docs/development.md))
+Check [Development Doc](docs/development.md)
 
 ## CI
 
