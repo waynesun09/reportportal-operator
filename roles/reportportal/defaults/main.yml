@@ -96,4 +96,4 @@ migration_image: quay.io/waynesun09/rp-migration:5.1.0-bcrypt
 
 # analyzer default values
 analyzer_replicas: 1
-analyzer_image: reportportal/service-auto-analyzer:5.1.0
+analyzer_image: quay.io/waynesun09/service-auto-analyzer:5.2.3-rootless
