@@ -87,7 +87,7 @@ ui_image: reportportal/service-ui:5.1.0
 
 # api default values
 api_replicas: 1
-api_image: quay.io/waynesun09/service-api:5.1.0-rootless
+api_image: quay.io/waynesun09/service-api:5.1.1-rootless
 rp_amqp_queues: 10
 rp_amqp_queuesperpod: 10
 
