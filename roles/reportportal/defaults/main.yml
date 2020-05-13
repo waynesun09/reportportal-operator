@@ -92,7 +92,7 @@ rp_amqp_queues: 10
 rp_amqp_queuesperpod: 10
 
 # migration default values
-migration_image: quay.io/waynesun09/rp-migration:5.1.0-bcrypt
+migration_image: reportportal/migrations:5.1.0
 
 # analyzer default values
 analyzer_replicas: 1
