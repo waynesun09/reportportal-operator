@@ -6,7 +6,7 @@ This repo is built with Operator SDK and Ansible role.
 
 What services are included:
 
-    - Report Portal v5.1
+    - Report Portal v5.2
     - PostgreSQL
     - Elasticsearch
     - RabbitMQ
