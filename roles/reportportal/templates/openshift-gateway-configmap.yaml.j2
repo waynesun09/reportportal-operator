@@ -67,11 +67,24 @@ data:
     entryPoints:
       http:
        address: ":8081"
+      metrics:
+       address: ":8082"
 
     #log:
     #  level : DEBUG
 
     # accessLog: {}
+
+    metrics:
+      prometheus:
+        entryPoint: metrics
+        addEntryPointsLabels: true
+        addServicesLabels: true
+        buckets:
+          - 0.1
+          - 0.3
+          - 1.2
+          - 5.0
 
     providers:
       file:
