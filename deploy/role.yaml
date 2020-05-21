@@ -42,10 +42,18 @@ rules:
 - apiGroups:
   - monitoring.coreos.com
   resources:
+  - alertmanagers
   - servicemonitors
+  - prometheuses
+  - prometheusrules
   verbs:
   - get
+  - list
   - create
+  - update
+  - delete
+  - deletecollection
+  - watch
 - apiGroups:
   - apps
   resourceNames:
