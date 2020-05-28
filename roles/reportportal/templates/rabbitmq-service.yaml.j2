@@ -24,6 +24,10 @@ spec:
     port: {{ rabbitmq_apiport }}
     protocol: TCP
     targetPort: stats
+  - name: metrics
+    port: 9419
+    protocol: TCP
+    targetPort: metrics
   selector:
     app: rabbitmq
   type: ClusterIP
