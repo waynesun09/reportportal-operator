@@ -108,6 +108,9 @@ spec:
         - containerPort: {{ rabbitmq_apiport }}
           name: stats
           protocol: TCP
+        - containerPort: 9419
+          name: metrics
+          protocol: TCP
         readinessProbe:
           exec:
             command:

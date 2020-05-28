@@ -1,6 +1,7 @@
 apiVersion: v1
 data:
-  enabled_plugins: '[rabbitmq_management, rabbitmq_peer_discovery_k8s, rabbitmq_auth_backend_ldap].'
+  enabled_plugins: '[rabbitmq_management, rabbitmq_peer_discovery_k8s, rabbitmq_auth_backend_ldap,
+    rabbitmq_prometheus].'
   rabbitmq.conf: |-
     ##username and password
     default_user=rabbitmq
@@ -17,6 +18,7 @@ data:
     loopback_users.guest = false
     #disk_free_limit.absolute = 50MB
     management.load_definitions = /app/load_definition.json
+    prometheus.tcp.port = 9419
 kind: ConfigMap
 metadata:
   labels:
