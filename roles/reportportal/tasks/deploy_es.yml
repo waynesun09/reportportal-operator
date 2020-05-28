@@ -17,3 +17,13 @@
   k8s:
     state: present
     definition: "{{ lookup('template', 'es-poddisruptionbudget.yaml.j2') | from_yaml }}"
+
+- name: Create elasticsearch metrics export deployment
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'es-metrics-deploy.yaml.j2') | from_yaml }}"
+
+- name: Create elasticsearch metrics service
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'es-metrics-service.yaml.j2') | from_yaml }}"

@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    component: metrics
+    app: elasticsearch
+  name: elasticsearch-metrics
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: metrics
+      app: elasticsearch
+  template:
+    metadata:
+      labels:
+        app: elasticsearch
+        component: metrics
+    spec:
+      containers:
+      - args:
+        - --es.uri=http://{{ es_host }}:{{ es_port }}
+        - --es.all
+        image: docker.io/bitnami/elasticsearch-exporter:1.1.0-debian-10-r109
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /metrics
+            port: metrics
+            scheme: HTTP
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+        name: metrics
+        ports:
+        - containerPort: 9114
+          name: metrics
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /metrics
+            port: metrics
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources: {}
