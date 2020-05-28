@@ -82,6 +82,44 @@ spec:
           name: dshm
         - mountPath: /bitnami/postgresql
           name: data
+      - env:
+        - name: DATA_SOURCE_URI
+          value: 127.0.0.1:5432/reportportal?sslmode=disable
+        - name: DATA_SOURCE_PASS
+          valueFrom:
+            secretKeyRef:
+              key: postgresql-password
+              name: postgresql
+        - name: DATA_SOURCE_USER
+          value: {{ rp_db_user }}
+        image: docker.io/bitnami/postgres-exporter:0.8.0-debian-10-r28
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 6
+          httpGet:
+            path: /
+            port: metrics
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+        name: metrics
+        ports:
+        - containerPort: 9187
+          name: metrics
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 6
+          httpGet:
+            path: /
+            port: metrics
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+        resources: {}
       initContainers:
       - command:
         - sh
