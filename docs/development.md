@@ -16,21 +16,20 @@ Then follow the [Ansible user guide](https://sdk.operatorframework.io/docs/ansib
 
 ## Update CSV
 
-If need update CSV or update release version, follow guide [Generating a CSV](https://sdk.operatorframework.io/docs/olm-integration/generating-a-csv/) create the Operator manifest CSV package file.
+Update the CSV descriptions, spec and validations.
 
-Run operator-sdk generate command
+If need update CSV or update release version, follow guide [Generating a CSV](https://sdk.operatorframework.io/docs/olm-integration/generating-a-csv/) create the Operator bundle CSV package file.
+
+Run operator-sdk bundle generate command
 ```console
-$ operator-sdk generate csv --csv-version 0.0.1 --make-manifests=false --update-crds
+$ operator-sdk generate csv --csv-version 0.0.1
 ```
 
-## Generate bundle file
-
-Run operator-sdk bundle
+## Upgrading your CSV
+A new version of your CSV can be created by running:
 ```console
-$ operator-sdk bundle create --generate-only
+$ operator-sdk generate csv --csv-version <new-version>
 ```
-
-Then update the CSV descriptions, spec and validations.
 
 ## Package operator application
 
