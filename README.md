@@ -86,24 +86,23 @@ If you have specified the app_domain in your example, the ReportPortal instance 
 
 ## Deploy with OperatorHub GUI
 
-Check the doc [Testing Operator Deployment on OpenShift](https://github.com/operator-framework/community-operators/blob/master/docs/testing-operators.md#testing-operator-deployment-on-openshift)
+Check the doc [Using the index with Operator Lifecycle Manager](https://github.com/operator-framework/operator-registry#using-the-index-with-operator-lifecycle-manager)
 
-The OLM operator application package have been pushed to: https://quay.io/application/waynesun09/reportportal-operator
+The OLM operator bundle have been added to registry index image: https://quay.io/waynesun09/wayne-index
 
-### Create the OperatorSource
+### Create the CatalogSource
 
-Prepare a operator source yaml:
+Prepare a catalog source yaml:
 
-    $ cat operator-source.yaml
-    apiVersion: operators.coreos.com/v1
-    kind: OperatorSource
+    $ cat catalog-source.yaml
+    apiVersion: operators.coreos.com/v1alpha1
+    kind: CatalogSource
     metadata:
-      name: wayne-operators
+      name: wayne-manifests
       namespace: openshift-marketplace
     spec:
-      type: appregistry
-      endpoint: https://quay.io/cnr
-      registryNamespace: waynesun09
+      sourceType: grpc
+      image: quay.io/waynesun09/wayne-index:1.0.4
 
 In the OperatorHub choose openshift-marketplace namespace and select Provider type as Custom.
 

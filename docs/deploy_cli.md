@@ -5,47 +5,31 @@ Check with [OLM install doc](https://github.com/operator-framework/operator-life
 
 The OLM operator application package have been pushed to: https://quay.io/application/waynesun09/reportportal-operator
 
-## Create the OperatorSource
+## Create the CatalogSource
 
-Prepare a operator source yaml:
+Prepare a catalog source yaml:
 
-    $ cat operator-source.yaml
-    apiVersion: operators.coreos.com/v1
-    kind: OperatorSource
+    $ cat catalog-source.yaml
+    apiVersion: operators.coreos.com/v1alpha1
+    kind: CatalogSource
     metadata:
-      name: wayne-operators
+      name: wayne-manifests
       namespace: openshift-marketplace
     spec:
-      type: appregistry
-      endpoint: https://quay.io/cnr
-      registryNamespace: waynesun09
+      sourceType: grpc
+      image: quay.io/waynesun09/wayne-index:1.0.4
 
 The registry namespace is where the application is on quay.io.
 
 Now add the source to the cluster:
 
-    $ oc apply -f operator-source.yaml
+    $ oc apply -f catalog-source.yaml
 
 The `operator-marketplace` controller should successfully process this object:
 ```console
-$ oc get operatorsource wayne-operators -n openshift-marketplace
-NAME                TYPE          ENDPOINT              REGISTRY   DISPLAYNAME  PUBLISHER   STATUS      MESSAGE                                       AGE
-wayne-operators     appregistry   https://quay.io/cnr   waynesun09              Succeeded               The object has been successfully reconciled   30s
-```
-Additionally, a `CatalogSource` is created in the `openshift-marketplace` namespace:
-```console
-$ oc get catalogsource -n openshift-marketplace
-NAME                           NAME        TYPE   PUBLISHER   AGE
-wayne-operators                Custom      grpc   Custom      3m32s
-[...]
-```
-## View Available Operators
-Once the `OperatorSource` and `CatalogSource` are deployed, the following command can be used to list the available operators (until an operator is pushed into quay, this list will be empty):
-> The command below assumes `wayne-operators` as the name of the `OperatorSource` object. Adjust accordingly.
-```console
-$ oc get opsrc wayne-operators -o=custom-columns=NAME:.metadata.name,PACKAGES:.status.packages -n openshift-marketplace
-NAME                PACKAGES
-wayne-operators     reportportal-operator
+$ oc get catalogsource wayne-manifests -n openshift-marketplace
+NAME              DISPLAY   TYPE   PUBLISHER   AGE
+wayne-manifests             grpc               9m48s
 ```
 
 ## Create an OperatorGroup
@@ -74,12 +58,12 @@ The last piece ties together all of the previous steps. A `Subscription` is crea
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:
-  name: rp-operator-subsription
+  name: rp-subscription
   namespace: rp
 spec:
-  channel: alpha
+  channel: stable
   name: reportportal-operator
-  source: wayne-operators
+  source: wayne-manifests
   sourceNamespace: openshift-marketplace
 ```
 In any case replace `<channel-name>` with the contents of `channel.name` in your `package.yaml` file.
@@ -93,7 +77,7 @@ Watch your Operator being deployed by OLM from the catalog source created by Ope
 ```console
 $ oc get Subscription
 NAME                      PACKAGE                 SOURCE            CHANNEL
-rp-operator-subsription   reportportal-operator   wayne-operators   alpha
+rp-subsription            reportportal-operator   wayne-manifests   alpha
 ```
 > The above command assumes you have created the `Subscription` in the `rp` namespace.
 If your Operator deployment (CSV) shows a `Succeeded` in the `InstallPhase` status, your Operator is deployed successfully. If that's not the case check the `ClusterServiceVersion` objects status for details.

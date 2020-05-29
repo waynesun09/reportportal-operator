@@ -20,7 +20,7 @@ If need update CSV or update release version, follow guide [Generating a CSV](ht
 
 Run operator-sdk generate command
 ```console
-$ operator-sdk generate csv --csv-version 0.0.1 --make-manifests=false --update-crds
+$ operator-sdk generate csv --csv-version 0.0.1 --update-crds
 ```
 
 ## Generate bundle file
@@ -30,15 +30,59 @@ Run operator-sdk bundle
 $ operator-sdk bundle create --generate-only
 ```
 
+Make sure the version in annotations are same (alpha, stable, etc.) are same in csv.
+
 Then update the CSV descriptions, spec and validations.
 
-## Package operator application
+## Validate the bundle file
 
-Use `operator-courier` to package and push the operator application to quay.io
+```console
+$ operator-sdk bundle validate deploy/olm-catalog/reportportal-operator
+```
 
-Check [Pre-Requisites](https://github.com/operator-framework/community-operators/blob/772ef722f32042d1f865bdf9a74fe3339ed56b88/docs/testing-operators.md#pre-requisites) to check and push the application to quay.io
+## Test the bundle
+Check [Testing Operator Deployment with OLM](https://sdk.operatorframework.io/docs/olm-integration/olm-deployment/)
 
-Then follow the guide with testing.
+```console
+$ operator-sdk run packagemanifests
+```
+
+## Create bundle image
+The default bundle create image builder is docker, make sure you have installed latest docker on you host and docker daemon is running.
+
+Podman did not support Docker v2.2 format yet, while v2.1 schema format is not supported by operator registry.
+
+```console
+$ sudo operator-sdk bundle create quay.io/waynesun09/rp5-bundle-operator:v0.0.1 --channels alpha
+```
+
+The channel must be same in the metadata/annotations.yaml
+
+Push the bundle image to quay.io
+
+```console
+$ sudo docker push quay.io/waynesun09/rp5-bundle-operator:v0.0.1
+```
+
+## Build operator registry
+
+Use `operator-registry` to build a registry index image which include the operator application to quay.io
+
+Check [operator-registry](https://github.com/operator-framework/operator-registry) to create Bundle images and Operators Index.
+
+```console
+$ sudo opm index add --container-tool docker --bundles quay.io/waynesun09/rp5-bundle-operator:0.0.1 --tag quay.io/waynesun09/wayne-index:1.0.0
+$ sudo docker push quay.io/waynesun09/wayne-index:1.0.0
+```
+
+To add updated bundle image to the index:
+
+```console
+$ sudo opm index add --container-tool docker --bundles quay.io/waynesun09/rp5-bundle-operator:v0.0.2 --from-index quay.io/waynesun09/wayne-index:1.0.0 --tag quay.io/waynesun09/wayne-index:1.0.1
+$ sudo docker push quay.io/waynesun09/wayne-index:1.0.1
+```
+
+Then could create CatalogSource on your testing cluster to add the operator registry.
 
 ## Run scorecard
 
