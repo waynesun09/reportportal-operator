@@ -31,11 +31,11 @@ A new version of your CSV can be created by running:
 $ operator-sdk generate csv --csv-version <new-version>
 ```
 
-## Package operator application
+## Build operator registry
 
-Use `operator-courier` to package and push the operator application to quay.io
+Use `operator-registry` to build a registry image which include the operator application to quay.io
 
-Check [Pre-Requisites](https://github.com/operator-framework/community-operators/blob/772ef722f32042d1f865bdf9a74fe3339ed56b88/docs/testing-operators.md#pre-requisites) to check and push the application to quay.io
+Check [operator-registry](https://github.com/operator-framework/operator-registry) to create Bundle images and Operators Index.
 
 Then follow the guide with testing.
 

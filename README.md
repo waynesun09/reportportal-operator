@@ -92,18 +92,17 @@ The OLM operator application package have been pushed to: https://quay.io/applic
 
 ### Create the OperatorSource
 
-Prepare a operator source yaml:
+Prepare a catalog source yaml:
 
     $ cat operator-source.yaml
-    apiVersion: operators.coreos.com/v1
-    kind: OperatorSource
+    apiVersion: operators.coreos.com/v1alpha1
+    kind: CatalogSource
     metadata:
-      name: wayne-operators
+      name: wayne-manifests
       namespace: openshift-marketplace
     spec:
-      type: appregistry
-      endpoint: https://quay.io/cnr
-      registryNamespace: waynesun09
+      sourceType: grpc
+      image: quay.io/waynesun09/wayne-index:latest
 
 In the OperatorHub choose openshift-marketplace namespace and select Provider type as Custom.
 
