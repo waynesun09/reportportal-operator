@@ -36,3 +36,8 @@
   k8s:
     state: present
     definition: "{{ lookup('template', 'minio-service.yaml.j2') | from_yaml }}"
+
+- name: Create minio servicemonitor
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'minio-servicemonitor.yaml.j2') | from_yaml }}"

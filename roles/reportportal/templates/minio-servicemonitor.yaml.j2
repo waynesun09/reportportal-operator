@@ -1,0 +1,13 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app: minio
+  name: minio-metrics
+spec:
+  endpoints:
+    - port: '9000'
+      path: /minio/prometheus/metrics
+  selector:
+    matchLabels:
+      app: minio
