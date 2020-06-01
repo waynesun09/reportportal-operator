@@ -17,3 +17,13 @@
   k8s:
     state: present
     definition: "{{ lookup('template', 'pg-service-headless.yaml.j2') | from_yaml }}"
+
+- name: Create postgresql metrics service
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'pg-service-metrics.yaml.j2') | from_yaml }}"
+
+- name: Create postgresql servicemonitor
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'pg-servicemonitor.yaml.j2') | from_yaml }}"
