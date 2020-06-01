@@ -27,3 +27,8 @@
   k8s:
     state: present
     definition: "{{ lookup('template', 'es-metrics-service.yaml.j2') | from_yaml }}"
+
+- name: Create elasticsearch servicemonitor
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'es-servicemonitor.yaml.j2') | from_yaml }}"
