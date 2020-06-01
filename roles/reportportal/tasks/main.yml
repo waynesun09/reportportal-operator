@@ -88,3 +88,8 @@
   k8s:
     state: present
     definition: "{{ lookup('template', 'openshift-gateway-route.yaml.j2') | from_yaml }}"
+
+- name: Create gateway servicemonitor
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'openshift-gateway-servicemonitor.yaml.j2') | from_yaml }}"
