@@ -47,3 +47,8 @@
   k8s:
     state: present
     definition: "{{ lookup('template', 'rabbitmq-rolebinding.yaml.j2') | from_yaml }}"
+
+- name: Create rabbitmq servicemonitor
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'rabbitmq-servicemonitor.yaml.j2') | from_yaml }}"
