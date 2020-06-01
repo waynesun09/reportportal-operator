@@ -1,0 +1,16 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app: reportportal
+  name: api-metrics
+spec:
+  endpoints:
+  - bearerTokenSecret:
+      key: token
+      name: rp-user-auth
+    port: headless
+    path: /prometheus
+  selector:
+    matchLabels:
+      component: api
