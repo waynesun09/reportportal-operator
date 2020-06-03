@@ -1,5 +1,5 @@
 channels:
-- currentCSV: reportportal-operator.v0.0.1
+- currentCSV: reportportal-operator.v0.0.2
   name: alpha
 defaultChannel: alpha
 packageName: reportportal-operator

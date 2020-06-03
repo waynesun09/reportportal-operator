@@ -51,13 +51,13 @@ metadata:
     capabilities: Basic Install
     categories: Application Runtime
     certified: "false"
-    containerImage: quay.io/waynesun09/rp5-operator:v0.0.1
+    containerImage: quay.io/waynesun09/rp5-operator:v0.0.2
     createdAt: "2020-04-23 20:09:00"
     description: ReportPortal is a test automation analytics platform. ReportPortal
       Operator for instantiating the Report Portal services and required dependencies.
     repository: https://github.com/waynesun09/reportportal-operator
     support: waynesun09
-  name: reportportal-operator.v0.0.1
+  name: reportportal-operator.v0.0.2
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
@@ -156,7 +156,7 @@ spec:
                 - /usr/local/bin/ao-logs
                 - /tmp/ansible-operator/runner
                 - stdout
-                image: quay.io/waynesun09/rp5-operator:v0.0.1
+                image: quay.io/waynesun09/rp5-operator:v0.0.2
                 imagePullPolicy: Always
                 name: ansible
                 resources: {}
@@ -177,7 +177,7 @@ spec:
                   value: reportportal-operator
                 - name: ANSIBLE_GATHERING
                   value: explicit
-                image: quay.io/waynesun09/rp5-operator:v0.0.1
+                image: quay.io/waynesun09/rp5-operator:v0.0.2
                 imagePullPolicy: Always
                 name: operator
                 resources: {}
@@ -349,4 +349,5 @@ spec:
   maturity: alpha
   provider:
     name: waynesun09
-  version: 0.0.1
+  replaces: reportportal-operator.v0.0.1
+  version: 0.0.2
