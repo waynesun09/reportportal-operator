@@ -19,6 +19,33 @@ metadata:
             "uat_image": "reportportal/service-authorization:5.2.0",
             "ui_replicas": 1
           }
+        },
+        {
+          "apiVersion": "monitoring.coreos.com/v1",
+          "kind": "ServiceMonitor",
+          "metadata": {
+            "labels": {
+              "app": "reportportal"
+            },
+            "name": "api-metrics"
+          },
+          "spec": {
+            "endpoints": [
+              {
+                "bearerTokenSecret": {
+                  "key": "token",
+                  "name": "rp-user-auth"
+                },
+                "path": "/prometheus",
+                "port": "headless"
+              }
+            ],
+            "selector": {
+              "matchLabels": {
+                "component": "api"
+              }
+            }
+          }
         }
       ]
     capabilities: Basic Install
@@ -38,6 +65,7 @@ spec:
     owned:
     - description: ReportPortal v5 Deployment with ReportPortal Operator
       displayName: ReportPortal v5
+      version: v1alpha1
       kind: ReportPortal
       name: reportportals.rp5.reportportal.io
       resources:
@@ -102,7 +130,6 @@ spec:
         path: conditions
         x-descriptors:
         - urn:alm:descriptor:io.kubernetes.conditions
-      version: v1alpha1
   description: ReportPortal is a test automation analytics platform. ReportPortal
     Operator for instantiating the Report Portal services and required dependencies.
   displayName: Reportportal Operator
