@@ -4,6 +4,7 @@ metadata:
   labels:
     app: elasticsearch
   name: elasticsearch-metrics
+  namespace: {{ meta.namespace }}
 spec:
   endpoints:
     - port: http-metrics

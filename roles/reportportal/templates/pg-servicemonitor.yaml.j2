@@ -4,6 +4,7 @@ metadata:
   labels:
     app: postgresql
   name: postgres-metrics
+  namespace: {{ meta.namespace }}
 spec:
   endpoints:
     - port: metrics

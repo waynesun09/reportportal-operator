@@ -5,6 +5,7 @@ metadata:
     component: metrics
     app: elasticsearch
   name: elasticsearch-metrics
+  namespace: {{ meta.namespace }}
 spec:
   ports:
   - name: http-metrics

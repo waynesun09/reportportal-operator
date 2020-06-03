@@ -4,6 +4,7 @@ metadata:
   labels:
     app: rabbitmq
   name: rabbitmq-metrics
+  namespace: {{ meta.namespace }}
 spec:
   endpoints:
   - honorLabels: false

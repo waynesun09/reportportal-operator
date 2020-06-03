@@ -4,6 +4,7 @@ metadata:
   labels:
     name: gateway
   name: gateway-metrics
+  namespace: {{ meta.namespace }}
 spec:
   endpoints:
     - port: metrics
