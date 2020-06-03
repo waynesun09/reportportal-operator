@@ -40,6 +40,12 @@ spec:
             api_replicas:
               description: Replicas number for service-api component
               type: integer
+            api_image:
+              description: service-api container image url
+              type: string
+            uat_image:
+              description: service-authorization container image url
+              type: string
             index_replicas:
               description: Replicas number for service-index component
               type: integer
