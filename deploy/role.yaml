@@ -54,6 +54,7 @@ rules:
   - delete
   - deletecollection
   - watch
+  - patch
 - apiGroups:
   - apps
   resourceNames:
