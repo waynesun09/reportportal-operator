@@ -11,3 +11,7 @@ spec:
   uat_image: reportportal/service-authorization:5.2.1
   index_replicas: 1
   gateway_replicas: 1
+  enable_pg_restic_backup: yes
+  pg_restic_s3_bucket_init: yes
+  pg_s3_bucket_name: pgbackup-123123
+  pg_restic_password: rp_user
