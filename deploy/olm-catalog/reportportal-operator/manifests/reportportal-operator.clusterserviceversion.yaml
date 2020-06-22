@@ -17,7 +17,11 @@ metadata:
             "gateway_replicas": 1,
             "index_replicas": 1,
             "uat_image": "reportportal/service-authorization:5.2.1",
-            "ui_replicas": 1
+            "ui_replicas": 1,
+            "enable_pg_restic_backup": "yes",
+            "pg_restic_s3_bucket_init": "yes",
+            "pg_s3_bucket_name": "pgbackup-123123",
+            "pg_restic_password": "rp_user"
           }
         },
         {
@@ -124,6 +128,26 @@ spec:
         path: gateway_replicas
         x-descriptors:
         - urn:alm:descriptor:tectonic.ui:number
+      - description: Whether to enable Postgres backup via restic, yes or no
+        displayName: Whether to enable Postgres backup via restic
+        path: enable_pg_restic_backup
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      - description: Whether to init the Postgres bucket, yes or no
+        displayName: Whether to init the Postgres bucket
+        path: pg_restic_s3_bucket_init
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      - description: The s3 Postgres bucket name, need be unique and valid bucket name
+        displayName: The s3 Postgres bucket name
+        path: pg_s3_bucket_name
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      - description: The s3 Postgres bucket restic password
+        displayName: Restic password
+        path: pg_restic_password
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
       statusDescriptors:
       - description: Conditions provided by deployment
         displayName: Conditions

@@ -52,6 +52,18 @@ spec:
             gateway_replicas:
               description: Replicas number for gateway component
               type: integer
+            enable_pg_restic_backup:
+              description: Whether to enable Postgres backup via restic, yes or no
+              type: string
+            pg_restic_s3_bucket_init:
+              description: Whether to init the Postgres bucket, yes or no
+              type: string
+            pg_s3_bucket_name:
+              description: The s3 Postgres bucket name, need be unique and valid bucket name
+              type: string
+            pg_restic_password:
+              description: The s3 Postgres bucket restic password
+              type: string
         status:
           description: Status results of an instance of ReportPortal
           properties:
