@@ -40,6 +40,22 @@ spec:
           value: {{ rp_db }}
         - name: POSTGRESQL_ENABLE_LDAP
           value: "no"
+        - name: ENABLE_RESTIC_BACKUP
+          value: {{ enable_pg_restic_backup }}
+        - name: RESTIC_S3_BUCKET_INIT
+          value: {{ pg_restic_s3_bucket_init }}
+        - name: RESTIC_PASSWORD
+          value: {{ pg_restic_password }}
+        - name: S3_ENDPOINT
+          value: {{ minio_endpoint }}
+        - name: S3_BUCKET_NAME
+          value: {{ pg_s3_bucket_name }}
+        - name: AWS_ACCESS_KEY_ID
+          value: {{ accesskey }}
+        - name: AWS_SECRET_ACCESS_KEY
+          value: {{ secretkey }}
+        - name: XDG_CACHE_HOME
+          value: "/bitnami/postgresql/.cache/restic"
         image: {{ pg_image }}
         imagePullPolicy: IfNotPresent
         livenessProbe:

@@ -23,7 +23,7 @@ rabbitmq_secret: rabbitmq
 # PostgreSQL deploy parameters
 deploy_postgresql: True
 db_storage_size: 8Gi
-pg_image: docker.io/bitnami/postgresql:11.7.0-debian-10-r9
+pg_image: quay.io/waynesun09/postgresql:11.7.0-debian-10-r9-archive-restic
 
 # PostgreSQL service default values
 # Update in vars if deploy_postgresql is False and use existing PostgreSQL service
@@ -33,6 +33,12 @@ rp_db_password: lYHfhS2Hfy
 rp_db_host: postgresql
 rp_db_port: 5432
 rp_db_secret: postgresql
+
+# PostgreSQL Restic S3 backup options
+enable_pg_restic_backup: yes
+pg_restic_s3_bucket_init: yes
+pg_restic_password: rp_user
+pg_s3_bucket_name: pgbackup-123123
 
 # Minio deploy parameters
 deploy_minio: True
