@@ -18,7 +18,7 @@ By default all services will be installed in the same namespace and managed by t
 
 - OpenShift Container Platform 4.x
 - operator-sdk
-- operator-courier
+- operator-registry opm client
 - oc client
 
 ## Deploy without OLM
