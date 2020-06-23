@@ -98,6 +98,8 @@ spec:
           name: dshm
         - mountPath: /bitnami/postgresql
           name: data
+        - mountPath: /docker-entrypoint-initdb.d
+          name: custom-init-restic-script
       - env:
         - name: DATA_SOURCE_URI
           value: 127.0.0.1:5432/reportportal?sslmode=disable
@@ -155,6 +157,9 @@ spec:
           medium: Memory
           sizeLimit: 1Gi
         name: dshm
+      - configMap:
+          name: pg-restic
+        name: custom-init-restic-script
   updateStrategy:
     type: RollingUpdate
   volumeClaimTemplates:

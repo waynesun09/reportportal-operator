@@ -1,0 +1,122 @@
+apiVersion: v1
+data:
+  restic.sh: |-
+    #!/bin/bash
+    #
+    # Install restic and update postgres wal command
+
+    # shellcheck disable=SC1090
+    # shellcheck disable=SC1091
+
+    # Load Generic Libraries
+    . /libfile.sh
+    . /libfs.sh
+    . /liblog.sh
+    . /libos.sh
+    . /libservice.sh
+    . /libvalidations.sh
+    . /libpostgresql.sh
+
+
+    ########################
+    # Load archive variables used on PostgreSQL configuration.
+    # Globals:
+    #   RESTIC_*, S3_*, AWS_*, ENABLE_RESTIC_BACKUP
+    # Arguments:
+    #   None
+    # Returns:
+    #   Series of exports to be used as 'eval' arguments
+    #########################
+    postgresql_archive_restic_env() {
+        cat <<"EOF"
+    # S3 settings
+    export RESTIC_BINARY_PATH="${RESTIC_BINARY_PATH:-/bitnami/postgresql/restic}"
+    export ENABLE_RESTIC_BACKUP="${ENABLE_RESTIC_BACKUP:-}"
+    export RESTIC_S3_BUCKET_INIT="${RESTIC_S3_BUCKET_INIT:-}"
+    export RESTIC_PASSWORD="${RESTIC_PASSWORD:-}"
+    export S3_ENDPOINT="${S3_ENDPOINT:-}"
+    export S3_BUCKET_NAME="${S3_BUCKET_NAME:-}"
+    export AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID:-}"
+    export AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY:-}"
+    EOF
+    }
+
+
+    ########################
+    # Change a PostgreSQL configuration file by setting a property
+    # Globals:
+    #   POSTGRESQL_*
+    # Arguments:
+    #   $1 - property
+    #   $2 - value
+    #   $3 - Path to configuration file (default: $POSTGRESQL_CONF_FILE)
+    # Returns:
+    #   None
+    #########################
+    postgresql_set_property() {
+        local -r property="${1:?missing property}"
+        local -r value="${2:?missing value}"
+        local -r conf_file="${3:-$POSTGRESQL_CONF_FILE}"
+        local psql_conf
+
+        replace_in_file "$conf_file" "^#*\s*${property}\s*=.*" "${property} = '${value}'" false
+    }
+
+
+    ########################
+    # Change postgresql.conf by setting archiving parameters
+    # Globals:
+    #   RESTIC_*, S3_*
+    # Arguments:
+    #   None
+    # Returns:
+    #   None
+    #########################
+    postgresql_configure_archive_parameters() {
+        postgresql_info "Configuring archive parameters"
+        postgresql_set_property "archive_mode" "on"
+        if is_boolean_yes "$RESTIC_S3_BUCKET_INIT"; then
+            postgresql_info "Run command restic -r s3:$S3_ENDPOINT/$S3_BUCKET_NAME init"
+            if ! ${RESTIC_BINARY_PATH} -r s3:$S3_ENDPOINT/$S3_BUCKET_NAME init; then
+                postgresql_warn "Failed to init new s3 bucket $S3_BUCKET_NAME"
+            fi
+        fi
+        postgresql_set_property "archive_command" "${RESTIC_BINARY_PATH} -r s3:${S3_ENDPOINT}/${S3_BUCKET_NAME} backup %p"
+    }
+
+
+    ########################
+    # Initiate Postgres base backup
+    # Globals:
+    #   None
+    # Arguments:
+    #   None
+    # Returns:
+    #   None
+    #########################
+    postgresql_base_backup() {
+        postgresql_info "Init pg base backup"
+        echo "SELECT pg_start_backup('restic');" | postgresql_execute "" "postgres" "$POSTGRES_PASSWORD"
+        postgresql_info "Stop pg base backup"
+        echo "SELECT pg_stop_backup();" | postgresql_execute "" "postgres" "$POSTGRES_PASSWORD"
+    }
+
+
+    eval "$(postgresql_archive_restic_env)"
+    if [[ ! -f "$RESTIC_BINARY_PATH" ]]; then
+        curl https://raw.githubusercontent.com/waynesun09/reportportal-operator/master/bin/restic_0.9.6_linux_amd64 -o ${RESTIC_BINARY_PATH}
+    fi
+    chmod +x ${RESTIC_BINARY_PATH}
+    is_boolean_yes "$ENABLE_RESTIC_BACKUP" && postgresql_configure_archive_parameters
+
+    if [[ "$POSTGRESQL_REPLICATION_MODE" = "master" ]]; then
+        if is_boolean_yes "$ENABLE_RESTIC_BACKUP"; then
+            postgresql_base_backup
+        fi
+    fi
+kind: ConfigMap
+metadata:
+  name: pg-restic
+  labels:
+    app: postgresql
+  namespace: {{ meta.namespace }}

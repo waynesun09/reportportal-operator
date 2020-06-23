@@ -23,7 +23,7 @@ rabbitmq_secret: rabbitmq
 # PostgreSQL deploy parameters
 deploy_postgresql: True
 db_storage_size: 8Gi
-pg_image: quay.io/waynesun09/postgresql:11.7.0-debian-10-r9-archive-restic
+pg_image: docker.io/bitnami/postgresql:11.7.0-debian-10-r9
 
 # PostgreSQL service default values
 # Update in vars if deploy_postgresql is False and use existing PostgreSQL service
