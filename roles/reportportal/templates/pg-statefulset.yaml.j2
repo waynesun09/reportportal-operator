@@ -51,9 +51,15 @@ spec:
         - name: S3_BUCKET_NAME
           value: {{ pg_s3_bucket_name }}
         - name: AWS_ACCESS_KEY_ID
-          value: {{ accesskey }}
+          valueFrom:
+            secretKeyRef:
+              key: accesskey
+              name: minio
         - name: AWS_SECRET_ACCESS_KEY
-          value: {{ secretkey }}
+          valueFrom:
+            secretKeyRef:
+              key: secretkey
+              name: minio
         - name: XDG_CACHE_HOME
           value: "/bitnami/postgresql/.cache/restic"
         image: {{ pg_image }}
