@@ -22,9 +22,9 @@ spec:
                     key: s3.client.default.secret_key
                     name: s3-access-key
               - name: ELASTIC_S3_BUCKET
-                value: {{ es-snapshot-bucket }}
+                value: {{ es_snapshot_bucket }}
               - name: ELASTIC_S3_SNAP_DIR
-                value: {{ es-s3-backup-dir }}
+                value: {{ es_s3_backup_dir }}
               name: snapshot
               image: quay.io/waynesun09/ubi8-minimal:s3cmd
               args:
