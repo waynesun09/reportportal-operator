@@ -1,0 +1,41 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: es-s3-snapshot
+  namespace: {{ meta.namesapce }}
+spec:
+  schedule: {{ es_backup_schedule }}
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - env:
+              - name: AWS_ACCESS_KEY_ID
+                valueFrom:
+                  secretKeyRef:
+                    key: s3.client.default.access_key
+                    name: s3-access-key
+              - name: AWS_SECRET_ACCESS_KEY
+                valueFrom:
+                  secretKeyRef:
+                    key: s3.client.default.secret_key
+                    name: s3-access-key
+              - name: ELASTIC_S3_BUCKET
+                value: {{ es-snapshot-bucket }}
+              - name: ELASTIC_S3_SNAP_DIR
+                value: {{ es-s3-backup-dir }}
+              name: snapshot
+              image: quay.io/waynesun09/ubi8-minimal:s3cmd
+              args:
+                - /bin/sh
+                - /opt/elastic_snapshot.sh
+              volumeMounts:
+              - mountPath: /opt
+              name: snapshot-s3cmd-script
+          volumes:
+          - name: snapshot-s3cmd-script
+            configMap:
+              name: es-snapshot
+              defaultMode: 0777
+          restartPolicy: OnFailure

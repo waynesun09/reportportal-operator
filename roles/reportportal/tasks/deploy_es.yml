@@ -32,3 +32,18 @@
   k8s:
     state: present
     definition: "{{ lookup('template', 'es-servicemonitor.yaml.j2') | from_yaml }}"
+
+- name: Create elasticsearch keystore secret
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'es-keystore-secret.yaml.j2') | from_yaml }}"
+
+- name: Create elasticsearch s3 snapshot configmap
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'es-snapshot-configmap.yaml.j2') | from_yaml }}"
+
+- name: Create elasticsearch snapshot cronjob
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'es-snapshot-cronjob.yaml.j2') | from_yaml }}"
