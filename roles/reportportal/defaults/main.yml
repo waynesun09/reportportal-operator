@@ -79,6 +79,8 @@ es_host: elasticsearch-master
 es_port: 9200
 
 # Elasticsearch s3 snapshot backup schedule
+es-s3-backup-dir: s3_backup
+es-snapshot-bucket: es-snapshot-123123
 es_backup_schedule: @daily
 
 # ReportPortal services values
