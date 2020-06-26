@@ -71,12 +71,15 @@ oss_endpoint: ""
 deploy_elasticsearch: True
 es_replicas: 1          # need update to 3 for ha
 es_storage_size: 10Gi   # better 2update to 30
-es_image: docker.elastic.co/elasticsearch/elasticsearch:7.6.1
+es_image: quay.io/waynesun09/elasticsearch:7.6.1-s3-plugin
 
 # Elasticsearch service default values
 # Update in vars if deploy_elasticsearch is False and use existing Elasticsearch service
 es_host: elasticsearch-master
 es_port: 9200
+
+# Elasticsearch s3 snapshot backup schedule
+es_backup_schedule: @daily
 
 # ReportPortal services values
 # index default values
