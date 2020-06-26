@@ -21,7 +21,10 @@ metadata:
             "enable_pg_restic_backup": "yes",
             "pg_restic_s3_bucket_init": "yes",
             "pg_s3_bucket_name": "pgbackup-123123",
-            "pg_restic_password": "rp_user"
+            "pg_restic_password": "rp_user",
+            "es_s3_backup_dir":"s3_backup",
+            "es_snapshot_bucket":"es-snapshot-123123",
+            "es_backup_schedule":"@daily"
           }
         },
         {
@@ -146,6 +149,21 @@ spec:
       - description: The s3 Postgres bucket restic password
         displayName: Restic password
         path: pg_restic_password
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      - description: The Elasticsearch snapshot path dir, if set the snapshot will be enabled
+        displayName: Elasticsearch snapshot path dir
+        path: es_s3_backup_dir
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      - description: The Elasticsearch snapshot s3 bucket name
+        displayName: Elasticsearch snapshot s3 bucket name
+        path: es_snapshot_bucket
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      - description: The Elasticsearch snapshot to s3 bucket schedule, crontab schedule format
+        displayName: Elasticsearch snapshot to s3 bucket schedule
+        path: es_backup_schedule
         x-descriptors:
         - urn:alm:descriptor:tectonic.ui:text
       statusDescriptors:

@@ -15,3 +15,6 @@ spec:
   pg_restic_s3_bucket_init: yes
   pg_s3_bucket_name: pgbackup-123123
   pg_restic_password: rp_user
+  es_s3_backup_dir: s3_backup
+  es_snapshot_bucket: es-snapshot-123123
+  es_backup_schedule: @daily

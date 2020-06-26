@@ -64,6 +64,15 @@ spec:
             pg_restic_password:
               description: The s3 Postgres bucket restic password
               type: string
+            es_s3_backup_dir:
+              description: The Elasticsearch snapshot path dir, if set the snapshot will be enabled
+              type: string
+            es_snapshot_bucket:
+              description: The Elasticsearch snapshot s3 bucket name
+              type: string
+            es_backup_schedule:
+              description: The Elasticsearch snapshot to s3 bucket schedule, crontab schedule format
+              type: string
         status:
           description: Status results of an instance of ReportPortal
           properties:
