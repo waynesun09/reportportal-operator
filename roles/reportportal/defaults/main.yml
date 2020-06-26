@@ -81,7 +81,7 @@ es_port: 9200
 # Elasticsearch s3 snapshot backup schedule
 es_s3_backup_dir: s3_backup
 es_snapshot_bucket: es-snapshot-123123
-es_backup_schedule: @daily
+es_backup_schedule: "@daily"
 
 # ReportPortal services values
 # index default values
