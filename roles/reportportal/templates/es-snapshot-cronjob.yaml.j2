@@ -1,6 +1,8 @@
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
+  labels:
+    app: elasticsearch-master
   name: es-s3-snapshot
   namespace: {{ meta.namespace }}
 spec:
