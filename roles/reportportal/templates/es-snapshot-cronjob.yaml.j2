@@ -6,7 +6,7 @@ metadata:
   name: es-s3-snapshot
   namespace: {{ meta.namespace }}
 spec:
-  schedule: {{ es_backup_schedule }}
+  schedule: "{{ es_backup_schedule }}"
   jobTemplate:
     spec:
       template:
