@@ -41,11 +41,11 @@ spec:
         - name: POSTGRESQL_ENABLE_LDAP
           value: "no"
         - name: ENABLE_RESTIC_BACKUP
-          value: {{ enable_pg_restic_backup }}
+          value: "{{ enable_pg_restic_backup }}"
         - name: RESTIC_S3_BUCKET_INIT
-          value: {{ pg_restic_s3_bucket_init }}
+          value: "{{ pg_restic_s3_bucket_init }}"
         - name: RESTIC_PASSWORD
-          value: {{ pg_restic_password }}
+          value: "{{ pg_restic_password }}"
         - name: S3_ENDPOINT
           value: {{ minio_endpoint }}
         - name: S3_BUCKET_NAME

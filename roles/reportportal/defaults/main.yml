@@ -35,8 +35,8 @@ rp_db_port: 5432
 rp_db_secret: postgresql
 
 # PostgreSQL Restic S3 backup options
-enable_pg_restic_backup: yes
-pg_restic_s3_bucket_init: yes
+enable_pg_restic_backup: "yes"
+pg_restic_s3_bucket_init: "yes"
 pg_restic_password: rp_user
 pg_s3_bucket_name: pgbackup-123123
 
