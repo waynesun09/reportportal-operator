@@ -2,7 +2,7 @@ apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
   name: es-s3-snapshot
-  namespace: {{ meta.namesapce }}
+  namespace: {{ meta.namespace }}
 spec:
   schedule: {{ es_backup_schedule }}
   jobTemplate:
