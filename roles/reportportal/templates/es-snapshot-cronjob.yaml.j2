@@ -35,9 +35,9 @@ spec:
               volumeMounts:
               - mountPath: /opt
               name: snapshot-s3cmd-script
-          volumes:
-          - name: snapshot-s3cmd-script
-            configMap:
-              name: es-snapshot
-              defaultMode: 0777
+            volumes:
+            - name: snapshot-s3cmd-script
+              configMap:
+                name: es-snapshot
+                defaultMode: 0777
           restartPolicy: OnFailure
