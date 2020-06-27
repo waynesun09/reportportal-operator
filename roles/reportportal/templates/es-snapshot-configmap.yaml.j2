@@ -24,12 +24,12 @@ data:
         echo "Create new s3 bucket failed"
     fi
 
-    minio_host=$(echo {{ mino_endpoint }} |awk -F:// '{print $2}' |awk -F: '{print $1}')
-    minio_port=$(echo {{ mino_endpoint }} |awk -F: '{print $3}'
+    minio_host=$(echo {{ minio_endpoint }} |awk -F:// '{print $2}' |awk -F: '{print $1}')
+    minio_port=$(echo {{ minio_endpoint }} |awk -F: '{print $3}'
     minio_ip=$(getent hosts $minio_host | awk '{ print $1}')
 
     if [[ -n $ELASTIC_S3_BACKUP_DIR ]] then;
-        curl -X PUT -H 'Content-Type: application/json' http://{{ es_host }}:{{ es_port }}/_snapshot/$ELASTIC_S3_BACKUP_DIR -d "$(generate_post_data $mino_ip $minio_port)"
+        curl -X PUT -H 'Content-Type: application/json' http://{{ es_host }}:{{ es_port }}/_snapshot/$ELASTIC_S3_BACKUP_DIR -d "$(generate_post_data $minio_ip $minio_port)"
         curl -X PUT http://{{ es_host }}:{{ es_port }}/_snapshot/$ELASTIC_S3_BACKUP_DIR/%3Csnapshot-%7Bnow%2Fd%7D%3E?wait_for_completion=true
     else
         echo "Skip as the snapshot dir is not specified"
