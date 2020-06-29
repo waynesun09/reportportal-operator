@@ -52,11 +52,20 @@ Prepare and update the CR yaml file:
       name: example-reportportal
     spec:
       # You cluster default router hostname
-      app_domain:
-      ui_replicas: 3
-      api_replicas: 3
-      index_replicas: 3
-      gateway_replicas: 3
+      app_domain: apps.test-example.com
+      ui_replicas: 1
+      api_replicas: 1
+      api_image: quay.io/waynesun09/service-api:5.2.2-rootless
+      uat_image: reportportal/service-authorization:5.2.1
+      index_replicas: 1
+      gateway_replicas: 1
+      enable_pg_restic_backup: yes
+      pg_restic_s3_bucket_init: yes
+      pg_s3_bucket_name: pgbackup-123123
+      pg_restic_password: rp_user
+      es_s3_backup_dir: s3_backup
+      es_snapshot_bucket: es-snapshot-123123
+      es_backup_schedule: '@daily'
 
 With the parameters, you could input your cluster router host name for app_domain which will be used to create your app route name.
 And also replicas for RP services components. All parameters descriptions could be in the `roles/reportportal/README.md`
@@ -102,7 +111,7 @@ Prepare a catalog source yaml:
       namespace: openshift-marketplace
     spec:
       sourceType: grpc
-      image: quay.io/waynesun09/wayne-index:1.0.4
+      image: quay.io/waynesun09/wayne-index:1.0.2
 
 In the OperatorHub choose openshift-marketplace namespace and select Provider type as Custom.
 
