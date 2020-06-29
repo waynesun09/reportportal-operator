@@ -1,3 +1,7 @@
+- name: Deploy minio service
+  include: deploy_minio.yml
+  when: deploy_minio
+
 - name: Deploy postgresql service
   include: deploy_pg.yml
   when: deploy_postgresql
@@ -5,10 +9,6 @@
 - name: Deploy rabbitmq service
   include: deploy_rabbitmq.yml
   when: deploy_rabbitmq
-
-- name: Deploy minio service
-  include: deploy_minio.yml
-  when: deploy_minio
 
 - name: Deploy elasticsearch service
   include: deploy_es.yml
