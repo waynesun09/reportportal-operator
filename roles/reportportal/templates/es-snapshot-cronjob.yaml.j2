@@ -25,7 +25,7 @@ spec:
                   name: s3-access-key
             - name: ELASTIC_S3_BUCKET
               value: {{ es_snapshot_bucket }}
-            - name: ELASTIC_S3_SNAP_DIR
+            - name: ELASTIC_S3_BACKUP_DIR
               value: {{ es_s3_backup_dir }}
             name: snapshot
             image: quay.io/waynesun09/ubi8-minimal:s3cmd
