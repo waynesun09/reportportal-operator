@@ -17,7 +17,7 @@ Prepare a catalog source yaml:
       namespace: openshift-marketplace
     spec:
       sourceType: grpc
-      image: quay.io/waynesun09/wayne-index:1.0.4
+      image: quay.io/waynesun09/wayne-index:1.0.2
 
 The registry namespace is where the application is on quay.io.
 
