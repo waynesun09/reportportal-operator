@@ -104,6 +104,8 @@ spec:
           name: dshm
         - mountPath: /bitnami/postgresql
           name: data
+        - mountPath: /docker-entrypoint-preinitdb.d
+          name: custom-preinit-script
         - mountPath: /docker-entrypoint-initdb.d
           name: custom-init-restic-script
       - env:
@@ -166,6 +168,9 @@ spec:
       - configMap:
           name: pg-restic
         name: custom-init-restic-script
+      - configMap:
+          name: pg-preinit
+        name: custom-preinit-script
   updateStrategy:
     type: RollingUpdate
   volumeClaimTemplates:

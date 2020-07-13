@@ -2,6 +2,10 @@ apiVersion: v1
 data:
   restic.sh: |-
     #!/bin/bash
+
+    set -o errexit
+    set -o nounset
+    set -o pipefail
     #
     # Install restic and update postgres wal command
 
@@ -10,10 +14,7 @@ data:
 
     # Load Generic Libraries
     . /libfile.sh
-    . /libfs.sh
     . /liblog.sh
-    . /libos.sh
-    . /libservice.sh
     . /libvalidations.sh
     . /libpostgresql.sh
 
@@ -43,27 +44,6 @@ data:
 
 
     ########################
-    # Change a PostgreSQL configuration file by setting a property
-    # Globals:
-    #   POSTGRESQL_*
-    # Arguments:
-    #   $1 - property
-    #   $2 - value
-    #   $3 - Path to configuration file (default: $POSTGRESQL_CONF_FILE)
-    # Returns:
-    #   None
-    #########################
-    postgresql_set_property() {
-        local -r property="${1:?missing property}"
-        local -r value="${2:?missing value}"
-        local -r conf_file="${3:-$POSTGRESQL_CONF_FILE}"
-        local psql_conf
-
-        replace_in_file "$conf_file" "^#*\s*${property}\s*=.*" "${property} = '${value}'" false
-    }
-
-
-    ########################
     # Change postgresql.conf by setting archiving parameters
     # Globals:
     #   RESTIC_*, S3_*
@@ -77,7 +57,7 @@ data:
         postgresql_set_property "archive_mode" "on"
         if is_boolean_yes "$RESTIC_S3_BUCKET_INIT"; then
             postgresql_info "Run command restic -r s3:$S3_ENDPOINT/$S3_BUCKET_NAME init"
-            if ! ${RESTIC_BINARY_PATH} -r s3:$S3_ENDPOINT/$S3_BUCKET_NAME init; then
+            if ! $RESTIC_BINARY_PATH -r s3:$S3_ENDPOINT/$S3_BUCKET_NAME init > /dev/null; then
                 postgresql_warn "Failed to init new s3 bucket $S3_BUCKET_NAME"
             fi
         fi
@@ -103,14 +83,20 @@ data:
 
 
     eval "$(postgresql_archive_restic_env)"
-    if [[ ! -f "$RESTIC_BINARY_PATH" ]]; then
-        curl https://raw.githubusercontent.com/waynesun09/reportportal-operator/master/bin/restic_0.9.6_linux_amd64 -o ${RESTIC_BINARY_PATH}
+    if [[ ! -f "${RESTIC_BINARY_PATH}" ]]; then
+        postgresql_info "Download restic client"
+        curl https://raw.githubusercontent.com/waynesun09/reportportal-operator/master/bin/restic_0.9.6_linux_amd64 -o "$RESTIC_BINARY_PATH"
     fi
-    chmod +x ${RESTIC_BINARY_PATH}
+
+    postgresql_info "Update restic client with execute permission"
+    chmod +x "$RESTIC_BINARY_PATH"
+
+    postgresql_info "Update archive config"
     is_boolean_yes "$ENABLE_RESTIC_BACKUP" && postgresql_configure_archive_parameters
 
     if [[ "$POSTGRESQL_REPLICATION_MODE" = "master" ]]; then
         if is_boolean_yes "$ENABLE_RESTIC_BACKUP"; then
+            postgresql_info "Start base backup"
             postgresql_base_backup
         fi
     fi

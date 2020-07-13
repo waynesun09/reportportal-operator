@@ -1,0 +1,19 @@
+apiVersion: v1
+data:
+  preinit.sh: |-
+    #!/bin/bash
+    #
+    # Remove custom "$POSTGRESQL_VOLUME_DIR/.user_scripts_initialized"
+
+    # shellcheck disable=SC1090
+    # shellcheck disable=SC1091
+
+    if [[ -f "$POSTGRESQL_VOLUME_DIR/.user_scripts_initialized" ]]; then
+        rm -f "${POSTGRESQL_VOLUME_DIR}/.user_scripts_initialized"
+    fi
+kind: ConfigMap
+metadata:
+  name: pg-preinit
+  labels:
+    app: postgresql
+  namespace: {{ meta.namespace }}
