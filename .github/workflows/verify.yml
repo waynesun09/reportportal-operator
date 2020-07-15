@@ -10,16 +10,10 @@ on:
 
 jobs:
   crd_csv_verify:
-    runs-on: ubuntu-latest
-    container:
-      image: quay.io/operator-framework/operator-testing:latest
-      env:
-        VERBOSE: 0
-        OP_PATH: $GITHUB_WORKSPACE/deploy/olm-catalog/reportportal-operator/
-      
+    runs-on: ubuntu-latest      
     steps:
     - uses: actions/checkout@v2
 
     # Runs operator testing with verify
     - name: Run operator testing with verification
-      run: operator.verify --no-print-directory OP_PATH=${OP_PATH} VERBOSE=${VERBOSE}
+      run: docker run -v $PWD/deploy/olm-catalog:/community-operators:z -ti quay.io/operator-framework/operator-testing:latest operator.verify --no-print-directory OP_PATH=community-operators/reportportal-operator VERBOSE=1
