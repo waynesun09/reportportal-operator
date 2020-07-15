@@ -24,4 +24,4 @@ jobs:
 
     # Runs operator testing with verify
     - name: Run operator testing with verification
-      run: operator.verify --no-print-directory
+      run: operator.verify --no-print-directory OP_PATH=${OP_PATH} VERBOSE=${VERBOSE}
