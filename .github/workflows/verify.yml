@@ -15,9 +15,7 @@ jobs:
       image: quay.io/operator-framework/operator-testing:latest
       env:
         VERBOSE: 0
-        OP_PATH: community-operators/reportportal-operator
-      volumes:
-        - ${PWD}/deploy/olm-catalog:/community-operators  
+        OP_PATH: $GITHUB_WORKSPACE/deploy/olm-catalog/reportportal-operator/
       
     steps:
     - uses: actions/checkout@v2
