@@ -1,0 +1,27 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  crd_csv_verify:
+    runs-on: ubuntu-latest
+    container:
+      image: quay.io/operator-framework/operator-testing:latest
+      env:
+        VERBOSE: 0
+        OP_PATH: community-operators/reportportal-operator
+      volumes:
+        - ${PWD}/deploy/olm-catalog:/community-operators  
+      
+    steps:
+    - uses: actions/checkout@v2
+
+    # Runs operator testing with verify
+    - name: Run operator testing with verification
+      run: operator.verify --no-print-directory
