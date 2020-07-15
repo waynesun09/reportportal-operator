@@ -16,4 +16,4 @@ jobs:
 
     # Runs operator testing with verify
     - name: Run operator testing with verification
-      run: docker run -v $PWD/deploy/olm-catalog:/community-operators:z -ti quay.io/operator-framework/operator-testing:latest operator.verify --no-print-directory OP_PATH=community-operators/reportportal-operator VERBOSE=1
+      run: docker run -v $PWD/deploy/olm-catalog:/community-operators:z quay.io/operator-framework/operator-testing:latest operator.verify --no-print-directory OP_PATH=community-operators/reportportal-operator VERBOSE=1
