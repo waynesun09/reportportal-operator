@@ -135,4 +135,4 @@ Check [Development Doc](docs/development.md)
 
 ## CI
 
-To be add
+The Github Action will pull operator-testing image and run operator.verify command to validate with CSV and CRD files change.
