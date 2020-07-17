@@ -86,25 +86,25 @@ es_backup_schedule: "@daily"
 # ReportPortal services values
 # index default values
 index_replicas: 1
-index_image: reportportal/service-index:5.0.7
+index_image: reportportal/service-index:5.0.9
 
 # uat default values
 uat_replicas: 1
-uat_image: reportportal/service-authorization:5.2.1
+uat_image: reportportal/service-authorization:5.2.3
 
 # ui default values
 ui_replicas: 1
-ui_image: reportportal/service-ui:5.2.2
+ui_image: reportportal/service-ui:5.2.3
 
 # api default values
 api_replicas: 1
-api_image: quay.io/waynesun09/service-api:5.2.2-rootless
+api_image: quay.io/waynesun09/service-api:5.2.3-rootless
 rp_amqp_queues: 10
 rp_amqp_queuesperpod: 10
 
 # migration default values
-migration_image: reportportal/migrations:5.2.0
+migration_image: reportportal/migrations:5.2.3
 
 # analyzer default values
 analyzer_replicas: 1
-analyzer_image: quay.io/waynesun09/service-auto-analyzer:5.2.3-rootless
+analyzer_image: reportportal/service-auto-analyzer:5.2.3

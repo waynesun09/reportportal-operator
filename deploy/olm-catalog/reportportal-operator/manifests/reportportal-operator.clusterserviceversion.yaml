@@ -11,12 +11,12 @@ metadata:
             "name": "example-reportportal"
           },
           "spec": {
-            "api_image": "quay.io/waynesun09/service-api:5.2.2-rootless",
+            "api_image": "quay.io/waynesun09/service-api:5.2.3-rootless",
             "api_replicas": 1,
             "app_domain": "apps.test-example.com",
             "gateway_replicas": 1,
             "index_replicas": 1,
-            "uat_image": "reportportal/service-authorization:5.2.1",
+            "uat_image": "reportportal/service-authorization:5.2.3",
             "ui_replicas": 1,
             "enable_pg_restic_backup": "yes",
             "pg_restic_s3_bucket_init": "yes",
