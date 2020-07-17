@@ -16,7 +16,7 @@ Then follow the [Ansible user guide](https://sdk.operatorframework.io/docs/ansib
 
 After role updated, create new operator image with:
 ```console
-$ podman bud -f build/Dockerfile -t quay.io/waynesun09/rp5-operator:v0.0.3
+$ buildah bud -f build/Dockerfile -t quay.io/waynesun09/rp5-operator:v0.0.3
 $ buildah push quay.io/waynesun09/rp5-operator:v0.0.3
 ```
 
