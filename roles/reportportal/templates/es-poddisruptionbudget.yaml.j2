@@ -3,6 +3,8 @@ kind: PodDisruptionBudget
 metadata:
   name: elasticsearch-master-pdb
   namespace: {{ meta.namespace }}
+  labels:
+      app: elasticsearch
 spec:
   maxUnavailable: 1
   selector:

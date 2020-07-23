@@ -1,0 +1,30 @@
+- ignore_errors: yes
+  debug:
+    msg: REMOVING RP
+
+- ignore_errors: yes
+  debug:
+    msg: "CR: name={{ meta.name }}, namespace={{ meta.namespace }}"
+
+- ignore_errors: yes
+  name: Playbook start time
+  set_fact:
+    playbook_time_start: "{{ '%Y-%m-%d %H:%M:%S' | strftime }}"
+
+- ignore_errors: yes
+  name: Remove all app resources
+  include: remove_app.yml
+
+- ignore_errors: yes
+  name: Playbook end time
+  set_fact:
+    playbook_time_end: "{{ '%Y-%m-%d %H:%M:%S' | strftime }}"
+
+- ignore_errors: yes
+  name: Log removal processing time
+  debug:
+    msg: "Processing time: [{{ (playbook_time_end|to_datetime - playbook_time_start|to_datetime).total_seconds() | int }}] seconds"
+
+- ignore_errors: yes
+  debug:
+    msg: RP REMOVAL IS DONE.

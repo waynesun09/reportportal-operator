@@ -1,0 +1,16 @@
+---
+# RP gateway values
+# app_domain: apps.ocp.test.example.com
+
+# RP dependency services values
+# RabbitMQ remove parameters
+remove_rabbitmq: True
+
+# PostgreSQL remove parameters
+remove_postgresql: True
+
+# Minio remove parameters
+remove_minio: False
+
+# Elasticsearch remove parameters
+remove_elasticsearch: True

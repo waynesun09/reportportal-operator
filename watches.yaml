@@ -3,3 +3,8 @@
   group: rp5.reportportal.io
   kind: ReportPortal
   role: /opt/ansible/roles/reportportal
+  finalizer:
+    name: finalizer.reportportal
+    role: /opt/ansible/roles/reportportal-remove
+    vars:
+      remove_minio: False

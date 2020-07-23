@@ -1,0 +1,156 @@
+- name: Delete Report Portal resources
+  ignore_errors: yes
+  k8s:
+    state: absent
+    api_version: "{{ k8s_item.apiVersion }}"
+    kind: "{{ k8s_item.kind }}"
+    namespace: "{{ meta.namespace }}"
+    name: "{{ k8s_item.metadata.name }}"
+  register: delete_result
+  until: delete_result.result == {} or (delete_result.result.status is defined and delete_result.result.status == "Success")
+  retries: 6
+  delay: 10
+  when:
+  - k8s_item is defined
+  - k8s_item.apiVersion is defined
+  - k8s_item.kind is defined
+  - k8s_item.metadata is defined
+  - k8s_item.metadata.name is defined
+  with_items:
+  - "{{ query('k8s', namespace=meta.namespace, kind='StatefulSet', label_selector='app=reportportal') }}"
+  - "{{ query('k8s', namespace=meta.namespace, kind='Deployment', label_selector='app=reportportal') }}"
+  - "{{ query('k8s', namespace=meta.namespace, kind='ReplicaSet', label_selector='app=reportportal') }}"
+  - "{{ query('k8s', namespace=meta.namespace, kind='Job', label_selector='app=reportportal') }}"
+  - "{{ query('k8s', namespace=meta.namespace, kind='Pod', label_selector='app=reportportal') }}"
+  - "{{ query('k8s', namespace=meta.namespace, kind='Service', label_selector='app=reportportal') }}"
+  - "{{ query('k8s', namespace=meta.namespace, kind='Route', label_selector='app=reportportal') }}"
+  - "{{ query('k8s', namespace=meta.namespace, kind='ServiceMonitor', label_selector='app=reportportal') }}"
+  - "{{ query('k8s', namespace=meta.namespace, kind='ConfigMap', label_selector='app=reportportal') }}"
+  loop_control:
+    loop_var: k8s_item
+
+- name: Delete PostgreSQL resources
+  ignore_errors: yes
+  k8s:
+    state: absent
+    api_version: "{{ k8s_item.apiVersion }}"
+    kind: "{{ k8s_item.kind }}"
+    namespace: "{{ meta.namespace }}"
+    name: "{{ k8s_item.metadata.name }}"
+  register: delete_result
+  until: delete_result.result == {} or (delete_result.result.status is defined and delete_result.result.status == "Success")
+  retries: 6
+  delay: 10
+  when:
+  - remove_postgresql | bool
+  - k8s_item is defined
+  - k8s_item.apiVersion is defined
+  - k8s_item.kind is defined
+  - k8s_item.metadata is defined
+  - k8s_item.metadata.name is defined
+  with_items:
+  - "{{ query('k8s', namespace=meta.namespace, kind='StatefulSet', label_selector='app=postgresql') }}"
+  - "{{ query('k8s', namespace=meta.namespace, kind='ReplicaSet', label_selector='app=postgresql') }}"
+  - "{{ query('k8s', namespace=meta.namespace, kind='Pod', label_selector='app=postgresql') }}"
+  - "{{ query('k8s', namespace=meta.namespace, kind='Service', label_selector='app=postgresql') }}"
+  - "{{ query('k8s', namespace=meta.namespace, kind='ServiceMonitor', label_selector='app=postgresql') }}"
+  - "{{ query('k8s', namespace=meta.namespace, kind='Secret', label_selector='app=postgresql') }}"
+  - "{{ query('k8s', namespace=meta.namespace, kind='ConfigMap', label_selector='app=postgresql') }}"
+  loop_control:
+    loop_var: k8s_item
+
+- name: Delete Minio resources
+  ignore_errors: yes
+  k8s:
+    state: absent
+    api_version: "{{ k8s_item.apiVersion }}"
+    kind: "{{ k8s_item.kind }}"
+    namespace: "{{ meta.namespace }}"
+    name: "{{ k8s_item.metadata.name }}"
+  register: delete_result
+  until: delete_result.result == {} or (delete_result.result.status is defined and delete_result.result.status == "Success")
+  retries: 6
+  delay: 10
+  when:
+  - remove_minio | bool
+  - k8s_item is defined
+  - k8s_item.apiVersion is defined
+  - k8s_item.kind is defined
+  - k8s_item.metadata is defined
+  - k8s_item.metadata.name is defined
+  with_items:
+  - "{{ query('k8s', namespace=meta.namespace, kind='Deployment', label_selector='app=minio') }}"
+  - "{{ query('k8s', namespace=meta.namespace, kind='ReplicaSet', label_selector='app=minio') }}"
+  - "{{ query('k8s', namespace=meta.namespace, kind='Pod', label_selector='app=minio') }}"
+  - "{{ query('k8s', namespace=meta.namespace, kind='Service', label_selector='app=minio') }}"
+  - "{{ query('k8s', namespace=meta.namespace, kind='ServiceMonitor', label_selector='app=minio') }}"
+  - "{{ query('k8s', namespace=meta.namespace, kind='ServiceAccount', label_selector='app=minio') }}"
+  - "{{ query('k8s', namespace=meta.namespace, kind='Secret', label_selector='app=minio') }}"
+  loop_control:
+    loop_var: k8s_item
+
+- name: Delete RabbitMQ resources
+  ignore_errors: yes
+  k8s:
+    state: absent
+    api_version: "{{ k8s_item.apiVersion }}"
+    kind: "{{ k8s_item.kind }}"
+    namespace: "{{ meta.namespace }}"
+    name: "{{ k8s_item.metadata.name }}"
+  register: delete_result
+  until: delete_result.result == {} or (delete_result.result.status is defined and delete_result.result.status == "Success")
+  retries: 6
+  delay: 10
+  when:
+  - remove_rabbitmq | bool
+  - k8s_item is defined
+  - k8s_item.apiVersion is defined
+  - k8s_item.kind is defined
+  - k8s_item.metadata is defined
+  - k8s_item.metadata.name is defined
+  with_items:
+  - "{{ query('k8s', namespace=meta.namespace, kind='StatefulSet', label_selector='app=rabbitmq') }}"
+  - "{{ query('k8s', namespace=meta.namespace, kind='ReplicaSet', label_selector='app=rabbitmq') }}"
+  - "{{ query('k8s', namespace=meta.namespace, kind='Pod', label_selector='app=rabbitmq') }}"
+  - "{{ query('k8s', namespace=meta.namespace, kind='Service', label_selector='app=rabbitmq') }}"
+  - "{{ query('k8s', namespace=meta.namespace, kind='ServiceMonitor', label_selector='app=rabbitmq') }}"
+  - "{{ query('k8s', namespace=meta.namespace, kind='ServiceAccount', label_selector='app=rabbitmq') }}"
+  - "{{ query('k8s', namespace=meta.namespace, kind='Secret', label_selector='app=rabbitmq') }}"
+  - "{{ query('k8s', namespace=meta.namespace, kind='RoleBinding', api_version='rbac.authorization.k8s.io/v1', resource_name='rabbitmq-endpoint-reader') }}"
+  - "{{ query('k8s', namespace=meta.namespace, kind='Role', api_version='rbac.authorization.k8s.io/v1', label_selector='app=rabbitmq') }}"
+  loop_control:
+    loop_var: k8s_item
+
+- name: Delete Elasticsearch resources
+  ignore_errors: yes
+  k8s:
+    state: absent
+    api_version: "{{ k8s_item.apiVersion }}"
+    kind: "{{ k8s_item.kind }}"
+    namespace: "{{ meta.namespace }}"
+    name: "{{ k8s_item.metadata.name }}"
+  register: delete_result
+  until: delete_result.result == {} or (delete_result.result.status is defined and delete_result.result.status == "Success")
+  retries: 6
+  delay: 10
+  when:
+  - remove_elasticsearch | bool
+  - k8s_item is defined
+  - k8s_item.apiVersion is defined
+  - k8s_item.kind is defined
+  - k8s_item.metadata is defined
+  - k8s_item.metadata.name is defined
+  with_items:
+  - "{{ query('k8s', namespace=meta.namespace, kind='Deployment', label_selector='app=elasticsearch') }}"
+  - "{{ query('k8s', namespace=meta.namespace, kind='ReplicaSet', label_selector='app=elasticsearch') }}"
+  - "{{ query('k8s', namespace=meta.namespace, kind='Pod', label_selector='app=elasticsearch') }}"
+  - "{{ query('k8s', namespace=meta.namespace, kind='Service', label_selector='app=elasticsearch') }}"
+  - "{{ query('k8s', namespace=meta.namespace, kind='ServiceMonitor', label_selector='app=elasticsearch') }}"
+  - "{{ query('k8s', namespace=meta.namespace, kind='Secret', label_selector='app=elasticsearch-master') }}"
+  - "{{ query('k8s', namespace=meta.namespace, kind='PodDisruptionBudget', api_version='policy/v1beta1', resource_name='elasticsearch-master-pdb') }}"
+  - "{{ query('k8s', namespace=meta.namespace, kind='Service', label_selector='app=elasticsearch-master') }}"
+  - "{{ query('k8s', namespace=meta.namespace, kind='ConfigMap', label_selector='app=elasticsearch-master') }}"
+  - "{{ query('k8s', namespace=meta.namespace, kind='CronJob', api_version='batch/v1beta1', label_selector='app=elasticsearch-master') }}"
+  - "{{ query('k8s', namespace=meta.namespace, kind='StatefulSet', label_selector='app=elasticsearch-master') }}"
+  loop_control:
+    loop_var: k8s_item
