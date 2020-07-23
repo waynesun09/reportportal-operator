@@ -136,5 +136,3 @@ Check [Development Doc](docs/development.md)
 ## CI
 
 The Github Action will pull operator-testing image and run operator.verify command to validate with CSV and CRD files change.
-
-> **_NOTE:_** Currently the CI job is failed due to: https://github.com/operator-framework/operator-courier/pull/189
