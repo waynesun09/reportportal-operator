@@ -3,10 +3,10 @@
     state: present
     definition: "{{ lookup('template', 'minio-serviceaccount.yaml.j2') | from_yaml }}"
 
-- name: Create minio deployment
+- name: Create minio statefulset
   k8s:
     state: present
-    definition: "{{ lookup('template', 'minio-deployment.yaml.j2') | from_yaml }}"
+    definition: "{{ lookup('template', 'minio-statefulset.yaml.j2') | from_yaml }}"
 
 - name: Create minio configmap
   k8s:
@@ -21,11 +21,6 @@
         namespace: "{{ meta.namespace }}"
       data:
         initialize: "{{ lookup('template', '_helper_create_bucket.txt') | string }}"
-
-- name: Create minio pvc
-  k8s:
-    state: present
-    definition: "{{ lookup('template', 'minio-pvc.yaml.j2') | from_yaml }}"
 
 - name: Create minio secret
   k8s:

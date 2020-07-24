@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   labels:
     app: minio
@@ -97,12 +97,21 @@ spec:
           name: minio-config-dir
       serviceAccountName: minio
       volumes:
-      - name: export
-        persistentVolumeClaim:
-          claimName: minio
       - name: minio-user
         secret:
           defaultMode: 420
           secretName: minio
       - emptyDir: {}
         name: minio-config-dir
+  volumeClaimTemplates:
+  - metadata:
+      labels:
+        app: minio
+      name: export
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: {{ minio_storage_size }}
+      volumeMode: Filesystem

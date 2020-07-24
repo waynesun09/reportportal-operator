@@ -80,7 +80,7 @@
   - k8s_item.metadata is defined
   - k8s_item.metadata.name is defined
   with_items:
-  - "{{ query('k8s', namespace=meta.namespace, kind='Deployment', label_selector='app=minio') }}"
+  - "{{ query('k8s', namespace=meta.namespace, kind='StatefulSet', label_selector='app=minio') }}"
   - "{{ query('k8s', namespace=meta.namespace, kind='ReplicaSet', label_selector='app=minio') }}"
   - "{{ query('k8s', namespace=meta.namespace, kind='Pod', label_selector='app=minio') }}"
   - "{{ query('k8s', namespace=meta.namespace, kind='Service', label_selector='app=minio') }}"
