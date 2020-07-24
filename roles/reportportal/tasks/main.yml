@@ -1,18 +1,18 @@
 - name: Deploy minio service
   include: deploy_minio.yml
-  when: deploy_minio
+  when: deploy_minio | bool
 
 - name: Deploy postgresql service
   include: deploy_pg.yml
-  when: deploy_postgresql
+  when: deploy_postgresql | bool
 
 - name: Deploy rabbitmq service
   include: deploy_rabbitmq.yml
-  when: deploy_rabbitmq
+  when: deploy_rabbitmq | bool
 
 - name: Deploy elasticsearch service
   include: deploy_es.yml
-  when: deploy_elasticsearch
+  when: deploy_elasticsearch | bool
 
 - name: Create index deployment
   k8s:

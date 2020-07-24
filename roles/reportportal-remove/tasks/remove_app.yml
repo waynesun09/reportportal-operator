@@ -22,6 +22,7 @@
   - "{{ query('k8s', namespace=meta.namespace, kind='ReplicaSet', label_selector='app=reportportal') }}"
   - "{{ query('k8s', namespace=meta.namespace, kind='Job', label_selector='app=reportportal') }}"
   - "{{ query('k8s', namespace=meta.namespace, kind='Pod', label_selector='app=reportportal') }}"
+  - "{{ query('k8s', namespace=meta.namespace, kind='Pod', label_selector='component=migrations') }}"
   - "{{ query('k8s', namespace=meta.namespace, kind='Service', label_selector='app=reportportal') }}"
   - "{{ query('k8s', namespace=meta.namespace, kind='Route', label_selector='app=reportportal') }}"
   - "{{ query('k8s', namespace=meta.namespace, kind='ServiceMonitor', label_selector='app=reportportal') }}"

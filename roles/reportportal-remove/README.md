@@ -28,10 +28,10 @@ The OpenShift project namespace:
 
 ReportPortal dependency services values
 
-    remove_rabbitmq: True
-    remove_postgresql: True
-    remove_elasticsearch: True
-    remove_minio: False
+    remove_rabbitmq: yes
+    remove_postgresql: yes
+    remove_elasticsearch: yes
+    remove_minio: no
 
 By default don't remove Minio as it's used as data backup target.
 

@@ -4,13 +4,13 @@
 
 # RP dependency services values
 # RabbitMQ remove parameters
-remove_rabbitmq: True
+remove_rabbitmq: yes
 
 # PostgreSQL remove parameters
-remove_postgresql: True
+remove_postgresql: yes
 
 # Minio remove parameters
-remove_minio: False
+remove_minio: no
 
 # Elasticsearch remove parameters
-remove_elasticsearch: True
+remove_elasticsearch: yes
