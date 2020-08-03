@@ -11,12 +11,12 @@ metadata:
             "name": "example-reportportal"
           },
           "spec": {
-            "api_image": "quay.io/waynesun09/service-api:5.2.3-rootless",
+            "api_image": "reportportal/service-api:5.3.0",
             "api_replicas": 1,
             "app_domain": "apps.test-example.com",
             "gateway_replicas": 1,
             "index_replicas": 1,
-            "uat_image": "reportportal/service-authorization:5.2.3",
+            "uat_image": "reportportal/service-authorization:5.3.0",
             "ui_replicas": 1,
             "enable_pg_restic_backup": "yes",
             "pg_restic_s3_bucket_init": "yes",
@@ -58,13 +58,13 @@ metadata:
     capabilities: Full Lifecycle
     categories: Application Runtime
     certified: "false"
-    containerImage: quay.io/waynesun09/rp5-operator:v0.0.3
+    containerImage: quay.io/waynesun09/rp5-operator:v0.0.4
     createdAt: "2020-06-26 10:30:00"
     description: ReportPortal is a test automation analytics platform. ReportPortal
       Operator for instantiating the Report Portal services and required dependencies.
     repository: https://github.com/waynesun09/reportportal-operator
     support: waynesun09
-  name: reportportal-operator.v0.0.3
+  name: reportportal-operator.v0.0.4
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
@@ -198,7 +198,7 @@ spec:
                 - /usr/local/bin/ao-logs
                 - /tmp/ansible-operator/runner
                 - stdout
-                image: quay.io/waynesun09/rp5-operator:v0.0.3
+                image: quay.io/waynesun09/rp5-operator:v0.0.4
                 imagePullPolicy: Always
                 name: ansible
                 resources: {}
@@ -219,7 +219,7 @@ spec:
                   value: reportportal-operator
                 - name: ANSIBLE_GATHERING
                   value: explicit
-                image: quay.io/waynesun09/rp5-operator:v0.0.3
+                image: quay.io/waynesun09/rp5-operator:v0.0.4
                 imagePullPolicy: Always
                 name: operator
                 resources: {}
@@ -393,5 +393,5 @@ spec:
   maturity: alpha
   provider:
     name: waynesun09
-  replaces: reportportal-operator.v0.0.2
-  version: 0.0.3
+  replaces: reportportal-operator.v0.0.3
+  version: 0.0.4
