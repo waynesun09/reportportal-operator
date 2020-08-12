@@ -1,95 +1,25 @@
-- name: Deploy minio service
-  include: deploy_minio.yml
-  when: deploy_minio | bool
+- name: Deploy RP app services
+  include: deploy_app.yml
+  when: deploy_rp | bool
 
-- name: Deploy postgresql service
-  include: deploy_pg.yml
-  when: deploy_postgresql | bool
+#- name: Remove RP app services
+#  include: remove_app.yml
+#  when: remove_rp | bool
 
-- name: Deploy rabbitmq service
-  include: deploy_rabbitmq.yml
-  when: deploy_rabbitmq | bool
+#- name: Create RP service-api servicemonitor
+#  include: service_api_servicemonitor.yml
+#  when: enable_rp_service_api_servicemonitor | bool
 
-- name: Deploy elasticsearch service
-  include: deploy_es.yml
-  when: deploy_elasticsearch | bool
+- name: Fetch ReportPortalRestore Operand
+  set_fact:
+    rp_restore_cr: "{{ lookup('k8s', kind='ReportPortalRestore', api_version='rp5.reportportal.io/v1alpha1', namespace=meta.namespace, resource_name=meta.name) }}"
 
-- name: Create index deployment
-  k8s:
-    state: present
-    definition: "{{ lookup('template', 'index-deployment.yaml.j2') | from_yaml }}"
+- name: Recover postgresql data
+  include: pg_data_recovery.yml
+  when:
+    - pg_recovery | bool
+    - rp_restore_cr.status is undefined or rp_restore_cr.status.conditions[0].type != 'Finished'
 
-- name: Create index service
-  k8s:
-    state: present
-    definition: "{{ lookup('template', 'index-service.yaml.j2') | from_yaml }}"
-
-- name: Create ui deployment
-  k8s:
-    state: present
-    definition: "{{ lookup('template', 'ui-deployment.yaml.j2') | from_yaml }}"
-
-- name: Create ui service
-  k8s:
-    state: present
-    definition: "{{ lookup('template', 'ui-service.yaml.j2') | from_yaml }}"
-
-- name: Create api deployment
-  k8s:
-    state: present
-    definition: "{{ lookup('template', 'api-deployment.yaml.j2') | from_yaml }}"
-
-- name: Create api service
-  k8s:
-    state: present
-    definition: "{{ lookup('template', 'api-service.yaml.j2') | from_yaml }}"
-
-- name: Create uat deployment
-  k8s:
-    state: present
-    definition: "{{ lookup('template', 'uat-deployment.yaml.j2') | from_yaml }}"
-
-- name: Create uat service
-  k8s:
-    state: present
-    definition: "{{ lookup('template', 'uat-service.yaml.j2') | from_yaml }}"
-
-- name: Create analyzer statefulset
-  k8s:
-    state: present
-    definition: "{{ lookup('template', 'analyzer-statefulset.yaml.j2') | from_yaml }}"
-
-- name: Create analyzer service
-  k8s:
-    state: present
-    definition: "{{ lookup('template', 'analyzer-service.yaml.j2') | from_yaml }}"
-
-- name: Create migration job
-  k8s:
-    state: present
-    definition: "{{ lookup('template', 'migration-job.yaml.j2') | from_yaml }}"
-
-- name: Create gateway configmap
-  k8s:
-    state: present
-    definition: "{{ lookup('template', 'openshift-gateway-configmap.yaml.j2') | from_yaml }}"
-
-- name: Create gateway deployment
-  k8s:
-    state: present
-    definition: "{{ lookup('template', 'openshift-gateway-deployment.yaml.j2') | from_yaml }}"
-
-- name: Create gateway service
-  k8s:
-    state: present
-    definition: "{{ lookup('template', 'openshift-gateway-service.yaml.j2') | from_yaml }}"
-
-- name: Create gateway route
-  k8s:
-    state: present
-    definition: "{{ lookup('template', 'openshift-gateway-route.yaml.j2') | from_yaml }}"
-
-- name: Create gateway servicemonitor
-  k8s:
-    state: present
-    definition: "{{ lookup('template', 'openshift-gateway-servicemonitor.yaml.j2') | from_yaml }}"
+#- name: Restore elasticsearch data
+#  include: es_data_restore.yml
+#  when: es_restore | bool

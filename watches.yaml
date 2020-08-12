@@ -3,8 +3,21 @@
   group: rp5.reportportal.io
   kind: ReportPortal
   role: /opt/ansible/roles/reportportal
+  vars:
+    deploy_rp: yes
+    pg_recovery: no
   finalizer:
     name: finalizer.reportportal
     role: /opt/ansible/roles/reportportal-remove
     vars:
       remove_minio: no
+
+- version: v1alpha1
+  group: rp5.reportportal.io
+  kind: ReportPortalRestore
+  role: /opt/ansible/roles/reportportal
+  vars:
+    deploy_rp: no
+    pg_recovery: yes
+    es_restore: yes
+  manageStatus: false

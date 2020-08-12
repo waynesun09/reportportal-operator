@@ -14,44 +14,33 @@ metadata:
             "api_image": "quay.io/waynesun09/service-api:5.3.0-rootless",
             "api_replicas": 1,
             "app_domain": "apps.test-example.com",
+            "enable_pg_restic_backup": 'yes',
+            "es_backup_schedule": "@daily",
+            "es_s3_backup_dir": "s3_backup",
+            "es_snapshot_bucket": "es-snapshot-123123",
             "gateway_replicas": 1,
             "index_replicas": 1,
-            "uat_image": "reportportal/service-authorization:5.3.0",
-            "ui_replicas": 1,
-            "enable_pg_restic_backup": "yes",
-            "pg_restic_s3_bucket_init": "yes",
-            "pg_s3_bucket_name": "pgbackup-123123",
             "pg_restic_password": "rp_user",
-            "es_s3_backup_dir":"s3_backup",
-            "es_snapshot_bucket":"es-snapshot-123123",
-            "es_backup_schedule":"@daily"
+            "pg_restic_s3_bucket_init": 'yes',
+            "pg_s3_bucket_name": "pgbackup-123123",
+            "uat_image": "reportportal/service-authorization:5.3.0",
+            "ui_replicas": 1
           }
         },
         {
-          "apiVersion": "monitoring.coreos.com/v1",
-          "kind": "ServiceMonitor",
+          "apiVersion": "rp5.reportportal.io/v1alpha1",
+          "kind": "ReportPortalRestore",
           "metadata": {
-            "labels": {
-              "app": "reportportal"
-            },
-            "name": "api-metrics"
+            "name": "example-reportportal-restore"
           },
           "spec": {
-            "endpoints": [
-              {
-                "bearerTokenSecret": {
-                  "key": "token",
-                  "name": "rp-user-auth"
-                },
-                "path": "/prometheus",
-                "port": "headless"
-              }
-            ],
-            "selector": {
-              "matchLabels": {
-                "component": "api"
-              }
-            }
+            "es_backup_schedule": "@daily",
+            "es_s3_backup_dir": "s3_backup",
+            "es_snapshot_bucket": "es-snapshot-123123",
+            "pg_recovery": 'yes',
+            "pg_recovery_target_time": "2020-08-07 00:00:00",
+            "pg_restic_password": "rp_user",
+            "pg_s3_bucket_name": "pgbackup-123123"
           }
         }
       ]
@@ -70,9 +59,62 @@ spec:
   apiservicedefinitions: {}
   customresourcedefinitions:
     owned:
+    - description: ReportPortal Restore from s3 backup
+      kind: ReportPortalRestore
+      name: reportportalrestores.rp5.reportportal.io
+      resources:
+      - kind: Pods
+        name: ""
+        version: v1
+      - kind: ConfigMaps
+        name: ""
+        version: v1
+      - kind: ReportPortals
+        name: reportportals.rp5.reportportal.io
+        version: v1alpha1
+      specDescriptors:
+      - description: Enable Postgres recovery, need be 'yes' or 'no'
+        displayName: Enable Postgres recovery
+        path: pg_recovery
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      - description: The Postgres recovery target time, need be unique and valid time,
+          e.g. '2020-08-05 08:20:00 UTC'
+        displayName: The Postgres recovery target time
+        path: pg_recovery_target_time
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      - description: The s3 Postgres bucket name, need be unique and valid bucket
+          name
+        displayName: The s3 Postgres bucket name
+        path: pg_s3_bucket_name
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      - description: The s3 Postgres bucket restic password
+        displayName: Restic password
+        path: pg_restic_password
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      - description: The Elasticsearch snapshot path dir, if set the snapshot will
+          be enabled
+        displayName: Elasticsearch snapshot path dir
+        path: es_s3_backup_dir
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      - description: The Elasticsearch snapshot s3 bucket name
+        displayName: Elasticsearch snapshot s3 bucket name
+        path: es_snapshot_bucket
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      - description: The Elasticsearch snapshot to s3 bucket schedule, crontab schedule
+          format
+        displayName: Elasticsearch snapshot to s3 bucket schedule
+        path: es_backup_schedule
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      version: v1alpha1
     - description: ReportPortal v5 Deployment with ReportPortal Operator
       displayName: ReportPortal v5
-      version: v1alpha1
       kind: ReportPortal
       name: reportportals.rp5.reportportal.io
       resources:
@@ -141,7 +183,8 @@ spec:
         path: pg_restic_s3_bucket_init
         x-descriptors:
         - urn:alm:descriptor:tectonic.ui:text
-      - description: The s3 Postgres bucket name, need be unique and valid bucket name
+      - description: The s3 Postgres bucket name, need be unique and valid bucket
+          name
         displayName: The s3 Postgres bucket name
         path: pg_s3_bucket_name
         x-descriptors:
@@ -151,7 +194,8 @@ spec:
         path: pg_restic_password
         x-descriptors:
         - urn:alm:descriptor:tectonic.ui:text
-      - description: The Elasticsearch snapshot path dir, if set the snapshot will be enabled
+      - description: The Elasticsearch snapshot path dir, if set the snapshot will
+          be enabled
         displayName: Elasticsearch snapshot path dir
         path: es_s3_backup_dir
         x-descriptors:
@@ -161,7 +205,8 @@ spec:
         path: es_snapshot_bucket
         x-descriptors:
         - urn:alm:descriptor:tectonic.ui:text
-      - description: The Elasticsearch snapshot to s3 bucket schedule, crontab schedule format
+      - description: The Elasticsearch snapshot to s3 bucket schedule, crontab schedule
+          format
         displayName: Elasticsearch snapshot to s3 bucket schedule
         path: es_backup_schedule
         x-descriptors:
@@ -172,6 +217,7 @@ spec:
         path: conditions
         x-descriptors:
         - urn:alm:descriptor:io.kubernetes.conditions
+      version: v1alpha1
   description: ReportPortal is a test automation analytics platform. ReportPortal
     Operator for instantiating the Report Portal services and required dependencies.
   displayName: Reportportal Operator
@@ -256,6 +302,7 @@ spec:
           - apps
           resources:
           - deployments
+          - deployments/scale
           - daemonsets
           - replicasets
           - statefulsets

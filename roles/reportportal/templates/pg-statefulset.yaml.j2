@@ -46,6 +46,10 @@ spec:
           value: "{{ pg_restic_s3_bucket_init }}"
         - name: RESTIC_PASSWORD
           value: "{{ pg_restic_password }}"
+        - name: ENABLE_RESTIC_RECOVERY
+          value: "{{ pg_recovery }}"
+        - name: RESTIC_RECOVERY_TARGET_TIME
+          value: "{{ pg_recovery_target_time }}"
         - name: S3_ENDPOINT
           value: {{ minio_endpoint }}
         - name: S3_BUCKET_NAME
