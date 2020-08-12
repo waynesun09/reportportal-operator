@@ -11,10 +11,10 @@ spec:
   uat_image: reportportal/service-authorization:5.3.0
   index_replicas: 1
   gateway_replicas: 1
-  enable_pg_restic_backup: yes
-  pg_restic_s3_bucket_init: yes
+  enable_pg_restic_backup: 'yes'
+  pg_restic_s3_bucket_init: 'yes'
   pg_s3_bucket_name: pgbackup-123123
   pg_restic_password: rp_user
   es_s3_backup_dir: s3_backup
   es_snapshot_bucket: es-snapshot-123123
-  es_backup_schedule: @daily
+  es_backup_schedule: '@daily'
