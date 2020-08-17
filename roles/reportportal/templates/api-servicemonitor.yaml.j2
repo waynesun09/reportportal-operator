@@ -3,12 +3,14 @@ kind: ServiceMonitor
 metadata:
   labels:
     app: reportportal
+    component: api
   name: api-metrics
+  namespace: '{{ meta.namespace }}'
 spec:
   endpoints:
   - bearerTokenSecret:
-      key: token
-      name: rp-user-auth
+      key: '{{ bearer_token_secret_name }}'
+      name: '{{ bearer_token_secret_key }}'
     port: headless
     path: /prometheus
   selector:

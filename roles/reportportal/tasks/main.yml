@@ -6,9 +6,9 @@
 #  include: remove_app.yml
 #  when: remove_rp | bool
 
-#- name: Create RP service-api servicemonitor
-#  include: service_api_servicemonitor.yml
-#  when: enable_rp_service_api_servicemonitor | bool
+- name: Create RP service-api servicemonitor
+  include: service_api_servicemonitor.yml
+  when: enable_rp_service_api_servicemonitor | bool
 
 - name: Fetch ReportPortalRestore Operand
   set_fact:

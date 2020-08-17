@@ -1,0 +1,4 @@
+- name: Create service-api servicemonitor
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'api-servicemonitor.yaml.j2') | from_yaml }}"

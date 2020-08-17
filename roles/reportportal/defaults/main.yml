@@ -117,3 +117,10 @@ pg_recovery: no
 pg_recovery_target_time: ''
 pg_restic_snapshot_id: latest
 es_restore: no
+
+# Enable RP service-api ServiceMonitor
+# The bearer token secret need be created by user before could be accessed by
+# the servicemonitor
+enable_rp_service_api_servicemonitor: 'no'
+bearer_token_secret_name: 'rp-user-auth'
+bearer_token_secret_name: 'token'

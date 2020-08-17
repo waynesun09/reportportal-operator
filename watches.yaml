@@ -6,6 +6,8 @@
   vars:
     deploy_rp: yes
     pg_recovery: no
+    es_restore: no
+    enable_rp_service_api_servicemonitor: no
   finalizer:
     name: finalizer.reportportal
     role: /opt/ansible/roles/reportportal-remove
@@ -18,6 +20,17 @@
   role: /opt/ansible/roles/reportportal
   vars:
     deploy_rp: no
+    enable_rp_service_api_servicemonitor: no
     pg_recovery: yes
     es_restore: yes
   manageStatus: false
+
+- version: v1alpha1
+  group: rp5.reportportal.io
+  kind: ServiceApiServiceMonitor
+  role: /opt/ansible/roles/reportportal
+  vars:
+    deploy_rp: no
+    pg_recovery: no
+    es_restore: no
+    enable_rp_service_api_servicemonitor: yes

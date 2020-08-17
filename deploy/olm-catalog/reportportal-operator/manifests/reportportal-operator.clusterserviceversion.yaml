@@ -43,6 +43,17 @@ metadata:
             "pg_restic_snapshot_id": "latest",
             "pg_s3_bucket_name": "pgbackup-123123"
           }
+        },
+        {
+          "apiVersion": "rp5.reportportal.io/v1alpha1",
+          "kind": "ServiceApiServiceMonitor",
+          "metadata": {
+            "name": "example-service-api-servicemonitor"
+          },
+          "spec": {
+            "bearer_token_secret_key": "token",
+            "bearer_token_secret_name": "rp-user-auth"
+          }
         }
       ]
     capabilities: Full Lifecycle
@@ -70,8 +81,8 @@ spec:
       - kind: ConfigMaps
         name: ""
         version: v1
-      - kind: ReportPortals
-        name: reportportals.rp5.reportportal.io
+      - kind: ReportPortalRestores
+        name: reportportalrestores.rp5.reportportal.io
         version: v1alpha1
       specDescriptors:
       - description: Enable Postgres recovery, need be 'yes' or 'no'
@@ -218,6 +229,32 @@ spec:
         path: conditions
         x-descriptors:
         - urn:alm:descriptor:io.kubernetes.conditions
+      version: v1alpha1
+    - description: Report Portal service-api ServiceMonitor for metrics
+      displayName: Report Portal service-api ServiceMonitor
+      kind: ServiceApiServiceMonitor
+      name: serviceapiservicemonitors.rp5.reportportal.io
+      resources:
+      - kind: Pods
+        name: ""
+        version: v1
+      - kind: ConfigMaps
+        name: ""
+        version: v1
+      - kind: serviceapiservicemonitors
+        name: serviceapiservicemonitors.rp5.reportportal.io
+        version: v1alpha1
+      specDescriptors:
+      - description: Report Portal bearer token secret name
+        displayName: Report Portal bearer token secret name
+        path: bearer_token_secret_name
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      - description: The key in Report Portal bearer token secret
+        displayName: The key in Report Portal bearer token secret
+        path: bearer_token_secret_key
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
       version: v1alpha1
   description: ReportPortal is a test automation analytics platform. ReportPortal
     Operator for instantiating the Report Portal services and required dependencies.
