@@ -73,9 +73,13 @@
   loop_control:
     loop_var: k8s_item
 
-- name: debug
-  debug:
-    var: pod_result
+- name: Wait for Postgresql port to become open
+  wait_for:
+    host: postgresql
+    port: 5432
+    delay: 60
+    state: started
+    timeout: 36000
 
 - name: Scale back RP Deployment replicas
   ignore_errors: yes
