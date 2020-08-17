@@ -14,14 +14,14 @@ metadata:
             "api_image": "quay.io/waynesun09/service-api:5.3.0-rootless",
             "api_replicas": 1,
             "app_domain": "apps.test-example.com",
-            "enable_pg_restic_backup": 'yes',
+            "enable_pg_restic_backup": "yes",
             "es_backup_schedule": "@daily",
             "es_s3_backup_dir": "s3_backup",
             "es_snapshot_bucket": "es-snapshot-123123",
             "gateway_replicas": 1,
             "index_replicas": 1,
             "pg_restic_password": "rp_user",
-            "pg_restic_s3_bucket_init": 'yes',
+            "pg_restic_s3_bucket_init": "yes",
             "pg_s3_bucket_name": "pgbackup-123123",
             "uat_image": "reportportal/service-authorization:5.3.0",
             "ui_replicas": 1
@@ -37,9 +37,10 @@ metadata:
             "es_backup_schedule": "@daily",
             "es_s3_backup_dir": "s3_backup",
             "es_snapshot_bucket": "es-snapshot-123123",
-            "pg_recovery": 'yes',
+            "pg_recovery": "yes",
             "pg_recovery_target_time": "2020-08-07 00:00:00",
             "pg_restic_password": "rp_user",
+            "pg_restic_snapshot_id": "latest",
             "pg_s3_bucket_name": "pgbackup-123123"
           }
         }

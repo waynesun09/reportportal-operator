@@ -48,6 +48,8 @@ spec:
           value: "{{ pg_restic_password }}"
         - name: ENABLE_RESTIC_RECOVERY
           value: "{{ pg_recovery }}"
+        - name: RESTIC_SNAPSHOT_ID
+          value: "{{ pg_restic_snapshot_id }}"
         - name: RESTIC_RECOVERY_TARGET_TIME
           value: "{{ pg_recovery_target_time }}"
         - name: S3_ENDPOINT

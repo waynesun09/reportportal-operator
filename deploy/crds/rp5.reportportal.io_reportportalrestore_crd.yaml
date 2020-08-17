@@ -37,6 +37,9 @@ spec:
             pg_s3_bucket_name:
               description: The s3 Postgres bucket name, need be unique and valid bucket name
               type: string
+            pg_restic_snapshot_id:
+              description: The restic snapshot id, need be unique and valid restic snapshot id, default to 'latest'
+              type: string
             pg_recovery_target_time:
               description: The Postgres recovery target time, need be unique and valid time, e.g. '2020-08-05 08:20:00 UTC'
               type: string
