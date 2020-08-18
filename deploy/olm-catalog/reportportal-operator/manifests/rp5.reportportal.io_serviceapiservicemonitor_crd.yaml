@@ -26,16 +26,16 @@ spec:
             submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds'
           type: string
         metadata:
-          description: Metadata definition for the Report Portal service-api ServiceMonitor object
+          description: Metadata definition for the ReportPortal service-api ServiceMonitor object
           type: object
         spec:
           description: Specification of the desired behavior of the ServiceApiServiceMonitor Operator.
           properties:
             bearer_token_secret_name:
-              description: Report Portal bearer token secret name
+              description: ReportPortal bearer token secret name
               type: string
             bearer_token_secret_key:
-              description: The key in Report Portal bearer token secret
+              description: The key in ReportPortal bearer token secret
               type: string
         status:
           description: Status results of an instance of ServiceApiServiceMonitor
