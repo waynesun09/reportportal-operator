@@ -9,8 +9,8 @@ metadata:
 spec:
   endpoints:
   - bearerTokenSecret:
-      key: '{{ bearer_token_secret_name }}'
-      name: '{{ bearer_token_secret_key }}'
+      name: '{{ bearer_token_secret_name }}'
+      key: '{{ bearer_token_secret_key }}'
     port: headless
     path: /prometheus
   selector:
