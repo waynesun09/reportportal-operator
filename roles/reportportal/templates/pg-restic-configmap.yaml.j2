@@ -31,6 +31,7 @@ data:
     postgresql_archive_restic_env() {
         cat <<"EOF"
     # S3 settings
+    export POSTGRESQL_BASE_BACKUP_DIR="${POSTGRESQL_BASE_BACKUP_DIR:-$POSTGRESQL_VOLUME_DIR/backup}"
     export RESTIC_BINARY_PATH="${RESTIC_BINARY_PATH:-/bitnami/postgresql/restic}"
     export ENABLE_RESTIC_BACKUP="${ENABLE_RESTIC_BACKUP:-}"
     export RESTIC_S3_BUCKET_INIT="${RESTIC_S3_BUCKET_INIT:-}"
@@ -75,8 +76,17 @@ data:
     #   None
     #########################
     postgresql_base_backup() {
+        if [[ ! -d "${POSTGRESQL_BASE_BACKUP_DIR}" ]]; then
+            mkdir $POSTGRESQL_BASE_BACKUP_DIR
+        else
+            rm -rf ${POSTGRESQL_BASE_BACKUP_DIR}/*
+        fi
         postgresql_info "Init pg base backup"
         echo "SELECT pg_start_backup('restic');" | postgresql_execute "" "postgres" "$POSTGRES_PASSWORD"
+        cp -r ${POSTGRESQL_DATA_DIR} ${POSTGRESQL_BASE_BACKUP_DIR}
+        rm -f ${POSTGRESQL_BASE_BACKUP_DIR}/data/postmaster.* ${POSTGRESQL_BASE_BACKUP_DIR}/data/recovery.*
+        tar -C ${POSTGRESQL_BASE_BACKUP_DIR} -czvf ${POSTGRESQL_VOLUME_DIR}/basebackup.tar.gz data
+        restic -r s3:$S3_ENDPOINT/$S3_BUCKET_NAME backup ${POSTGRESQL_VOLUME_DIR}/basebackup.tar.gz
         postgresql_info "Stop pg base backup"
         echo "SELECT pg_stop_backup();" | postgresql_execute "" "postgres" "$POSTGRES_PASSWORD"
     }
@@ -95,7 +105,7 @@ data:
     is_boolean_yes "$ENABLE_RESTIC_BACKUP" && postgresql_configure_archive_parameters
 
     if [[ "$POSTGRESQL_REPLICATION_MODE" = "master" ]]; then
-        if is_boolean_yes "$ENABLE_RESTIC_BACKUP"; then
+        if [[ ! -f ${POSTGRESQL_VOLUME_DIR}/basebackup.tar.gz ]] && is_boolean_yes "$ENABLE_RESTIC_BACKUP"; then
             postgresql_info "Start base backup"
             postgresql_base_backup
         fi
