@@ -84,11 +84,34 @@ data:
         postgresql_info "Init pg base backup"
         echo "SELECT pg_start_backup('restic');" | postgresql_execute "" "postgres" "$POSTGRES_PASSWORD"
         cp -r ${POSTGRESQL_DATA_DIR} ${POSTGRESQL_BASE_BACKUP_DIR}
+
+        # Backup wal files which might be missing before wal archive started
+        for i in $(ls ${POSTGRESQL_DATA_DIR}/pg_wal |grep -v archive_status)
+        do
+            $RESTIC_BINARY_PATH -r s3:$S3_ENDPOINT/$S3_BUCKET_NAME backup ${POSTGRESQL_DATA_DIR}/pg_wal/$i
+        done
+
+        # Clean up the backup files
         rm -f ${POSTGRESQL_BASE_BACKUP_DIR}/data/postmaster.* ${POSTGRESQL_BASE_BACKUP_DIR}/data/recovery.*
+        rm -rf ${POSTGRESQL_BASE_BACKUP_DIR}/data/pg_wal/* ${POSTGRESQL_BASE_BACKUP_DIR}/data/pg_replslot/* ${POSTGRESQL_BASE_BACKUP_DIR}/data/pg_dynshmem/* ${POSTGRESQL_BASE_BACKUP_DIR}/data/pg_notify/* ${POSTGRESQL_BASE_BACKUP_DIR}/data/pg_serial/* ${POSTGRESQL_BASE_BACKUP_DIR}/data/pg_snapshots/* ${POSTGRESQL_BASE_BACKUP_DIR}/data/pg_stat_tmp/* ${POSTGRESQL_BASE_BACKUP_DIR}/data/pg_subtrans/* ${POSTGRESQL_BASE_BACKUP_DIR}/data/pgsql_tmp
+
+        for i in $(find ${POSTGRESQL_BASE_BACKUP_DIR}/data/ -name pg_internal.init)
+        do
+            rm -f $i
+        done
+
+        # Tar zip the dir and backup with restic to s3
         tar -C ${POSTGRESQL_BASE_BACKUP_DIR} -czvf ${POSTGRESQL_VOLUME_DIR}/basebackup.tar.gz data
         $RESTIC_BINARY_PATH -r s3:$S3_ENDPOINT/$S3_BUCKET_NAME backup ${POSTGRESQL_VOLUME_DIR}/basebackup.tar.gz
+
         postgresql_info "Stop pg base backup"
         echo "SELECT pg_stop_backup();" | postgresql_execute "" "postgres" "$POSTGRES_PASSWORD"
+        sleep 20
+        echo "1	###	before 2000-01-01 00:00:00+00" >/tmp/00000001.history
+        timeline_base=$(echo "SELECT pg_current_wal_lsn();" | PGPASSWORD=$POSTGRES_PASSWORD psql -h localhost -p 5432 -U postgres |sed -n '3 p')
+        sed -i s/###/${timeline_base}/g /tmp/00000001.history
+        cp /tmp/00000001.history ${POSTGRESQL_DATA_DIR}/pg_wal/
+        $RESTIC_BINARY_PATH -r s3:$S3_ENDPOINT/$S3_BUCKET_NAME backup ${POSTGRESQL_DATA_DIR}/pg_wal/00000001.history
     }
 
 
@@ -103,6 +126,14 @@ data:
 
     postgresql_info "Update archive config"
     is_boolean_yes "$ENABLE_RESTIC_BACKUP" && postgresql_configure_archive_parameters
+
+    # Copy back recovery.conf file
+    if [[ -f ${POSTGRESQL_VOLUME_DIR}/recovery.conf ]] && is_boolean_yes "$ENABLE_RESTIC_RECOVERY"; then
+        mv ${POSTGRESQL_VOLUME_DIR}/recovery.conf $POSTGRESQL_RECOVERY_FILE
+        chmod 600 $POSTGRESQL_RECOVERY_FILE
+    fi
+
+    chmod 00700 -R ${POSTGRESQL_DATA_DIR}
 
     if [[ "$POSTGRESQL_REPLICATION_MODE" = "master" ]]; then
         if [[ ! -f ${POSTGRESQL_VOLUME_DIR}/basebackup.tar.gz ]] && is_boolean_yes "$ENABLE_RESTIC_BACKUP"; then

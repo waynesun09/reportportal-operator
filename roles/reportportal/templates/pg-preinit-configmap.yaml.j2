@@ -52,23 +52,38 @@ data:
     chmod +x "$RESTIC_BINARY_PATH"
 
     if is_boolean_yes "$ENABLE_RESTIC_RECOVERY"; then
-       # Download and restore postgresql base backup data file
-       snap_id=$({RESTIC_BINARY_PATH} -r s3:${S3_ENDPOINT}/${S3_BUCKET_NAME} snapshots --path="${POSTGRESQL_VOLUME_DIR}/basebackup.tar.gz" | grep basebackup | awk -F' ' '{print $1}')
-       ${RESTIC_BINARY_PATH} -r s3:${S3_ENDPOINT}/${S3_BUCKET_NAME} $snap_id -t /tmp
-       tar -C /tmp -xzvf /tmp/basebackup.tar.gz
-       mv $POSTGRESQL_DATA_DIR "${POSTGRESQL_DATA_DIR}_backup"
-       mv "/tmp/data" $POSTGRESQL_DATA_DIR
+        # Download and restore postgresql base backup data file
+        snap_id=$(${RESTIC_BINARY_PATH} -r s3:${S3_ENDPOINT}/${S3_BUCKET_NAME} snapshots --path="${POSTGRESQL_VOLUME_DIR}/basebackup.tar.gz" | grep basebackup | awk -F' ' '{print $1}')
+        ${RESTIC_BINARY_PATH} -r s3:${S3_ENDPOINT}/${S3_BUCKET_NAME} restore $snap_id -t /tmp
+        tar -C /tmp -xzvf /tmp/${POSTGRESQL_VOLUME_DIR}/basebackup.tar.gz
+        if [[ -d "${POSTGRESQL_DATA_DIR}_backup" ]]; then
+            rm -rf "${POSTGRESQL_DATA_DIR}_backup"
+        fi
+        mv $POSTGRESQL_DATA_DIR "${POSTGRESQL_DATA_DIR}_backup"
+        # rm -rf $POSTGRESQL_DATA_DIR/*
+        # u_id=$(id -u)
+        # chown $u_id:$u_id -R $POSTGRESQL_DATA_DIR
+        mkdir $POSTGRESQL_DATA_DIR
+        chmod -R 00700 $POSTGRESQL_DATA_DIR
+        cp -r /tmp/data/* $POSTGRESQL_VOLUME_DIR
+        chmod -R 00700 $POSTGRESQL_DATA_DIR
 
-       # Download all WAL snapshot files
-       snap_id=$({RESTIC_BINARY_PATH} -r s3:${S3_ENDPOINT}/${S3_BUCKET_NAME} snapshots --path="${POSTGRESQL_VOLUME_DIR}/basebackup.tar.gz" | grep pg_wal | awk -F' ' '{print $1}')
-       for i in $snap_id; do /bitnami/postgresql/restic -r s3:$S3_ENDPOINT/$S3_BUCKET_NAME restore $i -t /tmp; done
-       mv "/tmp/pg_wal" "${POSTGRESQL_VOLUME_DIR}/pg_wal"
+        # Download all WAL snapshot files
+        snap_id=$(${RESTIC_BINARY_PATH} -r s3:${S3_ENDPOINT}/${S3_BUCKET_NAME} snapshots | grep pg_wal | awk -F' ' '{print $1}')
+        for i in $snap_id
+        do
+            ${RESTIC_BINARY_PATH} -r s3:$S3_ENDPOINT/$S3_BUCKET_NAME restore $i -t /tmp
+        done
 
-       # Update recovery restore_command
-       cp -f "$POSTGRESQL_BASE_DIR/share/recovery.conf.sample" "$POSTGRESQL_RECOVERY_FILE"
-       chmod 600 "$POSTGRESQL_RECOVERY_FILE"
-       postgresql_set_property "restore_command" "cp ${POSTGRESQL_VOLUME_DIR}/pg_wal/%f %p" "$POSTGRESQL_RECOVERY_FILE"
-       postgresql_set_property "recovery_target_time" "$RESTIC_RECOVERY_TARGET_TIME" "$POSTGRESQL_RECOVERY_FILE"
+        cp -r /tmp/pg_wal "${POSTGRESQL_VOLUME_DIR}"
+        rm -rf /tmp/pg_wal
+
+        # Update recovery restore_command
+        cp -f "$POSTGRESQL_BASE_DIR/share/recovery.conf.sample" "$POSTGRESQL_RECOVERY_FILE"
+        chmod 600 "$POSTGRESQL_RECOVERY_FILE"
+        postgresql_set_property "restore_command" "cp ${POSTGRESQL_VOLUME_DIR}/pg_wal/%f %p" "$POSTGRESQL_RECOVERY_FILE"
+        postgresql_set_property "recovery_target_time" "$RESTIC_RECOVERY_TARGET_TIME" "$POSTGRESQL_RECOVERY_FILE"
+        mv $POSTGRESQL_RECOVERY_FILE $POSTGRESQL_VOLUME_DIR
     fi
 
     # Remove custom "$POSTGRESQL_VOLUME_DIR/.user_scripts_initialized"
