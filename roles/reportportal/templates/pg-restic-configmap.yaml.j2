@@ -45,6 +45,25 @@ data:
 
 
     ########################
+    # Restic backup wal files
+    # Globals:
+    #   POSTGRESQL_*, RESTIC_*, S3_*
+    # Arguments:
+    #   None
+    # Returns:
+    #   None
+    #########################
+    restic_wal_backup() {
+        file_array=$($RESTIC_BINARY_PATH -r s3:"$S3_ENDPOINT"/"$S3_BUCKET_NAME" snapshots | awk -F'/' '/pg_wal/ {print $NF}')
+        for i in "${POSTGRESQL_DATA_DIR}"/pg_wal/*;do
+            if [[ ! " ${file_array[*]} " =~ $i ]] && [[ ! " ${file_array[*]} " =~ archive_status* ]]; then
+                $RESTIC_BINARY_PATH -r s3:"$S3_ENDPOINT"/"$S3_BUCKET_NAME" backup "$i"
+            fi
+        done
+    }
+
+
+    ########################
     # Change postgresql.conf by setting archiving parameters
     # Globals:
     #   RESTIC_*, S3_*
@@ -58,7 +77,7 @@ data:
         postgresql_set_property "archive_mode" "on"
         if is_boolean_yes "$RESTIC_S3_BUCKET_INIT"; then
             postgresql_info "Run command restic -r s3:$S3_ENDPOINT/$S3_BUCKET_NAME init"
-            if ! $RESTIC_BINARY_PATH -r s3:$S3_ENDPOINT/$S3_BUCKET_NAME init > /dev/null; then
+            if ! $RESTIC_BINARY_PATH -r s3:"$S3_ENDPOINT"/"$S3_BUCKET_NAME" init > /dev/null; then
                 postgresql_warn "Failed to init new s3 bucket $S3_BUCKET_NAME"
             fi
         fi
@@ -77,45 +96,56 @@ data:
     #########################
     postgresql_base_backup() {
         if [[ ! -d "${POSTGRESQL_BASE_BACKUP_DIR}" ]]; then
-            mkdir $POSTGRESQL_BASE_BACKUP_DIR
+            mkdir "$POSTGRESQL_BASE_BACKUP_DIR"
         else
-            rm -rf ${POSTGRESQL_BASE_BACKUP_DIR}/*
+            rm -rf "${POSTGRESQL_BASE_BACKUP_DIR:?}"/*
         fi
         postgresql_info "Init pg base backup"
         echo "SELECT pg_start_backup('restic');" | postgresql_execute "" "postgres" "$POSTGRES_PASSWORD"
-        cp -r ${POSTGRESQL_DATA_DIR} ${POSTGRESQL_BASE_BACKUP_DIR}
-
-        # Backup wal files which might be missing before wal archive started
-        for i in $(ls ${POSTGRESQL_DATA_DIR}/pg_wal |grep -v archive_status)
-        do
-            $RESTIC_BINARY_PATH -r s3:$S3_ENDPOINT/$S3_BUCKET_NAME backup ${POSTGRESQL_DATA_DIR}/pg_wal/$i
-        done
+        cp -r "${POSTGRESQL_DATA_DIR}" "${POSTGRESQL_BASE_BACKUP_DIR}"
 
         # Clean up the backup files
-        rm -f ${POSTGRESQL_BASE_BACKUP_DIR}/data/postmaster.* ${POSTGRESQL_BASE_BACKUP_DIR}/data/recovery.*
-        rm -rf ${POSTGRESQL_BASE_BACKUP_DIR}/data/pg_wal/* ${POSTGRESQL_BASE_BACKUP_DIR}/data/pg_replslot/* ${POSTGRESQL_BASE_BACKUP_DIR}/data/pg_dynshmem/* ${POSTGRESQL_BASE_BACKUP_DIR}/data/pg_notify/* ${POSTGRESQL_BASE_BACKUP_DIR}/data/pg_serial/* ${POSTGRESQL_BASE_BACKUP_DIR}/data/pg_snapshots/* ${POSTGRESQL_BASE_BACKUP_DIR}/data/pg_stat_tmp/* ${POSTGRESQL_BASE_BACKUP_DIR}/data/pg_subtrans/* ${POSTGRESQL_BASE_BACKUP_DIR}/data/pgsql_tmp
-
-        for i in $(find ${POSTGRESQL_BASE_BACKUP_DIR}/data/ -name pg_internal.init)
+        rm -f "${POSTGRESQL_BASE_BACKUP_DIR}"/data/postmaster.* "${POSTGRESQL_BASE_BACKUP_DIR}"/data/recovery.*
+        rm -rf "${POSTGRESQL_BASE_BACKUP_DIR}"/data/pg_wal/* "${POSTGRESQL_BASE_BACKUP_DIR}"/data/pg_replslot/* "${POSTGRESQL_BASE_BACKUP_DIR}"/data/pg_dynshmem/* "${POSTGRESQL_BASE_BACKUP_DIR}"/data/pg_notify/* "${POSTGRESQL_BASE_BACKUP_DIR}"/data/pg_serial/* "${POSTGRESQL_BASE_BACKUP_DIR}"/data/pg_snapshots/* "${POSTGRESQL_BASE_BACKUP_DIR}"/data/pg_stat_tmp/* "${POSTGRESQL_BASE_BACKUP_DIR}"/data/pg_subtrans/* "${POSTGRESQL_BASE_BACKUP_DIR}"/data/pgsql_tmp
+        while IFS= read -r -d '' file
         do
-            rm -f $i
-        done
+            rm -f "$file"
+        done <    <(find "${POSTGRESQL_BASE_BACKUP_DIR}"/data/ -name pg_internal.init -print0)
 
         # Tar zip the dir and backup with restic to s3
-        tar -C ${POSTGRESQL_BASE_BACKUP_DIR} -czvf ${POSTGRESQL_VOLUME_DIR}/basebackup.tar.gz data
-        $RESTIC_BINARY_PATH -r s3:$S3_ENDPOINT/$S3_BUCKET_NAME backup ${POSTGRESQL_VOLUME_DIR}/basebackup.tar.gz
+        tar -C "${POSTGRESQL_BASE_BACKUP_DIR}" -czvf "${POSTGRESQL_VOLUME_DIR}"/basebackup.tar.gz data
+        $RESTIC_BINARY_PATH -r s3:"$S3_ENDPOINT"/"$S3_BUCKET_NAME" backup "${POSTGRESQL_VOLUME_DIR}"/basebackup.tar.gz
 
         postgresql_info "Stop pg base backup"
         echo "SELECT pg_stop_backup();" | postgresql_execute "" "postgres" "$POSTGRES_PASSWORD"
-        sleep 20
-        echo "1	###	before 2000-01-01 00:00:00+00" >/tmp/00000001.history
+        # counter=30
+        # while ! ls ${POSTGRESQL_DATA_DIR}/pg_wal/*.history >/dev/null 2>&1;do
+        #     sleep 10
+        #     counter=$((counter - 1 ))
+        #     if (( counter <= 0 )); then
+        #         postgresql_warn "No history file generated after base backup"
+        #         exit 1
+        #     fi
+        # done
+
+        # Create .history file if not exist
         timeline_base=$(echo "SELECT pg_current_wal_lsn();" | PGPASSWORD=$POSTGRES_PASSWORD psql -h localhost -p 5432 -U postgres |sed -n '3 p')
-        sed -i s/###/${timeline_base}/g /tmp/00000001.history
-        cp /tmp/00000001.history ${POSTGRESQL_DATA_DIR}/pg_wal/
-        $RESTIC_BINARY_PATH -r s3:$S3_ENDPOINT/$S3_BUCKET_NAME backup ${POSTGRESQL_DATA_DIR}/pg_wal/00000001.history
+        echo "1     ${timeline_base}    before 2000-01-01 00:00:00+00" >/tmp/00000001.history
+        if ! ls "${POSTGRESQL_DATA_DIR}"/pg_wal/*.history; then
+            file_array=$($RESTIC_BINARY_PATH -r s3:"$S3_ENDPOINT"/"$S3_BUCKET_NAME" snapshots | awk -F'/' '/pg_wal/ {print $NF}')
+            if [[ ! " ${file_array[*]} " =~ 00000001.history ]]; then
+                cp /tmp/00000001.history "${POSTGRESQL_DATA_DIR}"/pg_wal/
+            fi
+        fi
+
+        # Backup wal files which might be missing before wal archive started
+        restic_wal_backup
     }
 
 
+
     eval "$(postgresql_archive_restic_env)"
+    chmod 00700 -R "${POSTGRESQL_DATA_DIR}"
     if [[ ! -f "${RESTIC_BINARY_PATH}" ]]; then
         postgresql_info "Download restic client"
         curl https://raw.githubusercontent.com/waynesun09/reportportal-operator/master/bin/restic_0.9.6_linux_amd64 -o "$RESTIC_BINARY_PATH"
@@ -129,18 +159,19 @@ data:
 
     # Copy back recovery.conf file
     if [[ -f ${POSTGRESQL_VOLUME_DIR}/recovery.conf ]] && is_boolean_yes "$ENABLE_RESTIC_RECOVERY"; then
-        mv ${POSTGRESQL_VOLUME_DIR}/recovery.conf $POSTGRESQL_RECOVERY_FILE
-        chmod 600 $POSTGRESQL_RECOVERY_FILE
+        mv "${POSTGRESQL_VOLUME_DIR}"/recovery.conf "$POSTGRESQL_RECOVERY_FILE"
+        chmod 600 "$POSTGRESQL_RECOVERY_FILE"
     fi
-
-    chmod 00700 -R ${POSTGRESQL_DATA_DIR}
 
     if [[ "$POSTGRESQL_REPLICATION_MODE" = "master" ]]; then
         if [[ ! -f ${POSTGRESQL_VOLUME_DIR}/basebackup.tar.gz ]] && is_boolean_yes "$ENABLE_RESTIC_BACKUP"; then
             postgresql_info "Start base backup"
             postgresql_base_backup
         fi
+        # Backup wal files which might be missing after wal archive started
+        is_boolean_yes "$ENABLE_RESTIC_BACKUP" && restic_wal_backup
     fi
+    chmod 00700 -R "${POSTGRESQL_DATA_DIR}"
 kind: ConfigMap
 metadata:
   name: pg-restic
