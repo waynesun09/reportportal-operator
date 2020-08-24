@@ -129,14 +129,14 @@ data:
         # done
 
         # Create .history file if not exist
-        timeline_base=$(echo "SELECT pg_current_wal_lsn();" | PGPASSWORD=$POSTGRES_PASSWORD psql -h localhost -p 5432 -U postgres |sed -n '3 p')
-        echo "1     ${timeline_base}    before 2000-01-01 00:00:00+00" >/tmp/00000001.history
-        if ! ls "${POSTGRESQL_DATA_DIR}"/pg_wal/*.history; then
-            file_array=$($RESTIC_BINARY_PATH -r s3:"$S3_ENDPOINT"/"$S3_BUCKET_NAME" snapshots | awk -F'/' '/pg_wal/ {print $NF}')
-            if [[ ! " ${file_array[*]} " =~ 00000001.history ]]; then
-                cp /tmp/00000001.history "${POSTGRESQL_DATA_DIR}"/pg_wal/
-            fi
-        fi
+        # timeline_base=$(echo "SELECT pg_current_wal_lsn();" | PGPASSWORD=$POSTGRES_PASSWORD psql -h localhost -p 5432 -U postgres |sed -n '3 p')
+        # echo "1     ${timeline_base}    before 2000-01-01 00:00:00+00" >/tmp/00000001.history
+        # if ! ls "${POSTGRESQL_DATA_DIR}"/pg_wal/*.history; then
+        #     file_array=$($RESTIC_BINARY_PATH -r s3:"$S3_ENDPOINT"/"$S3_BUCKET_NAME" snapshots | awk -F'/' '/pg_wal/ {print $NF}')
+        #     if [[ ! " ${file_array[*]} " =~ 00000001.history ]]; then
+        #         cp /tmp/00000001.history "${POSTGRESQL_DATA_DIR}"/pg_wal/
+        #     fi
+        # fi
 
         # Backup wal files which might be missing before wal archive started
         restic_wal_backup
@@ -158,10 +158,12 @@ data:
     is_boolean_yes "$ENABLE_RESTIC_BACKUP" && postgresql_configure_archive_parameters
 
     # Copy back recovery.conf file
-    if [[ -f ${POSTGRESQL_VOLUME_DIR}/recovery.conf ]] && is_boolean_yes "$ENABLE_RESTIC_RECOVERY"; then
-        mv "${POSTGRESQL_VOLUME_DIR}"/recovery.conf "$POSTGRESQL_RECOVERY_FILE"
-        chmod 600 "$POSTGRESQL_RECOVERY_FILE"
-    fi
+    # if [[ -f ${POSTGRESQL_VOLUME_DIR}/recovery.conf ]] && is_boolean_yes "$ENABLE_RESTIC_RECOVERY"; then
+    #     mv "${POSTGRESQL_VOLUME_DIR}"/recovery.conf "$POSTGRESQL_RECOVERY_FILE"
+    #     chmod 600 "$POSTGRESQL_RECOVERY_FILE"
+    # fi
+
+    is_boolean_yes "$ENABLE_RESTIC_RECOVERY" && postgresql_set_property "hot_standby" "off"
 
     if [[ "$POSTGRESQL_REPLICATION_MODE" = "master" ]]; then
         if [[ ! -f ${POSTGRESQL_VOLUME_DIR}/basebackup.tar.gz ]] && is_boolean_yes "$ENABLE_RESTIC_BACKUP"; then

@@ -92,14 +92,17 @@ data:
         chmod 600 "$POSTGRESQL_RECOVERY_FILE"
         postgresql_set_property "restore_command" "cp ${POSTGRESQL_VOLUME_DIR}/pg_wal/%f %p" "$POSTGRESQL_RECOVERY_FILE"
         postgresql_set_property "recovery_target_time" "$RESTIC_RECOVERY_TARGET_TIME" "$POSTGRESQL_RECOVERY_FILE"
-        mv "$POSTGRESQL_RECOVERY_FILE" "$POSTGRESQL_VOLUME_DIR"
+        # postgresql_set_property "hot_standby" "off"
+        # mv "$POSTGRESQL_RECOVERY_FILE" "$POSTGRESQL_VOLUME_DIR"
     fi
 
     # Remove custom "$POSTGRESQL_VOLUME_DIR/.user_scripts_initialized"
     if [[ -f "$POSTGRESQL_VOLUME_DIR/.user_scripts_initialized" ]]; then
         rm -f "${POSTGRESQL_VOLUME_DIR}/.user_scripts_initialized"
     fi
-    chmod -R 00700 "$POSTGRESQL_DATA_DIR"
+    if [[ -d "$POSTGRESQL_DATA_DIR" ]]; then
+        chmod -R 00700 "$POSTGRESQL_DATA_DIR"
+    fi
 kind: ConfigMap
 metadata:
   name: pg-preinit
