@@ -56,7 +56,8 @@ data:
     restic_wal_backup() {
         file_array=$($RESTIC_BINARY_PATH -r s3:"$S3_ENDPOINT"/"$S3_BUCKET_NAME" snapshots | awk -F'/' '/pg_wal/ {print $NF}')
         for i in "${POSTGRESQL_DATA_DIR}"/pg_wal/*;do
-            if [[ ! " ${file_array[*]} " =~ $i ]] && [[ ! " ${file_array[*]} " =~ archive_status* ]]; then
+            # Need fix the archive_status dir still match problem
+            if [[ ! " ${file_array[*]} " =~ $i ]] && [[ ! "${file_array[*]}" =~ .*archive_status ]]; then
                 $RESTIC_BINARY_PATH -r s3:"$S3_ENDPOINT"/"$S3_BUCKET_NAME" backup "$i"
             fi
         done

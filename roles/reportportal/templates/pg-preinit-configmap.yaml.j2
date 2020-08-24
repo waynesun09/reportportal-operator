@@ -80,10 +80,18 @@ data:
             mkdir "${POSTGRESQL_VOLUME_DIR}"/pg_wal
         fi
 
+        # Copy files which backup from WAL files that Postgres haven't archived yet
         while IFS= read -r -d '' file
         do
             cp "$file" "${POSTGRESQL_VOLUME_DIR}"/pg_wal
-        done <    <(find /tmp/pg_wal/ -regex '.*/[0-9].*' -print0)
+        done <    <(find /tmp/pg_wal/bitnami -regex '.*/[0-9].*' -print0)
+
+        # Copy archived WAL files which are archived and latest, overide same files
+        # copied in last step
+        while IFS= read -r -d '' file
+        do
+            cp "$file" "${POSTGRESQL_VOLUME_DIR}"/pg_wal
+        done <    <(find /tmp/pg_wal/pg_wal -regex '.*/[0-9].*' -print0)
 
         rm -rf /tmp/pg_wal
 
