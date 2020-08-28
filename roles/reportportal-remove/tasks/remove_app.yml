@@ -152,6 +152,8 @@
   - "{{ query('k8s', namespace=meta.namespace, kind='Service', label_selector='app=elasticsearch-master') }}"
   - "{{ query('k8s', namespace=meta.namespace, kind='ConfigMap', label_selector='app=elasticsearch-master') }}"
   - "{{ query('k8s', namespace=meta.namespace, kind='CronJob', api_version='batch/v1beta1', label_selector='app=elasticsearch-master') }}"
+  - "{{ query('k8s', namespace=meta.namespace, kind='Job', label_selector='app=elasticsearch-master') }}"
+  - "{{ query('k8s', namespace=meta.namespace, kind='Pod', label_selector='app=elasticsearch-master') }}"
   - "{{ query('k8s', namespace=meta.namespace, kind='StatefulSet', label_selector='app=elasticsearch-master') }}"
   loop_control:
     loop_var: k8s_item

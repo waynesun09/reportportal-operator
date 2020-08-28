@@ -11,6 +11,10 @@ spec:
     spec:
       template:
         spec:
+          metadata:
+            labels:
+              job: es-s3-snapshot
+              app: elasticsearch-master
           containers:
           - env:
             - name: AWS_ACCESS_KEY_ID
