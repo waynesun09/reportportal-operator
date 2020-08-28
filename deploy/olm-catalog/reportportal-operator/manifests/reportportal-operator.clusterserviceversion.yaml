@@ -34,13 +34,11 @@ metadata:
             "name": "example-reportportal-restore"
           },
           "spec": {
-            "es_backup_schedule": "@daily",
             "es_s3_backup_dir": "s3_backup",
             "es_snapshot_bucket": "es-snapshot-123123",
             "pg_recovery": "yes",
             "pg_recovery_target_time": "2020-08-07 00:00:00",
             "pg_restic_password": "rp_user",
-            "pg_restic_snapshot_id": "latest",
             "pg_s3_bucket_name": "pgbackup-123123"
           }
         },
