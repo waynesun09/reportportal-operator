@@ -28,6 +28,14 @@
     state: present
     definition: "{{ lookup('template', 'rabbitmq-healthchecks-configmap.yaml.j2') | from_yaml }}"
 
+- name: Check whether rabbitmq secret exist
+  k8s_info:
+    api_version: v1
+    kind: Secret
+    name: "{{ rabbitmq_secret }}"
+    namespace: "{{ meta.namespace }}"
+  register: rabbitmq_secret_def
+
 - name: Create rabbitmq definition secret
   k8s:
     state: present
@@ -37,6 +45,7 @@
   k8s:
     state: present
     definition: "{{ lookup('template', 'rabbitmq-secret.yaml.j2') | from_yaml }}"
+  when: rabbitmq_secret_def.resources|length == 0
 
 - name: Create rabbitmq role
   k8s:
