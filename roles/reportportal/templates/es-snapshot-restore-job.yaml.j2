@@ -1,0 +1,48 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels:
+    app: elasticsearch-master
+  name: es-s3-snapshot-restore
+  namespace: {{ meta.namespace }}
+spec:
+  template:
+    metadata:
+      labels:
+        job: es-s3-snapshot-restore
+        app: elasticsearch-master
+    spec:
+      containers:
+      - env:
+        - name: ENABLE_ES_RESTORE
+          value: {{ es_restore }}
+        - name: ES_RESTORE_DATE
+          value: {{ es_restore_date }}
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              key: s3.client.default.access_key
+              name: s3-access-key
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: s3.client.default.secret_key
+              name: s3-access-key
+        - name: ELASTIC_S3_BUCKET
+          value: {{ es_snapshot_bucket }}
+        - name: ELASTIC_S3_BACKUP_DIR
+          value: {{ es_s3_backup_dir }}
+        name: restore
+        image: quay.io/waynesun09/ubi8-minimal:s3cmd
+        args:
+          - /bin/sh
+          - /opt/elastic_snapshot.sh
+        volumeMounts:
+        - mountPath: /opt
+          name: snapshot-s3cmd-script
+      volumes:
+      - name: snapshot-s3cmd-script
+        configMap:
+          name: es-snapshot
+          defaultMode: 0777
+      restartPolicy: OnFailure

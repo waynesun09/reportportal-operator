@@ -1,26 +1,3 @@
-- name: Fetch all RP deployments
-  set_fact:
-    rp_deployments: "{{ query('k8s', kind='Deployment', namespace=meta.namespace, label_selector='app=reportportal') }}"
-
-- name: Scale RP Deployment replicas to 0
-  ignore_errors: yes
-  k8s_scale:
-    api_version: "{{ k8s_item.apiVersion }}"
-    kind: Deployment
-    namespace: "{{ meta.namespace }}"
-    name: "{{ k8s_item.metadata.name }}"
-    replicas: "0"
-  register: scale_result
-  until: scale_result.result == {} or (scale_result.result.spec is defined and scale_result.result.spec.replicas == 0)
-  retries: 6
-  delay: 10
-  when:
-    - k8s_item.apiVersion is defined
-    - k8s_item.metadata.name is defined
-  with_items: "{{ rp_deployments }}"
-  loop_control:
-    loop_var: k8s_item
-
 - name: Delete PostgreSQL statefulset
   ignore_errors: yes
   k8s:
@@ -80,36 +57,3 @@
     delay: 60
     state: started
     timeout: 36000
-
-- name: Scale back RP Deployment replicas
-  ignore_errors: yes
-  k8s_scale:
-    api_version: "{{ k8s_item.apiVersion }}"
-    kind: Deployment
-    namespace: "{{ meta.namespace }}"
-    name: "{{ k8s_item.metadata.name }}"
-    replicas: "{{ k8s_item.spec.replicas }}"
-  register: scale_result
-  until: scale_result.result.status == {} or (scale_result.result.status is defined and scale_result.result.status.replicas == k8s_item.spec.replicas)
-  retries: 6
-  delay: 10
-  when:
-    - k8s_item.apiVersion is defined
-    - k8s_item.metadata.name is defined
-    - k8s_item.spec.replicas is defined
-  with_items: "{{ rp_deployments }}"
-  loop_control:
-    loop_var: k8s_item
-
-- operator_sdk.util.k8s_status:
-    api_version: rp5.reportportal.io/v1alpha1
-    kind: ReportPortalRestore
-    name: "{{ meta.name }}"
-    namespace: "{{ meta.namespace }}"
-    status:
-      conditions:
-        - LastTransitionTime: '{{ ansible_date_time.iso8601 }}'
-          message: 'Postgres WAL recovery finished'
-          status: 'False'
-          reason: 'Done'
-          type: 'Finished'

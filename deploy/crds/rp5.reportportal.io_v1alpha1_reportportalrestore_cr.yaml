@@ -8,5 +8,7 @@ spec:
   pg_recovery_target_time: '2020-08-07 00:00:00'
   pg_s3_bucket_name: pgbackup-123123
   pg_restic_password: rp_user
+  es_restore: 'yes'
   es_s3_backup_dir: s3_backup
   es_snapshot_bucket: es-snapshot-123123
+  es_restore_date: '2020-08-07'

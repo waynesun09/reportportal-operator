@@ -1,0 +1,18 @@
+- name: Scale RP Deployment replicas to 0
+  ignore_errors: yes
+  k8s_scale:
+    api_version: "{{ k8s_item.apiVersion }}"
+    kind: Deployment
+    namespace: "{{ meta.namespace }}"
+    name: "{{ k8s_item.metadata.name }}"
+    replicas: "0"
+  register: scale_result
+  until: scale_result.result == {} or (scale_result.result.spec is defined and scale_result.result.spec.replicas == 0)
+  retries: 6
+  delay: 10
+  when:
+    - k8s_item.apiVersion is defined
+    - k8s_item.metadata.name is defined
+  with_items: "{{ rp_deployments }}"
+  loop_control:
+    loop_var: k8s_item

@@ -14,12 +14,8 @@
   set_fact:
     rp_restore_cr: "{{ lookup('k8s', kind='ReportPortalRestore', api_version='rp5.reportportal.io/v1alpha1', namespace=meta.namespace, resource_name=meta.name) }}"
 
-- name: Recover postgresql data
-  include: pg_data_recovery.yml
+- name: Recover data for postgresql or elasticsearch
+  include: data_recovery.yml
   when:
-    - pg_recovery | bool
+    - (pg_recovery | bool) or (es_restore | bool)
     - rp_restore_cr.status is undefined or rp_restore_cr.status.conditions[0].type != 'Finished'
-
-#- name: Restore elasticsearch data
-#  include: es_data_restore.yml
-#  when: es_restore | bool

@@ -1,0 +1,19 @@
+- name: Fetch all RP deployments
+  set_fact:
+    rp_deployments: "{{ query('k8s', kind='Deployment', namespace=meta.namespace, label_selector='app=reportportal') }}"
+
+- name: Scale down RP deployment
+  include: scale_down_rp.yml
+
+- name: Recover postgresql data
+  include: pg_data_recovery.yml
+  when:
+    - pg_recovery | bool
+
+- name: Restore elasticsearch data
+  include: es_data_restore.yml
+  when:
+    - es_restore | bool
+
+- name: Scale up RP deployment
+  include: scale_up_rp.yml
