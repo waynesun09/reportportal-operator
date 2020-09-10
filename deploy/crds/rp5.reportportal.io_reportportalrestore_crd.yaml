@@ -45,6 +45,12 @@ spec:
             pg_restic_password:
               description: The s3 Postgres bucket restic password
               type: string
+            es_restore:
+              description: Enable elasticsearch snapshot restore, need be 'yes' or 'no'
+              type: string
+            es_restore_date:
+              description: The elasticsearch snapshot restore date, need be unique and valid time, e.g. '2020-08-05'
+              type: string
             es_s3_backup_dir:
               description: The Elasticsearch snapshot path dir, if set the snapshot will be enabled
               type: string

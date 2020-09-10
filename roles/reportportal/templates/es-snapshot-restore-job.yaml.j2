@@ -15,9 +15,9 @@ spec:
       containers:
       - env:
         - name: ENABLE_ES_RESTORE
-          value: {{ es_restore }}
+          value: "{{ es_restore }}"
         - name: ES_RESTORE_DATE
-          value: {{ es_restore_date }}
+          value: "{{ es_restore_date }}"
         - name: AWS_ACCESS_KEY_ID
           valueFrom:
             secretKeyRef:
