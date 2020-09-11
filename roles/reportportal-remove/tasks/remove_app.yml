@@ -1,6 +1,6 @@
 - name: Delete Report Portal resources
   ignore_errors: yes
-  k8s:
+  community.kubernetes.k8s:
     state: absent
     api_version: "{{ k8s_item.apiVersion }}"
     kind: "{{ k8s_item.kind }}"
@@ -32,7 +32,7 @@
 
 - name: Delete PostgreSQL resources
   ignore_errors: yes
-  k8s:
+  community.kubernetes.k8s:
     state: absent
     api_version: "{{ k8s_item.apiVersion }}"
     kind: "{{ k8s_item.kind }}"
@@ -62,7 +62,7 @@
 
 - name: Delete Minio resources
   ignore_errors: yes
-  k8s:
+  community.kubernetes.k8s:
     state: absent
     api_version: "{{ k8s_item.apiVersion }}"
     kind: "{{ k8s_item.kind }}"
@@ -92,7 +92,7 @@
 
 - name: Delete RabbitMQ resources
   ignore_errors: yes
-  k8s:
+  community.kubernetes.k8s:
     state: absent
     api_version: "{{ k8s_item.apiVersion }}"
     kind: "{{ k8s_item.kind }}"
@@ -124,7 +124,7 @@
 
 - name: Delete Elasticsearch resources
   ignore_errors: yes
-  k8s:
+  community.kubernetes.k8s:
     state: absent
     api_version: "{{ k8s_item.apiVersion }}"
     kind: "{{ k8s_item.kind }}"

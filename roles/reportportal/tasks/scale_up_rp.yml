@@ -1,6 +1,6 @@
 - name: Scale back RP Deployment replicas
   ignore_errors: yes
-  k8s_scale:
+  community.kubernetes.k8s_scale:
     api_version: "{{ k8s_item.apiVersion }}"
     kind: Deployment
     namespace: "{{ meta.namespace }}"
@@ -18,7 +18,8 @@
   loop_control:
     loop_var: k8s_item
 
-- operator_sdk.util.k8s_status:
+- name: Update ReportPortalRestore Operator status
+  operator_sdk.util.k8s_status:
     api_version: rp5.reportportal.io/v1alpha1
     kind: ReportPortalRestore
     name: "{{ meta.name }}"

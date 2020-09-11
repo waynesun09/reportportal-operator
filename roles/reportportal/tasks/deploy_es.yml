@@ -1,49 +1,49 @@
 - name: Create elasticsearch keystore secret
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'es-keystore-secret.yaml.j2') | from_yaml }}"
 
 - name: Create elasticsearch statefulset
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'es-statefulset.yaml.j2') | from_yaml }}"
 
 - name: Create elasticsearch service
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'es-service.yaml.j2') | from_yaml }}"
 
 - name: Create elasticsearch headless service
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'es-service-headless.yaml.j2') | from_yaml }}"
 
 - name: Create elasticsearch poddisruptionbudget
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'es-poddisruptionbudget.yaml.j2') | from_yaml }}"
 
 - name: Create elasticsearch metrics export deployment
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'es-metrics-deploy.yaml.j2') | from_yaml }}"
 
 - name: Create elasticsearch metrics service
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'es-metrics-service.yaml.j2') | from_yaml }}"
 
 - name: Create elasticsearch servicemonitor
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'es-servicemonitor.yaml.j2') | from_yaml }}"
 
 - name: Create elasticsearch s3 snapshot configmap
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'es-snapshot-configmap.yaml.j2') | from_yaml }}"
 
 - name: Create elasticsearch snapshot cronjob
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'es-snapshot-cronjob.yaml.j2') | from_yaml }}"

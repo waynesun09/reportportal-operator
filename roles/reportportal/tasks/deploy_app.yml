@@ -15,81 +15,81 @@
   when: deploy_elasticsearch | bool
 
 - name: Create index deployment
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'index-deployment.yaml.j2') | from_yaml }}"
 
 - name: Create index service
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'index-service.yaml.j2') | from_yaml }}"
 
 - name: Create ui deployment
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'ui-deployment.yaml.j2') | from_yaml }}"
 
 - name: Create ui service
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'ui-service.yaml.j2') | from_yaml }}"
 
 - name: Create api deployment
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'api-deployment.yaml.j2') | from_yaml }}"
 
 - name: Create api service
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'api-service.yaml.j2') | from_yaml }}"
 
 - name: Create uat deployment
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'uat-deployment.yaml.j2') | from_yaml }}"
 
 - name: Create uat service
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'uat-service.yaml.j2') | from_yaml }}"
 
 - name: Create analyzer statefulset
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'analyzer-statefulset.yaml.j2') | from_yaml }}"
 
 - name: Create analyzer service
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'analyzer-service.yaml.j2') | from_yaml }}"
 
 - name: Create migration job
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'migration-job.yaml.j2') | from_yaml }}"
 
 - name: Create gateway configmap
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'openshift-gateway-configmap.yaml.j2') | from_yaml }}"
 
 - name: Create gateway deployment
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'openshift-gateway-deployment.yaml.j2') | from_yaml }}"
 
 - name: Create gateway service
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'openshift-gateway-service.yaml.j2') | from_yaml }}"
 
 - name: Create gateway route
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'openshift-gateway-route.yaml.j2') | from_yaml }}"
 
 - name: Create gateway servicemonitor
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'openshift-gateway-servicemonitor.yaml.j2') | from_yaml }}"

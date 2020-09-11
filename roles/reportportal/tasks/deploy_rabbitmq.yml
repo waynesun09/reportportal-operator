@@ -1,35 +1,35 @@
 - name: Create rabbitmq serviceaccount
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'rabbitmq-serviceaccount.yaml.j2') | from_yaml }}"
 
 - name: Create rabbitmq statefulset
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'rabbitmq-statefulset.yaml.j2') | from_yaml }}"
 
 - name: Create rabbitmq service
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'rabbitmq-service.yaml.j2') | from_yaml }}"
 
 - name: Create rabbitmq headless service
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'rabbitmq-service-headless.yaml.j2') | from_yaml }}"
 
 - name: Create rabbitmq configmap
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'rabbitmq-configmap.yaml.j2') | from_yaml }}"
 
 - name: Create rabbitmq healthcheck configmap
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'rabbitmq-healthchecks-configmap.yaml.j2') | from_yaml }}"
 
 - name: Check whether rabbitmq secret exist
-  k8s_info:
+  community.kubernetes.k8s_info:
     api_version: v1
     kind: Secret
     name: "{{ rabbitmq_secret }}"
@@ -37,27 +37,27 @@
   register: rabbitmq_secret_def
 
 - name: Create rabbitmq definition secret
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'rabbitmq-definition-secret.yaml.j2') | from_yaml }}"
 
 - name: Create rabbitmq secret
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'rabbitmq-secret.yaml.j2') | from_yaml }}"
   when: rabbitmq_secret_def.resources|length == 0
 
 - name: Create rabbitmq role
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'rabbitmq-role.yaml.j2') | from_yaml }}"
 
 - name: Create rabbitmq rolebinding
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'rabbitmq-rolebinding.yaml.j2') | from_yaml }}"
 
 - name: Create rabbitmq servicemonitor
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'rabbitmq-servicemonitor.yaml.j2') | from_yaml }}"

@@ -1,39 +1,39 @@
 - name: Create postgresql custom pre-init script configmap
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'pg-preinit-configmap.yaml.j2') | from_yaml }}"
 
 - name: Create postgresql restic custom init script configmap
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'pg-restic-configmap.yaml.j2') | from_yaml }}"
 
 - name: Create postgresql statefulset
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'pg-statefulset.yaml.j2') | from_yaml }}"
 
 - name: Create postgresql secret
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'pg-secret.yaml.j2') | from_yaml }}"
 
 - name: Create postgresql service
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'pg-service.yaml.j2') | from_yaml }}"
 
 - name: Create postgresql headless service
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'pg-service-headless.yaml.j2') | from_yaml }}"
 
 - name: Create postgresql metrics service
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'pg-service-metrics.yaml.j2') | from_yaml }}"
 
 - name: Create postgresql servicemonitor
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'pg-servicemonitor.yaml.j2') | from_yaml }}"

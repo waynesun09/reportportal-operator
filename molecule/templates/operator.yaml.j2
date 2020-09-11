@@ -17,8 +17,8 @@ spec:
       containers:
         - name: reportportal-operator
           # Replace this with the built image name
-          image: "quay.io/waynesun09/rp5-operator:v0.0.4"
-          imagePullPolicy: "Always"
+          image: "{{ image }}"
+          imagePullPolicy: "{{ pull_policy }}"
           volumeMounts:
           - mountPath: /tmp/ansible-operator/runner
             name: runner
@@ -41,6 +41,7 @@ spec:
               port: 6789
             initialDelaySeconds: 5
             periodSeconds: 3
+
       volumes:
         - name: runner
           emptyDir: {}

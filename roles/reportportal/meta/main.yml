@@ -9,6 +9,7 @@ galaxy_info:
   platforms:
   - name: Fedora
     versions:
+    - 32
     - 31
   - name: EL
     versions:
@@ -17,3 +18,7 @@ galaxy_info:
   galaxy_tags: [k8s, openshift, reportportal]
 
 dependencies: []
+
+collections:
+  - operator_sdk.util
+  - community.kubernetes

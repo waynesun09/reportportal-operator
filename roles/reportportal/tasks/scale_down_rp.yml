@@ -1,6 +1,6 @@
 - name: Scale RP Deployment replicas to 0
   ignore_errors: yes
-  k8s_scale:
+  community.kubernetes.k8s_scale:
     api_version: "{{ k8s_item.apiVersion }}"
     kind: Deployment
     namespace: "{{ meta.namespace }}"

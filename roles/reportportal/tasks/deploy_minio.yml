@@ -1,15 +1,15 @@
 - name: Create minio service account
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'minio-serviceaccount.yaml.j2') | from_yaml }}"
 
 - name: Create minio statefulset
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'minio-statefulset.yaml.j2') | from_yaml }}"
 
 - name: Create minio configmap
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition:
       apiVersion: v1
@@ -23,16 +23,16 @@
         initialize: "{{ lookup('template', '_helper_create_bucket.txt') | string }}"
 
 - name: Create minio secret
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'minio-secret.yaml.j2') | from_yaml }}"
 
 - name: Create minio service
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'minio-service.yaml.j2') | from_yaml }}"
 
 - name: Create minio servicemonitor
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition: "{{ lookup('template', 'minio-servicemonitor.yaml.j2') | from_yaml }}"
