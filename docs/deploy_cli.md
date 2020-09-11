@@ -10,7 +10,7 @@ The OLM operator application package have been pushed to: https://quay.io/applic
 Prepare a catalog source yaml:
 
     $ cat catalog-source.yaml
-    apiVersion: operators.coreos.com/v1alpha1
+    apiVersion: operators.coreos.com/v1
     kind: CatalogSource
     metadata:
       name: wayne-manifests
@@ -38,7 +38,7 @@ Its configuration depends on whether your Operator supports watching its own nam
 Create the following file as  `operator-group.yaml` if your Operator supports watching its own or a single namespace.
 If your Operator supports watching all namespaces you can leave the property `spec.targetNamespace` present but empty. This will create an `OperatorGroup` that instructs the Operator to watch all namespaces.
 ```yaml
-apiVersion: operators.coreos.com/v1alpha2
+apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
   name: rp-operatorgroup
@@ -55,7 +55,7 @@ $ oc apply -f operator-group.yaml
 ## Create a Subscription
 The last piece ties together all of the previous steps. A `Subscription` is created to the operator. Save the following to a file named: `operator-subscription.yaml`:
 ```yaml
-apiVersion: operators.coreos.com/v1alpha1
+apiVersion: operators.coreos.com/v1
 kind: Subscription
 metadata:
   name: rp-subscription
@@ -90,7 +90,7 @@ $ oc get deployment -n rp
 
 Copy a CR yaml file
 ```console
-$ cp deploy/crds/rp5.reportportal.io_v1alpha1_reportportal_cr.yaml cr-test.yaml
+$ cp deploy/crds/rp5.reportportal.io_v1_reportportal_cr.yaml cr-test.yaml
 ```
 
 Update the app_domain with app route sub domain, e.g. apps-crc.testing.

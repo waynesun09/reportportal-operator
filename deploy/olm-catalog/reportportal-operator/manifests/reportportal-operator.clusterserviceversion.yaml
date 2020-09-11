@@ -5,7 +5,7 @@ metadata:
     alm-examples: |-
       [
         {
-          "apiVersion": "rp5.reportportal.io/v1alpha1",
+          "apiVersion": "rp5.reportportal.io/v1",
           "kind": "ReportPortal",
           "metadata": {
             "name": "example-reportportal"
@@ -28,7 +28,7 @@ metadata:
           }
         },
         {
-          "apiVersion": "rp5.reportportal.io/v1alpha1",
+          "apiVersion": "rp5.reportportal.io/v1",
           "kind": "ReportPortalRestore",
           "metadata": {
             "name": "example-reportportal-restore"
@@ -45,7 +45,7 @@ metadata:
           }
         },
         {
-          "apiVersion": "rp5.reportportal.io/v1alpha1",
+          "apiVersion": "rp5.reportportal.io/v1",
           "kind": "ServiceApiServiceMonitor",
           "metadata": {
             "name": "example-service-api-servicemonitor"
@@ -59,13 +59,13 @@ metadata:
     capabilities: Full Lifecycle
     categories: Application Runtime
     certified: "false"
-    containerImage: quay.io/waynesun09/rp5-operator:v0.0.4
+    containerImage: quay.io/waynesun09/rp5-operator:v0.0.5
     createdAt: "2020-06-26 10:30:00"
     description: ReportPortal is a test automation analytics platform. ReportPortal
       Operator for instantiating the ReportPortal services and required dependencies.
     repository: https://github.com/waynesun09/reportportal-operator
     support: waynesun09
-  name: reportportal-operator.v0.0.4
+  name: reportportal-operator.v0.0.5
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
@@ -83,7 +83,7 @@ spec:
         version: v1
       - kind: ReportPortalRestores
         name: reportportalrestores.rp5.reportportal.io
-        version: v1alpha1
+        version: v1
       specDescriptors:
       - description: Enable Postgres recovery, need be 'yes' or 'no'
         displayName: Enable Postgres recovery
@@ -124,7 +124,7 @@ spec:
         path: es_backup_schedule
         x-descriptors:
         - urn:alm:descriptor:tectonic.ui:text
-      version: v1alpha1
+      version: v1
     - description: ReportPortal v5 Deployment with ReportPortal Operator
       displayName: ReportPortal v5
       kind: ReportPortal
@@ -138,7 +138,7 @@ spec:
         version: v1
       - kind: ReportPortals
         name: reportportals.rp5.reportportal.io
-        version: v1alpha1
+        version: v1
       - kind: ReplicaSets
         name: ""
         version: v1
@@ -229,7 +229,7 @@ spec:
         path: conditions
         x-descriptors:
         - urn:alm:descriptor:io.kubernetes.conditions
-      version: v1alpha1
+      version: v1
     - description: ReportPortal service-api ServiceMonitor for metrics
       displayName: ReportPortal service-api ServiceMonitor
       kind: ServiceApiServiceMonitor
@@ -243,7 +243,7 @@ spec:
         version: v1
       - kind: serviceapiservicemonitors
         name: serviceapiservicemonitors.rp5.reportportal.io
-        version: v1alpha1
+        version: v1
       specDescriptors:
       - description: ReportPortal bearer token secret name
         displayName: ReportPortal bearer token secret name
@@ -255,7 +255,7 @@ spec:
         path: bearer_token_secret_key
         x-descriptors:
         - urn:alm:descriptor:tectonic.ui:text
-      version: v1alpha1
+      version: v1
   description: ReportPortal is a test automation analytics platform. ReportPortal
     Operator for instantiating the ReportPortal services and required dependencies.
   displayName: ReportPortal Operator
@@ -278,18 +278,6 @@ spec:
                 name: reportportal-operator
             spec:
               containers:
-              - command:
-                - /usr/local/bin/ao-logs
-                - /tmp/ansible-operator/runner
-                - stdout
-                image: quay.io/waynesun09/rp5-operator:v0.0.4
-                imagePullPolicy: Always
-                name: ansible
-                resources: {}
-                volumeMounts:
-                - mountPath: /tmp/ansible-operator/runner
-                  name: runner
-                  readOnly: true
               - env:
                 - name: WATCH_NAMESPACE
                   valueFrom:
@@ -303,9 +291,15 @@ spec:
                   value: reportportal-operator
                 - name: ANSIBLE_GATHERING
                   value: explicit
-                image: quay.io/waynesun09/rp5-operator:v0.0.4
+                image: quay.io/waynesun09/rp5-operator:v0.0.5
                 imagePullPolicy: Always
-                name: operator
+                livenessProbe:
+                  httpGet:
+                    path: /healthz
+                    port: 6789
+                  initialDelaySeconds: 5
+                  periodSeconds: 3
+                name: reportportal-operator
                 resources: {}
                 volumeMounts:
                 - mountPath: /tmp/ansible-operator/runner
@@ -478,5 +472,5 @@ spec:
   maturity: alpha
   provider:
     name: waynesun09
-  replaces: reportportal-operator.v0.0.3
-  version: 0.0.4
+  replaces: reportportal-operator.v0.0.4
+  version: 0.0.5

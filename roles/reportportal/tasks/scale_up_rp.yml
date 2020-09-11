@@ -20,7 +20,7 @@
 
 - name: Update ReportPortalRestore Operator status
   operator_sdk.util.k8s_status:
-    api_version: rp5.reportportal.io/v1alpha1
+    api_version: rp5.reportportal.io/v1
     kind: ReportPortalRestore
     name: "{{ meta.name }}"
     namespace: "{{ meta.namespace }}"

@@ -16,8 +16,8 @@ Then follow the [Ansible user guide](https://sdk.operatorframework.io/docs/ansib
 
 After role updated, create new operator image with:
 ```console
-$ buildah bud -f build/Dockerfile -t quay.io/waynesun09/rp5-operator:v0.0.4
-$ buildah push quay.io/waynesun09/rp5-operator:v0.0.4
+$ buildah bud -f build/Dockerfile -t quay.io/waynesun09/rp5-operator:v0.0.5
+$ buildah push quay.io/waynesun09/rp5-operator:v0.0.5
 ```
 
 ## Update CSV
@@ -59,7 +59,7 @@ The default bundle create image builder is docker, make sure you have installed 
 Podman did not support Docker v2.2 format yet, while v2.1 schema format is not supported by operator registry.
 
 ```console
-$ sudo operator-sdk bundle create quay.io/waynesun09/rp5-bundle-operator:v0.0.4 --channels alpha
+$ sudo operator-sdk bundle create quay.io/waynesun09/rp5-bundle-operator:v0.0.5 --channels alpha
 ```
 
 The channel must be same in the metadata/annotations.yaml
@@ -67,7 +67,7 @@ The channel must be same in the metadata/annotations.yaml
 Push the bundle image to quay.io
 
 ```console
-$ sudo docker push quay.io/waynesun09/rp5-bundle-operator:v0.0.4
+$ sudo docker push quay.io/waynesun09/rp5-bundle-operator:v0.0.5
 ```
 
 ## Build operator registry
@@ -84,8 +84,8 @@ $ sudo docker push quay.io/waynesun09/wayne-index:1.0.0
 To add updated bundle image to the index:
 
 ```console
-$ sudo opm index add --container-tool docker --bundles quay.io/waynesun09/rp5-bundle-operator:v0.0.4 --from-index quay.io/waynesun09/wayne-index:1.0.2 --tag quay.io/waynesun09/wayne-index:1.0.3
-$ sudo docker push quay.io/waynesun09/wayne-index:1.0.2
+$ sudo opm index add --container-tool docker --bundles quay.io/waynesun09/rp5-bundle-operator:v0.0.5 --from-index quay.io/waynesun09/wayne-index:1.0.3 --tag quay.io/waynesun09/wayne-index:1.0.4
+$ sudo docker push quay.io/waynesun09/wayne-index:1.0.4
 ```
 
 Then could create CatalogSource on your testing cluster to add the operator registry.

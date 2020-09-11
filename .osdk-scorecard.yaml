@@ -5,9 +5,9 @@ scorecard:
   plugins:
     - basic:
         cr-manifest:
-          - "deploy/crds/rp5.reportportal.io_v1alpha1_reportportal_cr.yaml"
+          - "deploy/crds/rp5.reportportal.io_v1_reportportal_cr.yaml"
         csv-path: "deploy/olm-catalog/reportportal-operator/0.0.1/reportportal-operator.clusterserviceversion.yaml"
     - olm:
         cr-manifest:
-          - "deploy/crds/rp5.reportportal.io_v1alpha1_reportportal_cr.yaml"
+          - "deploy/crds/rp5.reportportal.io_v1_reportportal_cr.yaml"
         csv-path: "deploy/olm-catalog/reportportal-operator/0.0.1/reportportal-operator.clusterserviceversion.yaml"

@@ -41,12 +41,12 @@ Deploy the Operator:
 
 Prepare and update the CR yaml file:
 
-    $ cp deploy/crds/rp5.reportportal.io_v1alpha1_reportportal_cr.yaml cr_example.yaml
+    $ cp deploy/crds/rp5.reportportal.io_v1_reportportal_cr.yaml cr_example.yaml
 
     Update the CR file with the parameters
 
     $ vim cr_example.yaml
-    apiVersion: rp5.reportportal.io/v1alpha1
+    apiVersion: rp5.reportportal.io/v1
     kind: ReportPortal
     metadata:
       name: example-reportportal
@@ -104,7 +104,7 @@ The OLM operator bundle have been added to registry index image: https://quay.io
 Prepare a catalog source yaml:
 
     $ cat catalog-source.yaml
-    apiVersion: operators.coreos.com/v1alpha1
+    apiVersion: operators.coreos.com/v1
     kind: CatalogSource
     metadata:
       name: wayne-manifests

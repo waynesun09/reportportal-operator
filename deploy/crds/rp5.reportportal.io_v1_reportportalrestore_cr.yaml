@@ -1,4 +1,4 @@
-apiVersion: rp5.reportportal.io/v1alpha1
+apiVersion: rp5.reportportal.io/v1
 kind: ReportPortalRestore
 metadata:
   name: example-reportportal-restore

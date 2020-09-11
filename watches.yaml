@@ -1,5 +1,5 @@
 ---
-- version: v1alpha1
+- version: v1
   group: rp5.reportportal.io
   kind: ReportPortal
   role: /opt/ansible/roles/reportportal
@@ -14,7 +14,7 @@
     vars:
       remove_minio: no
 
-- version: v1alpha1
+- version: v1
   group: rp5.reportportal.io
   kind: ReportPortalRestore
   role: /opt/ansible/roles/reportportal
@@ -25,7 +25,7 @@
     es_restore: yes
   manageStatus: false
 
-- version: v1alpha1
+- version: v1
   group: rp5.reportportal.io
   kind: ServiceApiServiceMonitor
   role: /opt/ansible/roles/reportportal
