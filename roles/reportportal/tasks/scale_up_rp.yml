@@ -18,6 +18,10 @@
   loop_control:
     loop_var: k8s_item
 
+- name: Set the operator status message
+  set_fact:
+    op_message: "{% if (pg_recovery | bool) and (es_restore | bool) %}Postgres WAL recovery and Elasticsearch snapshot restore have finished{% elif pg_recovery | bool %}Postgres WAL recovery have finished{% elif es_restore | bool %}Elasticsearch snapshot restore have finished{% else %}Nothing have been restored{% endif %}"
+
 - name: Update ReportPortalRestore Operator status
   operator_sdk.util.k8s_status:
     api_version: rp5.reportportal.io/v1
@@ -26,8 +30,8 @@
     namespace: "{{ meta.namespace }}"
     status:
       conditions:
-        - LastTransitionTime: '{{ ansible_date_time.iso8601 }}'
-          message: 'Postgres WAL recovery finished'
-          status: 'False'
-          reason: 'Done'
-          type: 'Finished'
+        - type: "Finished"
+          status: "True"
+          reason: "Successful"
+          message: "{{ op_message }}"
+          LastTransitionTime: "{{ ansible_date_time.iso8601 }}"
