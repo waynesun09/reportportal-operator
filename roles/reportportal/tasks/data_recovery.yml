@@ -17,3 +17,21 @@
 
 - name: Scale up RP deployment
   include: scale_up_rp.yml
+
+- name: Set the operator status message
+  set_fact:
+    op_message: "{% if (pg_recovery | bool) and (es_restore | bool) %}Postgres WAL recovery and Elasticsearch snapshot restore have finished{% elif pg_recovery | bool %}Postgres WAL recovery have finished{% elif es_restore | bool %}Elasticsearch snapshot restore have finished{% else %}Nothing have been restored{% endif %}"
+
+- name: Update ReportPortalRestore Operator status
+  operator_sdk.util.k8s_status:
+    api_version: rp5.reportportal.io/v1
+    kind: ReportPortalRestore
+    name: "{{ meta.name }}"
+    namespace: "{{ meta.namespace }}"
+    status:
+      conditions:
+        - type: "Finished"
+          status: "True"
+          reason: "Successful"
+          message: "{{ op_message }}"
+          LastTransitionTime: "{{ ansible_date_time.iso8601 }}"
