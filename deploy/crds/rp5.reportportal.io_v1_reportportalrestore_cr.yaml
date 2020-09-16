@@ -3,7 +3,6 @@ kind: ReportPortalRestore
 metadata:
   name: example-reportportal-restore
 spec:
-  # You cluster default router hostname
   pg_recovery: 'yes'
   pg_recovery_target_time: '2020-08-07 00:00:00'
   pg_s3_bucket_name: pgbackup-123123

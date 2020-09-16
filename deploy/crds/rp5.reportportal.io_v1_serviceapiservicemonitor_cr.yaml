@@ -3,6 +3,5 @@ kind: ServiceApiServiceMonitor
 metadata:
   name: example-service-api-servicemonitor
 spec:
-  # You cluster default router hostname
   bearer_token_secret_name: 'rp-user-auth'
   bearer_token_secret_key: 'token'
