@@ -1,0 +1,9 @@
+FROM registry.access.redhat.com/ubi8/ubi-minimal
+
+ENV HOME=/tmp
+
+RUN microdnf install -y python3 python3-pip && \
+    microdnf clean all && \
+    pip3 --disable-pip-version-check install -U --compile --no-cache-dir s3cmd
+
+USER 1001
