@@ -62,6 +62,7 @@ metadata:
     containerImage: quay.io/waynesun09/rp5-operator:v0.0.5
     createdAt: "2020-09-17 09:45:00"
     repository: https://github.com/waynesun09/reportportal-operator
+    support: waynesun09
     operators.operatorframework.io/builder: operator-sdk-v1.0.0
     operators.operatorframework.io/project_layout: ansible.sdk.operatorframework.io/v1
   name: reportportal-operator.v0.0.5
