@@ -118,10 +118,14 @@ spec:
         path: es_snapshot_bucket
         x-descriptors:
         - urn:alm:descriptor:tectonic.ui:text
-      - description: The Elasticsearch snapshot to s3 bucket schedule, crontab schedule
-          format
-        displayName: Elasticsearch snapshot to s3 bucket schedule
-        path: es_backup_schedule
+      - description: Enable elasticsearch snapshot restore, need be 'yes' or 'no'
+        displayName: Enable elasticsearch snapshot restore
+        path: es_restore
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      - description: The elasticsearch snapshot restore date, need be unique and valid time, e.g. '2020-08-05'
+        displayName: Elasticsearch snapshot restore date
+        path: es_restore_date
         x-descriptors:
         - urn:alm:descriptor:tectonic.ui:text
     - kind: ReportPortal
