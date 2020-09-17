@@ -14,7 +14,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Build bundle image
+      run: docker build -t quay.io/waynesun09/rp5-operator:latest -f bundle.Dockerfile .
+
     - name: Run operator-sdk scorecard bundle test
-      run: curl -L https://github.com/operator-framework/operator-sdk/releases/download/${RELEASE_VERSION}/operator-sdk-${RELEASE_VERSION}-x86_64-linux-gnu -o operator-sdk && chmod +x operator-sdk && ./operator-sdk scorecard bundle
+      run: curl -L https://github.com/operator-framework/operator-sdk/releases/download/${RELEASE_VERSION}/operator-sdk-${RELEASE_VERSION}-x86_64-linux-gnu -o operator-sdk && chmod +x operator-sdk && ./operator-sdk bundle validate quay.io/waynesun09/rp5-bundle-operator:latest
       env:
         RELEASE_VERSION: v1.0.0
