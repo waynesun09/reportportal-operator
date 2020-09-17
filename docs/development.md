@@ -2,7 +2,7 @@
 
 This operator is build with [operator-sdk](https://github.com/operator-framework/operator-sdk "operator-sdk") and ansible galaxy role [reportportal-openshift](https://github.com/waynesun09/reportportal-openshift "reportportal-openshift").
 
-Note: Make sure you've installed the lastest operator-sdk as it changes rapidly.
+**Note:** Make sure you've installed the lastest operator-sdk as it changes rapidly.
 
 Please read the [Operator SDK doc](https://sdk.operatorframework.io/docs/) to understand how the operator is built with the sdk.
 
@@ -64,7 +64,7 @@ $ sudo docker push quay.io/waynesun09/wayne-index:1.0.0
 ```
 
 To add updated bundle image to the index:
-Note: Use sha256 rather than image tag to avoid cache problem
+**Note:** Use sha256 rather than image tag to avoid cache problem
 
 ```console
 $ sudo opm index add --container-tool docker --bundles quay.io/waynesun09/rp5-bundle-operator@sha256:60985448712964fcb9ea2e22b82012b791c1647d27b18c34e1f7c5d376874188 --from-index quay.io/waynesun09/wayne-index:1.0.3 --tag quay.io/waynesun09/wayne-index:1.0.4
@@ -81,7 +81,7 @@ dff05adcc153: Layer already exists
 
 Then could create CatalogSource on your testing cluster to add the operator registry.
 
-Note: Use sha256 rather than image tag to avoid cache problem
+**Note:** Use sha256 rather than image tag to avoid cache problem
 
 ## Run bundle scorecard
 
