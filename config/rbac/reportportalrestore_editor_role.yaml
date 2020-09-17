@@ -1,0 +1,24 @@
+# permissions for end users to edit reportportalrestores.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: reportportalrestore-editor-role
+rules:
+- apiGroups:
+  - rp5.reportportal.io
+  resources:
+  - reportportalrestores
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - rp5.reportportal.io
+  resources:
+  - reportportalrestores/status
+  verbs:
+  - get

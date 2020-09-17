@@ -1,0 +1,512 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: ClusterServiceVersion
+metadata:
+  annotations:
+    alm-examples: |-
+      [
+        {
+          "apiVersion": "rp5.reportportal.io/v1",
+          "kind": "ReportPortal",
+          "metadata": {
+            "name": "reportportal-sample"
+          },
+          "spec": {
+            "api_image": "quay.io/waynesun09/service-api:5.3.0-rootless",
+            "api_replicas": 1,
+            "app_domain": "apps.test-example.com",
+            "enable_pg_restic_backup": "yes",
+            "es_backup_schedule": "@daily",
+            "es_s3_backup_dir": "s3_backup",
+            "es_snapshot_bucket": "es-snapshot-123123",
+            "gateway_replicas": 1,
+            "index_replicas": 1,
+            "pg_restic_password": "rp_user",
+            "pg_restic_s3_bucket_init": "yes",
+            "pg_s3_bucket_name": "pgbackup-123123",
+            "uat_image": "reportportal/service-authorization:5.3.0",
+            "ui_replicas": 1
+          }
+        },
+        {
+          "apiVersion": "rp5.reportportal.io/v1",
+          "kind": "ReportPortalRestore",
+          "metadata": {
+            "name": "reportportalrestore-sample"
+          },
+          "spec": {
+            "es_restore": "yes",
+            "es_restore_date": "2020-08-07",
+            "es_s3_backup_dir": "s3_backup",
+            "es_snapshot_bucket": "es-snapshot-123123",
+            "pg_recovery": "yes",
+            "pg_recovery_target_time": "2020-08-07 00:00:00",
+            "pg_restic_password": "rp_user",
+            "pg_s3_bucket_name": "pgbackup-123123"
+          }
+        },
+        {
+          "apiVersion": "rp5.reportportal.io/v1",
+          "kind": "ServiceApiServiceMonitor",
+          "metadata": {
+            "name": "serviceapiservicemonitor-sample"
+          },
+          "spec": {
+            "bearer_token_secret_key": "token",
+            "bearer_token_secret_name": "rp-user-auth"
+          }
+        }
+      ]
+    capabilities: Deep Insights
+    categories: Application Runtime
+    certified: "false"
+    containerImage: quay.io/waynesun09/rp5-operator:v0.0.5
+    createdAt: "2020-09-17 09:45:00"
+    repository: https://github.com/waynesun09/reportportal-operator
+    operators.operatorframework.io/builder: operator-sdk-v1.0.0
+    operators.operatorframework.io/project_layout: ansible.sdk.operatorframework.io/v1
+  name: reportportal-operator.v0.0.5
+  namespace: placeholder
+spec:
+  apiservicedefinitions: {}
+  customresourcedefinitions:
+    owned:
+    - kind: ReportPortalRestore
+      description: ReportPortal Restore from s3 backup
+      name: reportportalrestores.rp5.reportportal.io
+      version: v1
+      resources:
+      - kind: Pods
+        name: ""
+        version: v1
+      - kind: ConfigMaps
+        name: ""
+        version: v1
+      - kind: ReportPortalRestores
+        name: reportportalrestores.rp5.reportportal.io
+        version: v1
+      specDescriptors:
+      - description: Enable Postgres recovery, need be 'yes' or 'no'
+        displayName: Enable Postgres recovery
+        path: pg_recovery
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      - description: The Postgres recovery target time, need be unique and valid time,
+          e.g. '2020-08-05 08:20:00 UTC'
+        displayName: The Postgres recovery target time
+        path: pg_recovery_target_time
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      - description: The s3 Postgres bucket name, need be unique and valid bucket
+          name
+        displayName: The s3 Postgres bucket name
+        path: pg_s3_bucket_name
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      - description: The s3 Postgres bucket restic password
+        displayName: Restic password
+        path: pg_restic_password
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      - description: The Elasticsearch snapshot path dir, if set the snapshot will
+          be enabled
+        displayName: Elasticsearch snapshot path dir
+        path: es_s3_backup_dir
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      - description: The Elasticsearch snapshot s3 bucket name
+        displayName: Elasticsearch snapshot s3 bucket name
+        path: es_snapshot_bucket
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      - description: The Elasticsearch snapshot to s3 bucket schedule, crontab schedule
+          format
+        displayName: Elasticsearch snapshot to s3 bucket schedule
+        path: es_backup_schedule
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+    - kind: ReportPortal
+      description: ReportPortal v5 Deployment with ReportPortal Operator
+      name: reportportals.rp5.reportportal.io
+      version: v1
+      resources:
+      - kind: Pods
+        name: ""
+        version: v1
+      - kind: ConfigMaps
+        name: ""
+        version: v1
+      - kind: ReportPortals
+        name: reportportals.rp5.reportportal.io
+        version: v1
+      - kind: ReplicaSets
+        name: ""
+        version: v1
+      - kind: Deployments
+        name: ""
+        version: v1
+      - kind: Services
+        name: ""
+        version: v1
+      specDescriptors:
+      - description: Clustser default sub domain hostname for the apps, if specified
+          route will be created with $namespace-reportportal.$app_domain.
+        displayName: App route base domain name
+        path: app_domain
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      - description: Replicas number for service-ui component
+        displayName: RP service-ui replicas
+        path: ui_replicas
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:number
+      - description: Replicas number for service-api component
+        displayName: RP service-api replicas
+        path: api_replicas
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:number
+      - description: service-api container image url
+        displayName: service-api container image
+        path: api_image
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      - description: service-authorization container image url
+        displayName: service-authorization container image
+        path: uat_image
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      - description: Replicas number for service-index component
+        displayName: RP service-index replicas
+        path: index_replicas
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:number
+      - description: Replicas number for gateway component
+        displayName: RP gateway replicas
+        path: gateway_replicas
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:number
+      - description: Whether to enable Postgres backup via restic, yes or no
+        displayName: Whether to enable Postgres backup via restic
+        path: enable_pg_restic_backup
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      - description: Whether to init the Postgres bucket, yes or no
+        displayName: Whether to init the Postgres bucket
+        path: pg_restic_s3_bucket_init
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      - description: The s3 Postgres bucket name, need be unique and valid bucket
+          name
+        displayName: The s3 Postgres bucket name
+        path: pg_s3_bucket_name
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      - description: The s3 Postgres bucket restic password
+        displayName: Restic password
+        path: pg_restic_password
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      - description: The Elasticsearch snapshot path dir, if set the snapshot will
+          be enabled
+        displayName: Elasticsearch snapshot path dir
+        path: es_s3_backup_dir
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      - description: The Elasticsearch snapshot s3 bucket name
+        displayName: Elasticsearch snapshot s3 bucket name
+        path: es_snapshot_bucket
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      - description: The Elasticsearch snapshot to s3 bucket schedule, crontab schedule
+          format
+        displayName: Elasticsearch snapshot to s3 bucket schedule
+        path: es_backup_schedule
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      statusDescriptors:
+      - description: Conditions provided by deployment
+        displayName: Conditions
+        path: conditions
+        x-descriptors:
+        - urn:alm:descriptor:io.kubernetes.conditions
+    - kind: ServiceApiServiceMonitor
+      description: ReportPortal service-api ServiceMonitor for metrics
+      name: serviceapiservicemonitors.rp5.reportportal.io
+      version: v1
+      resources:
+      - kind: Pods
+        name: ""
+        version: v1
+      - kind: ConfigMaps
+        name: ""
+        version: v1
+      - kind: serviceapiservicemonitors
+        name: serviceapiservicemonitors.rp5.reportportal.io
+        version: v1
+      specDescriptors:
+      - description: ReportPortal bearer token secret name
+        displayName: ReportPortal bearer token secret name
+        path: bearer_token_secret_name
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      - description: The key in ReportPortal bearer token secret
+        displayName: The key in ReportPortal bearer token secret
+        path: bearer_token_secret_key
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+  description: ReportPortal is a test automation analytics platform. ReportPortal Operator support instantiating the ReportPortal services and required dependencies. The Operator also support data backup & restore and metrics monitoring.
+  displayName: reportportal-operator
+  icon:
+  - base64data: PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCFET0NUWVBFIHN2ZyBQVUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj4KPHN2ZyB2ZXJzaW9uPSIxLjIiIHdpZHRoPSIzOC4xbW0iIGhlaWdodD0iNi4zNW1tIiB2aWV3Qm94PSIwIDAgMzgxMCA2MzUiIHByZXNlcnZlQXNwZWN0UmF0aW89InhNaWRZTWlkIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIHN0cm9rZS13aWR0aD0iMjguMjIyIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOm9vbz0iaHR0cDovL3htbC5vcGVub2ZmaWNlLm9yZy9zdmcvZXhwb3J0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeG1sbnM6cHJlc2VudGF0aW9uPSJodHRwOi8vc3VuLmNvbS94bWxucy9zdGFyb2ZmaWNlL3ByZXNlbnRhdGlvbiIgeG1sbnM6c21pbD0iaHR0cDovL3d3dy53My5vcmcvMjAwMS9TTUlMMjAvIiB4bWxuczphbmltPSJ1cm46b2FzaXM6bmFtZXM6dGM6b3BlbmRvY3VtZW50OnhtbG5zOmFuaW1hdGlvbjoxLjAiIHhtbDpzcGFjZT0icHJlc2VydmUiPgogPGRlZnMgY2xhc3M9IkNsaXBQYXRoR3JvdXAiPgogIDxjbGlwUGF0aCBpZD0icHJlc2VudGF0aW9uX2NsaXBfcGF0aCIgY2xpcFBhdGhVbml0cz0idXNlclNwYWNlT25Vc2UiPgogICA8cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMzgxMCIgaGVpZ2h0PSI2MzUiLz4KICA8L2NsaXBQYXRoPgogIDxjbGlwUGF0aCBpZD0icHJlc2VudGF0aW9uX2NsaXBfcGF0aF9zaHJpbmsiIGNsaXBQYXRoVW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KICAgPHJlY3QgeD0iMyIgeT0iMCIgd2lkdGg9IjM4MDMiIGhlaWdodD0iNjM0Ii8+CiAgPC9jbGlwUGF0aD4KIDwvZGVmcz4KIDxkZWZzIGNsYXNzPSJUZXh0U2hhcGVJbmRleCI+CiAgPGcgb29vOnNsaWRlPSJpZDEiIG9vbzppZC1saXN0PSJpZDMiLz4KIDwvZGVmcz4KIDxkZWZzIGNsYXNzPSJFbWJlZGRlZEJ1bGxldENoYXJzIj4KICA8ZyBpZD0iYnVsbGV0LWNoYXItdGVtcGxhdGUtNTczNTYiIHRyYW5zZm9ybT0ic2NhbGUoMC4wMDA0ODgyODEyNSwtMC4wMDA0ODgyODEyNSkiPgogICA8cGF0aCBkPSJNIDU4MCwxMTQxIEwgMTE2Myw1NzEgNTgwLDAgLTQsNTcxIDU4MCwxMTQxIFoiLz4KICA8L2c+CiAgPGcgaWQ9ImJ1bGxldC1jaGFyLXRlbXBsYXRlLTU3MzU0IiB0cmFuc2Zvcm09InNjYWxlKDAuMDAwNDg4MjgxMjUsLTAuMDAwNDg4MjgxMjUpIj4KICAgPHBhdGggZD0iTSA4LDExMjggTCAxMTM3LDExMjggMTEzNywwIDgsMCA4LDExMjggWiIvPgogIDwvZz4KICA8ZyBpZD0iYnVsbGV0LWNoYXItdGVtcGxhdGUtMTAxNDYiIHRyYW5zZm9ybT0ic2NhbGUoMC4wMDA0ODgyODEyNSwtMC4wMDA0ODgyODEyNSkiPgogICA8cGF0aCBkPSJNIDE3NCwwIEwgNjAyLDczOSAxNzQsMTQ4MSAxNDU2LDczOSAxNzQsMCBaIE0gMTM1OCw3MzkgTCAzMDksMTM0NiA2NTksNzM5IDEzNTgsNzM5IFoiLz4KICA8L2c+CiAgPGcgaWQ9ImJ1bGxldC1jaGFyLXRlbXBsYXRlLTEwMTMyIiB0cmFuc2Zvcm09InNjYWxlKDAuMDAwNDg4MjgxMjUsLTAuMDAwNDg4MjgxMjUpIj4KICAgPHBhdGggZD0iTSAyMDE1LDczOSBMIDEyNzYsMCA3MTcsMCAxMjYwLDU0MyAxNzQsNTQzIDE3NCw5MzYgMTI2MCw5MzYgNzE3LDE0ODEgMTI3NCwxNDgxIDIwMTUsNzM5IFoiLz4KICA8L2c+CiAgPGcgaWQ9ImJ1bGxldC1jaGFyLXRlbXBsYXRlLTEwMDA3IiB0cmFuc2Zvcm09InNjYWxlKDAuMDAwNDg4MjgxMjUsLTAuMDAwNDg4MjgxMjUpIj4KICAgPHBhdGggZD0iTSAwLC0yIEMgLTcsMTQgLTE2LDI3IC0yNSwzNyBMIDM1Niw1NjcgQyAyNjIsODIzIDIxNSw5NTIgMjE1LDk1NCAyMTUsOTc5IDIyOCw5OTIgMjU1LDk5MiAyNjQsOTkyIDI3Niw5OTAgMjg5LDk4NyAzMTAsOTkxIDMzMSw5OTkgMzU0LDEwMTIgTCAzODEsOTk5IDQ5Miw3NDggNzcyLDEwNDkgODM2LDEwMjQgODYwLDEwNDkgQyA4ODEsMTAzOSA5MDEsMTAyNSA5MjIsMTAwNiA4ODYsOTM3IDgzNSw4NjMgNzcwLDc4NCA3NjksNzgzIDcxMCw3MTYgNTk0LDU4NCBMIDc3NCwyMjMgQyA3NzQsMTk2IDc1MywxNjggNzExLDEzOSBMIDcyNywxMTkgQyA3MTcsOTAgNjk5LDc2IDY3Miw3NiA2NDEsNzYgNTcwLDE3OCA0NTcsMzgxIEwgMTY0LC03NiBDIDE0MiwtMTEwIDExMSwtMTI3IDcyLC0xMjcgMzAsLTEyNyA5LC0xMTAgOCwtNzYgMSwtNjcgLTIsLTUyIC0yLC0zMiAtMiwtMjMgLTEsLTEzIDAsLTIgWiIvPgogIDwvZz4KICA8ZyBpZD0iYnVsbGV0LWNoYXItdGVtcGxhdGUtMTAwMDQiIHRyYW5zZm9ybT0ic2NhbGUoMC4wMDA0ODgyODEyNSwtMC4wMDA0ODgyODEyNSkiPgogICA8cGF0aCBkPSJNIDI4NSwtMzMgQyAxODIsLTMzIDExMSwzMCA3NCwxNTYgNTIsMjI4IDQxLDMzMyA0MSw0NzEgNDEsNTQ5IDU1LDYxNiA4Miw2NzIgMTE2LDc0MyAxNjksNzc4IDI0MCw3NzggMjkzLDc3OCAzMjgsNzQ3IDM0Niw2ODQgTCAzNjksNTA4IEMgMzc3LDQ0NCAzOTcsNDExIDQyOCw0MTAgTCAxMTYzLDExMTYgQyAxMTc0LDExMjcgMTE5NiwxMTMzIDEyMjksMTEzMyAxMjcxLDExMzMgMTI5MiwxMTE4IDEyOTIsMTA4NyBMIDEyOTIsOTY1IEMgMTI5Miw5MjkgMTI4Miw5MDEgMTI2Miw4ODEgTCA0NDIsNDcgQyAzOTAsLTYgMzM4LC0zMyAyODUsLTMzIFoiLz4KICA8L2c+CiAgPGcgaWQ9ImJ1bGxldC1jaGFyLXRlbXBsYXRlLTk2NzkiIHRyYW5zZm9ybT0ic2NhbGUoMC4wMDA0ODgyODEyNSwtMC4wMDA0ODgyODEyNSkiPgogICA8cGF0aCBkPSJNIDgxMywwIEMgNjMyLDAgNDg5LDU0IDM4MywxNjEgMjc2LDI2OCAyMjMsNDExIDIyMyw1OTIgMjIzLDc3MyAyNzYsOTE2IDM4MywxMDIzIDQ4OSwxMTMwIDYzMiwxMTg0IDgxMywxMTg0IDk5MiwxMTg0IDExMzYsMTEzMCAxMjQ1LDEwMjMgMTM1Myw5MTYgMTQwNyw3NzIgMTQwNyw1OTIgMTQwNyw0MTIgMTM1MywyNjggMTI0NSwxNjEgMTEzNiw1NCA5OTIsMCA4MTMsMCBaIi8+CiAgPC9nPgogIDxnIGlkPSJidWxsZXQtY2hhci10ZW1wbGF0ZS04MjI2IiB0cmFuc2Zvcm09InNjYWxlKDAuMDAwNDg4MjgxMjUsLTAuMDAwNDg4MjgxMjUpIj4KICAgPHBhdGggZD0iTSAzNDYsNDU3IEMgMjczLDQ1NyAyMDksNDgzIDE1NSw1MzUgMTAxLDU4NiA3NCw2NDkgNzQsNzIzIDc0LDc5NiAxMDEsODU5IDE1NSw5MTEgMjA5LDk2MyAyNzMsOTg5IDM0Niw5ODkgNDE5LDk4OSA0ODAsOTYzIDUzMSw5MTAgNTgyLDg1OSA2MDgsNzk2IDYwOCw3MjMgNjA4LDY0OCA1ODMsNTg2IDUzMiw1MzUgNDgyLDQ4MyA0MjAsNDU3IDM0Niw0NTcgWiIvPgogIDwvZz4KICA8ZyBpZD0iYnVsbGV0LWNoYXItdGVtcGxhdGUtODIxMSIgdHJhbnNmb3JtPSJzY2FsZSgwLjAwMDQ4ODI4MTI1LC0wLjAwMDQ4ODI4MTI1KSI+CiAgIDxwYXRoIGQ9Ik0gLTQsNDU5IEwgMTEzNSw0NTkgMTEzNSw2MDYgLTQsNjA2IC00LDQ1OSBaIi8+CiAgPC9nPgogIDxnIGlkPSJidWxsZXQtY2hhci10ZW1wbGF0ZS02MTU0OCIgdHJhbnNmb3JtPSJzY2FsZSgwLjAwMDQ4ODI4MTI1LC0wLjAwMDQ4ODI4MTI1KSI+CiAgIDxwYXRoIGQ9Ik0gMTczLDc0MCBDIDE3Myw5MDMgMjMxLDEwNDMgMzQ2LDExNTkgNDYyLDEyNzQgNjAxLDEzMzIgNzY1LDEzMzIgOTI4LDEzMzIgMTA2NywxMjc0IDExODMsMTE1OSAxMjk5LDEwNDMgMTM1Nyw5MDMgMTM1Nyw3NDAgMTM1Nyw1NzcgMTI5OSw0MzcgMTE4MywzMjIgMTA2NywyMDYgOTI4LDE0OCA3NjUsMTQ4IDYwMSwxNDggNDYyLDIwNiAzNDYsMzIyIDIzMSw0MzcgMTczLDU3NyAxNzMsNzQwIFoiLz4KICA8L2c+CiA8L2RlZnM+CiA8Zz4KICA8ZyBpZD0iaWQyIiBjbGFzcz0iTWFzdGVyX1NsaWRlIj4KICAgPGcgaWQ9ImJnLWlkMiIgY2xhc3M9IkJhY2tncm91bmQiLz4KICAgPGcgaWQ9ImJvLWlkMiIgY2xhc3M9IkJhY2tncm91bmRPYmplY3RzIi8+CiAgPC9nPgogPC9nPgogPGcgY2xhc3M9IlNsaWRlR3JvdXAiPgogIDxnPgogICA8ZyBpZD0iY29udGFpbmVyLWlkMSI+CiAgICA8ZyBpZD0iaWQxIiBjbGFzcz0iU2xpZGUiIGNsaXAtcGF0aD0idXJsKCNwcmVzZW50YXRpb25fY2xpcF9wYXRoKSI+CiAgICAgPGcgY2xhc3M9IlBhZ2UiPgogICAgICA8ZyBjbGFzcz0iR3JhcGhpYyI+CiAgICAgICA8ZyBpZD0iaWQzIj4KICAgICAgICA8cmVjdCBjbGFzcz0iQm91bmRpbmdCb3giIHN0cm9rZT0ibm9uZSIgZmlsbD0ibm9uZSIgeD0iMCIgeT0iMCIgd2lkdGg9IjM4MTAiIGhlaWdodD0iNjM1Ii8+CiAgICAgICAgPHBhdGggZmlsbD0icmdiKDEwMiwyNTUsMTUzKSIgc3Ryb2tlPSJub25lIiBkPSJNIDAsMCBMIDM4MDksMCAzODA5LDYzNCAwLDYzNCAwLDAgWiIvPgogICAgICAgIDxkZWZzPgogICAgICAgICA8Y2xpcFBhdGggaWQ9ImNsaXBfcGF0aF8xIiBjbGlwUGF0aFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+CiAgICAgICAgICA8cGF0aCBkPSJNIDAsMCBMIDM4MDksMCAzODA5LDYzNCAwLDYzNCAwLDAgWiIvPgogICAgICAgICA8L2NsaXBQYXRoPgogICAgICAgIDwvZGVmcz4KICAgICAgICA8ZyBjbGlwLXBhdGg9InVybCgjY2xpcF9wYXRoXzEpIj4KICAgICAgICAgPHBhdGggZmlsbD0icmdiKDI1NSwyNTUsMjU1KSIgc3Ryb2tlPSJub25lIiBkPSJNIDUyOSwzNzAgTCA2NjEsMjM0IEMgNjM5LDE1OSA1OTMsOTUgNTI5LDUzIEwgNTI5LDI1NyA1MjksMzcwIFogTSA1MDMsMjExIEwgNTAzLDQyIEMgNDU1LDEzIDQwMSwwIDM1NCwwIDMyOCwwIDMwOSwyIDI5MSwwIEwgNTAzLDIxMSBaIE0gMTc4LDI2OSBMIDI2NSwxODUgNzAsMTg1IEMgMzAsMjQ4IDE3LDMyNCAyNiwzOTYgTCAxNzgsMjY5IFogTSA2NTYsNDQ5IEMgNjU2LDQ0OSA2OTUsMzI3IDY4NiwyNjQgTCA0NzYsNDQ5IDY1Niw0NDkgWiBNIDE4NSwzODAgTCAxODUsMzEzIEMgMTg1LDMxMyA1NSw0MjkgNTUsNDMxIDgxLDQ5MiAxMjYsNTQ1IDE4NSw1ODEgTCAxODUsMzgwIFogTSAyODMsMTU5IEwgMzk3LDE1OSAyNjEsMjYgQyAxOTIsNDYgMTI1LDkzIDc5LDE1OSBMIDI4MywxNTkgWiBNIDQ1Nyw0NzUgTCAzMjEsNDc1IDQ1Nyw2MTkgQyA0NzgsNjE5IDYxNyw1MzkgNjYxLDQ3NSBMIDQ1Nyw0NzUgWiBNIDIxMiw0MjMgTCAyMTIsNTk2IEMgMjU5LDYyMSAzMTEsNjM0IDM2NSw2MzQgMzY1LDYzNCAzNjUsNjM0IDM2NSw2MzQgMzg1LDYzNCA0MDQsNjMyIDQyMyw2MjkgTCAyOTQsNTAzIDIxMiw0MjMgWiIvPgogICAgICAgICA8cGF0aCBmaWxsPSJyZ2IoMjU1LDI1NSwyNTUpIiBzdHJva2U9Im5vbmUiIGQ9Ik0gOTQ0LDM3NiBMIDk0NCw1MDYgODczLDUwNiA4NzMsMTUxIDk4NywxNTEgQyAxMDIzLDE1MSAxMDUxLDE2MSAxMDcwLDE3OSAxMDkwLDE5OCAxMTAwLDIyNCAxMTAwLDI1OSAxMTAwLDMwNiAxMDgyLDMzOSAxMDQ4LDM1NyBMIDExMTEsNTAzIDExMTEsNTA2IDEwMzQsNTA2IDk4MCwzNzYgOTQ0LDM3NiBaIE0gOTg1LDMxNyBDIDk5NywzMTggMTAwOSwzMTIgMTAxNywzMDMgMTAyNSwyOTEgMTAyOSwyNzggMTAyOCwyNjUgMTAyOCwyMjkgMTAxNCwyMTEgOTg2LDIxMSBMIDk0NCwyMTEgOTQ0LDMxNyA5ODUsMzE3IFogTSAxMjM5LDUxMSBDIDEyMDMsNTExIDExNzYsNTAwIDExNTYsNDc5IDExMzYsNDU4IDExMjYsNDI4IDExMjYsMzg5IEwgMTEyNiwzNjggQyAxMTI2LDMyNiAxMTM1LDI5NCAxMTUzLDI3MiAxMTcyLDI0OSAxMTk4LDIzOCAxMjMyLDIzOCAxMjY1LDIzOCAxMjkwLDI0OCAxMzA2LDI2OSAxMzIzLDI5MSAxMzMyLDMyMiAxMzMyLDM2NCBMIDEzMzIsMzk3IDExOTUsMzk3IEMgMTE5Niw0MTcgMTIwMCw0MzIgMTIwOCw0NDEgMTIxNiw0NTAgMTIyNyw0NTQgMTI0Myw0NTQgMTI2NSw0NTUgMTI4Niw0NDYgMTMwMSw0MzAgTCAxMzI4LDQ3MiBDIDEzMTksNDg0IDEzMDYsNDk0IDEyOTEsNTAwIDEyNzUsNTA3IDEyNTcsNTExIDEyMzksNTExIEwgMTIzOSw1MTEgMTIzOSw1MTEgWiBNIDExOTYsMzQ5IEwgMTI2NSwzNDkgMTI2NSwzNDMgQyAxMjY1LDM0MiAxMjY1LDM0MSAxMjY1LDM0MCAxMjY1LDMyOSAxMjYyLDMxNyAxMjU3LDMwNyAxMjUyLDI5OSAxMjQzLDI5NCAxMjMxLDI5NCAxMjMxLDI5NCAxMjMwLDI5NCAxMjI5LDI5NCAxMjI0LDI5NCAxMjE5LDI5NiAxMjE1LDI5OCAxMjExLDMwMCAxMjA3LDMwNCAxMjA1LDMwNyAxMjAwLDMxNiAxMTk3LDMzMCAxMTk2LDM0OSBaIE0gMTU3MSwzODMgQyAxNTcxLDQyNCAxNTY0LDQ1NiAxNTUwLDQ3OCAxNTM1LDUwMCAxNTE0LDUxMSAxNDg2LDUxMSAxNDg2LDUxMSAxNDg1LDUxMSAxNDg1LDUxMSAxNDc0LDUxMSAxNDYzLDUwOCAxNDU0LDUwMyAxNDQ2LDQ5OCAxNDQwLDQ5MiAxNDM0LDQ4NSBMIDE0MzQsNjA3IDEzNjYsNjA3IDEzNjYsMjQzIDE0MzAsMjQzIDE0MzIsMjY3IEMgMTQzOCwyNTggMTQ0NSwyNTEgMTQ1NCwyNDYgMTQ2MywyNDEgMTQ3NCwyMzggMTQ4NSwyMzggMTQ4NSwyMzggMTQ4NiwyMzggMTQ4NiwyMzggMTUxNCwyMzggMTUzNSwyNDggMTU1MCwyNjggMTU2NCwyODkgMTU3MSwzMjAgMTU3MSwzNjMgTCAxNTcxLDM4MyAxNTcxLDM4MyAxNTcxLDM4MyBaIE0gMTQ5NCwzMTEgQyAxNDk0LDMxMSAxNDkzLDMxMSAxNDkzLDMxMCAxNDkxLDMwNiAxNDg3LDMwMiAxNDgyLDI5OSAxNDc4LDI5NyAxNDczLDI5NSAxNDY4LDI5NSAxNDY3LDI5NSAxNDY2LDI5NSAxNDY2LDI5NSAxNDY1LDI5NSAxNDY0LDI5NSAxNDY0LDI5NSAxNDU4LDI5NSAxNDUyLDI5NyAxNDQ3LDMwMCAxNDQzLDMwMyAxNDM4LDMwNyAxNDM1LDMxMiAxNDM1LDMxMiAxNDM1LDMxMyAxNDM1LDMxMyBMIDE0MzUsNDM3IEMgMTQ0MSw0NDggMTQ1Myw0NTUgMTQ2Niw0NTQgMTQ2Nyw0NTQgMTQ2OCw0NTQgMTQ2OCw0NTQgMTQ3Myw0NTQgMTQ3OCw0NTMgMTQ4Miw0NTAgMTQ4Nyw0NDggMTQ5MCw0NDQgMTQ5Myw0NDAgMTQ5NCw0MzkgMTQ5NCw0MzggMTQ5NSw0MzcgMTUwMCw0MjUgMTUwMiw0MDcgMTUwMiwzODMgTCAxNTAyLDM2NSAxNTAyLDM2NiBDIDE1MDIsMzQwIDE0OTksMzIyIDE0OTQsMzExIFogTSAxNjI3LDI3MSBDIDE2NDYsMjQ5IDE2NzIsMjM3IDE3MDUsMjM3IDE3MzksMjM3IDE3NjUsMjQ5IDE3ODQsMjcxIDE4MDMsMjk0IDE4MTIsMzI2IDE4MTIsMzY2IEwgMTgxMiwzODIgQyAxODEyLDQyMyAxODAzLDQ1NCAxNzg0LDQ3NyAxNzY2LDQ5OSAxNzM5LDUxMSAxNzA2LDUxMCAxNjcyLDUxMCAxNjQ2LDQ5OSAxNjI3LDQ3NyAxNjA4LDQ1NCAxNTk5LDQyMyAxNTk5LDM4MiBMIDE1OTksMzY2IEMgMTU5OSwzMjYgMTYwOCwyOTQgMTYyNywyNzEgWiBNIDE3MDYsNDU0IEMgMTcyOSw0NTQgMTc0MSw0MzQgMTc0MywzOTUgTCAxNzQzLDM2NiBDIDE3NDMsMzQxIDE3NDAsMzIzIDE3MzMsMzEyIDE3MzMsMzExIDE3MzMsMzEwIDE3MzIsMzEwIDE3MzAsMzA1IDE3MjYsMzAxIDE3MjEsMjk4IDE3MTYsMjk2IDE3MTEsMjk0IDE3MDUsMjk0IDE3MDUsMjk0IDE3MDUsMjk0IDE3MDUsMjk0IDE2OTMsMjk0IDE2ODMsMzAxIDE2NzgsMzEyIDE2NzEsMzIzIDE2NjgsMzQxIDE2NjgsMzY2IEwgMTY2OCwzODMgMTY2OCwzODMgQyAxNjY4LDQzMCAxNjgxLDQ1NCAxNzA2LDQ1NCBaIE0gMTk1NSwzMDcgQyAxOTM2LDMwNyAxOTIzLDMxNSAxOTE3LDMzMiBMIDE5MTcsNTA2IDE4NDgsNTA2IDE4NDgsMjQzIDE5MTMsMjQzIDE5MTUsMjcxIEMgMTkyNiwyNDkgMTk0MSwyMzggMTk2MCwyMzggMTk2NiwyMzggMTk3MywyMzkgMTk3OSwyNDEgTCAxOTc4LDMwOSAxOTU1LDMwNyBaIE0gMjA5NiwxNzggTCAyMDk2LDI0MyAyMTMxLDI0MyAyMTMxLDI5NCAyMDk2LDI5NCAyMDk2LDQyNSBDIDIwOTYsNDMyIDIwOTcsNDQwIDIxMDAsNDQ2IDIxMDMsNDUwIDIxMDksNDUyIDIxMTcsNDUyIDIxMjMsNDUyIDIxMjgsNDUyIDIxMzMsNDUxIEwgMjEzMyw1MDQgQyAyMTIxLDUwOSAyMTA4LDUxMSAyMDk1LDUxMSAyMDUwLDUxMSAyMDI4LDQ4NiAyMDI3LDQzNSBMIDIwMjcsMjk0IDE5OTcsMjk0IDE5OTcsMjQzIDIwMjcsMjQzIDIwMjcsMTc4IDIwOTYsMTc4IFogTSAyMjY5LDM4MSBMIDIyNjksNTA2IDIxOTgsNTA2IDIxOTgsMTUxIDIzMTksMTUxIEMgMjM1NCwxNTEgMjM4MiwxNjIgMjQwMywxODQgMjQyMywyMDYgMjQzNCwyMzQgMjQzNCwyNjkgMjQzNCwzMDMgMjQyNCwzMzEgMjQwMywzNTEgMjM4MiwzNzEgMjM1NCwzODEgMjMxNywzODEgTCAyMjY5LDM4MSAyMjY5LDM4MSBaIE0gMjI2OSwzMjIgTCAyMjY5LDMyMiAyMjY5LDMyMiAyMzE5LDMyMiBDIDIzMzEsMzIyIDIzNDIsMzE3IDIzNTAsMzA4IDIzNTgsMjk5IDIzNjEsMjg2IDIzNjEsMjY5IDIzNjEsMjY4IDIzNjEsMjY3IDIzNjEsMjY2IDIzNjEsMjUzIDIzNTgsMjQxIDIzNTIsMjMxIDIzNTEsMjMwIDIzNTEsMjI4IDIzNTAsMjI3IDIzNDcsMjIzIDIzNDMsMjE5IDIzMzgsMjE2IDIzMzIsMjEzIDIzMjYsMjExIDIzMTksMjExIDIzMTksMjExIDIzMTksMjExIDIzMTksMjExIEwgMjI2OSwyMTEgMjI2OSwzMjIgMjI2OSwzMjIgWiBNIDI0ODAsMjcyIEMgMjQ5OSwyNDkgMjUyNSwyMzcgMjU1OCwyMzggMjU5MiwyMzggMjYxOCwyNDkgMjYzNywyNzIgMjY1NiwyOTQgMjY2NSwzMjYgMjY2NSwzNjYgTCAyNjY1LDM4MyBDIDI2NjUsNDIzIDI2NTYsNDU0IDI2MzcsNDc3IDI2MTksNTAwIDI1OTMsNTExIDI1NTksNTExIDI1MjUsNTExIDI0OTksNDk5IDI0ODAsNDc3IDI0NjEsNDU0IDI0NTIsNDIzIDI0NTIsMzgzIEwgMjQ1MiwzNjYgQyAyNDUyLDMyNiAyNDYxLDI5NSAyNDgwLDI3MiBaIE0gMjU1OSw0NTQgQyAyNTgyLDQ1NCAyNTk1LDQzNCAyNTk2LDM5NSBMIDI1OTYsMzY2IEMgMjU5NiwzNDIgMjU5MywzMjQgMjU4NiwzMTIgMjU4NiwzMTEgMjU4NiwzMTEgMjU4NSwzMTAgMjU4MywzMDUgMjU3OSwzMDEgMjU3NCwyOTkgMjU2OSwyOTYgMjU2NCwyOTUgMjU1OCwyOTUgMjU1OCwyOTUgMjU1OCwyOTUgMjU1OCwyOTUgMjU0NiwyOTUgMjUzNiwzMDEgMjUzMSwzMTIgMjUyNCwzMjQgMjUyMSwzNDIgMjUyMSwzNjYgTCAyNTIxLDM4MyAyNTIxLDM4MyBDIDI1MjEsNDMxIDI1MzQsNDU0IDI1NTksNDU0IFogTSAyODMxLDMwOSBMIDI4MDgsMzA3IEMgMjc4OSwzMDcgMjc3NywzMTUgMjc3MCwzMzIgTCAyNzcwLDUwNiAyNzAxLDUwNiAyNzAxLDI0MyAyNzY2LDI0MyAyNzY4LDI3MSBDIDI3NzksMjQ5IDI3OTQsMjM4IDI4MTMsMjM4IDI4MTksMjM4IDI4MjYsMjM5IDI4MzIsMjQxIEwgMjgzMSwzMDkgMjgzMSwzMDkgWiBNIDI5NDksMTc4IEwgMjk0OSwxNzggMjk0OSwxNzggMjk0OSwyNDMgMjk4NCwyNDMgMjk4NCwyOTQgMjk0OSwyOTQgMjk0OSw0MjUgQyAyOTQ4LDQzMiAyOTUwLDQ0MCAyOTUzLDQ0NiAyOTU2LDQ1MCAyOTYyLDQ1MiAyOTcwLDQ1MiAyOTc1LDQ1MiAyOTgxLDQ1MiAyOTg2LDQ1MSBMIDI5ODYsNTA0IEMgMjk3Myw1MDkgMjk2MSw1MTEgMjk0OCw1MTEgMjkwMyw1MTEgMjg4MSw0ODYgMjg4MCw0MzUgTCAyODgwLDI5NCAyODUwLDI5NCAyODUwLDI0MyAyODgwLDI0MyAyODgwLDE3OCAyOTQ5LDE3OCAyOTQ5LDE3OCBaIE0gMzEzNyw0ODUgQyAzMTI1LDUwMiAzMTA3LDUxMSAzMDg3LDUxMSAzMDg2LDUxMSAzMDg1LDUxMSAzMDg1LDUxMSAzMDcyLDUxMSAzMDU5LDUwNyAzMDQ3LDUwMSAzMDQyLDQ5NyAzMDM2LDQ5MyAzMDMyLDQ4OSAzMDI3LDQ4NCAzMDIzLDQ3OSAzMDIwLDQ3MyAzMDEzLDQ2MiAzMDEwLDQ0OCAzMDEwLDQzNSAzMDEwLDQzNCAzMDEwLDQzMyAzMDEwLDQzMiAzMDEwLDQwNCAzMDE5LDM4MyAzMDM2LDM2OCAzMDU0LDM1MyAzMDc5LDM0NSAzMTEyLDM0NSBMIDMxMzMsMzQ1IDMxMzMsMzI0IEMgMzEzMywzMTIgMzEzMSwzMDQgMzEyNywyOTkgMzEyNiwyOTcgMzEyNCwyOTYgMzEyMiwyOTQgMzExOSwyOTIgMzExNSwyOTEgMzExMSwyOTEgMzExMCwyOTEgMzExMCwyOTEgMzEwOSwyOTEgMzA5MiwyOTEgMzA4NCwzMDIgMzA4NCwzMjIgTCAzMDE1LDMyMiBDIDMwMTUsMzIxIDMwMTUsMzIxIDMwMTUsMzIwIDMwMTUsMzA3IDMwMTgsMjkzIDMwMjUsMjgyIDMwMjksMjc0IDMwMzUsMjY3IDMwNDIsMjYxIDMwNDcsMjU4IDMwNTEsMjU0IDMwNTcsMjUxIDMwNzIsMjQyIDMwOTAsMjM4IDMxMDgsMjM4IDMxMDksMjM4IDMxMTAsMjM4IDMxMTEsMjM4IDMxNDAsMjM4IDMxNjMsMjQ1IDMxNzksMjYwIDMxOTQsMjc1IDMyMDIsMjk3IDMyMDIsMzI1IEwgMzIwMiw0NDggQyAzMjAzLDQ3MSAzMjA2LDQ4OSAzMjEyLDUwMiBMIDMyMTIsNTA2IDMxNDMsNTA2IDMxNDMsNTA2IEMgMzE0MCw0OTkgMzEzOCw0OTIgMzEzNyw0ODUgWiBNIDMxMDIsNDU3IEMgMzEwOSw0NTcgMzExNSw0NTUgMzEyMSw0NTIgMzEyNiw0NDkgMzEzMCw0NDYgMzEzMyw0NDEgTCAzMTMzLDM4NiAzMTE3LDM4NiBDIDMxMTYsMzg2IDMxMTUsMzg2IDMxMTUsMzg2IDMxMDksMzg2IDMxMDIsMzg4IDMwOTcsMzkxIDMwOTQsMzkzIDMwOTEsMzk1IDMwODksMzk3IDMwODcsMzk5IDMwODYsNDAxIDMwODUsNDA0IDMwODEsNDEwIDMwNzksNDE3IDMwNzksNDI1IDMwNzksNDI2IDMwNzksNDI3IDMwNzksNDI3IDMwNzksNDQ3IDMwODcsNDU3IDMxMDIsNDU3IEwgMzEwMiw0NTcgMzEwMiw0NTcgWiBNIDMzMTYsNTA2IEwgMzMxNiw1MDYgMzMxNiw1MDYgMzI0Nyw1MDYgMzI0NywxMzIgMzMxNiwxMzIgMzMxNiw1MDYgMzMxNiw1MDYgWiBNIDMzNzQsNDQ0IEMgMzM3Niw0NDEgMzM3OSw0NDAgMzM4MSw0MzggMzM4Nyw0MzUgMzM5NCw0MzMgMzQwMSw0MzMgMzQwMiw0MzMgMzQwMiw0MzMgMzQwMyw0MzMgMzQxNCw0MzIgMzQyNCw0MzYgMzQzMiw0NDMgMzQzOSw0NTAgMzQ0NCw0NjAgMzQ0Myw0NzEgMzQ0NCw0ODEgMzQzOSw0OTEgMzQzMiw0OTggMzQzMCw1MDAgMzQyNyw1MDIgMzQyNSw1MDMgMzQxOSw1MDcgMzQxMiw1MDggMzQwNCw1MDggMzQwNCw1MDggMzQwMyw1MDggMzQwMyw1MDggMzQwMyw1MDggMzQwMiw1MDggMzQwMiw1MDggMzM5NSw1MDggMzM4OCw1MDcgMzM4MSw1MDMgMzM3OSw1MDIgMzM3Nyw1MDAgMzM3NCw0OTggMzM3Miw0OTYgMzM3MCw0OTMgMzM2OCw0OTAgMzM2NSw0ODQgMzM2Myw0NzggMzM2Myw0NzIgMzM2Myw0NzIgMzM2Myw0NzEgMzM2Myw0NzEgTCAzMzYzLDQ3MSBDIDMzNjMsNDYxIDMzNjcsNDUxIDMzNzQsNDQ0IFogTSAzNDg4LDE3NCBDIDM0ODgsMTc0IDM0ODgsMTczIDM0ODgsMTczIDM0ODgsMTY3IDM0ODksMTYxIDM0OTIsMTU1IDM0OTQsMTUzIDM0OTYsMTUwIDM0OTgsMTQ4IDM1MDAsMTQ2IDM1MDIsMTQ1IDM1MDQsMTQzIDM1MTEsMTQwIDM1MTgsMTM4IDM1MjUsMTM4IDM1MzIsMTM4IDM1NDAsMTQwIDM1NDYsMTQzIDM1NDgsMTQ1IDM1NTAsMTQ2IDM1NTIsMTQ4IDM1NTksMTU1IDM1NjMsMTY0IDM1NjMsMTc0IDM1NjMsMTc1IDM1NjMsMTc2IDM1NjMsMTc2IDM1NjMsMTgzIDM1NjEsMTg5IDM1NTgsMTk1IDM1NTQsMjAxIDM1NTAsMjA2IDM1NDQsMjA5IDM1MzgsMjEyIDM1MzIsMjE0IDM1MjUsMjE0IDM1MTksMjE0IDM1MTIsMjEyIDM1MDYsMjA5IDM1MDEsMjA2IDM0OTYsMjAxIDM0OTMsMTk1IDM0ODksMTg5IDM0ODgsMTgzIDM0ODgsMTc2IDM0ODgsMTc2IDM0ODgsMTc1IDM0ODgsMTc0IEwgMzQ4OCwxNzQgWiBNIDM0OTEsNTA2IEwgMzQ5MSwyNDMgMzU2MCwyNDMgMzU2MCw1MDYgMzU2MCw1MDYgMzQ5MSw1MDYgWiBNIDM2MjQsMjcxIEMgMzY0MywyNDkgMzY2OSwyMzcgMzcwMiwyMzcgMzczNiwyMzcgMzc2MiwyNDkgMzc4MSwyNzEgMzgwMCwyOTQgMzgwOSwzMjYgMzgwOSwzNjYgTCAzODA5LDM4MiBDIDM4MDksNDIzIDM4MDAsNDU0IDM3ODEsNDc3IDM3NjIsNDk5IDM3MzYsNTExIDM3MDMsNTEwIDM2NjksNTEwIDM2NDIsNDk5IDM2MjQsNDc3IDM2MDUsNDU0IDM1OTUsNDIzIDM1OTUsMzgyIEwgMzU5NSwzNjYgQyAzNTk1LDMyNiAzNjA1LDI5NCAzNjI0LDI3MSBaIE0gMzY2NSwzODMgQyAzNjY1LDQzMCAzNjc3LDQ1NCAzNzAyLDQ1NCAzNzI2LDQ1NCAzNzM4LDQzNCAzNzQwLDM5NSBMIDM3NDAsMzY2IEMgMzc0MCwzNDEgMzczNywzMjMgMzczMCwzMTIgMzczMCwzMTEgMzcyOSwzMTAgMzcyOSwzMTAgMzcyNiwzMDUgMzcyMiwzMDEgMzcxOCwyOTggMzcxMywyOTYgMzcwOCwyOTQgMzcwMiwyOTQgMzcwMiwyOTQgMzcwMiwyOTQgMzcwMiwyOTQgMzY5MCwyOTQgMzY3OSwzMDEgMzY3NCwzMTIgMzY2OCwzMjMgMzY2NCwzNDEgMzY2NCwzNjYgTCAzNjY0LDM4MyAzNjY1LDM4MyBaIi8+CiAgICAgICAgPC9nPgogICAgICAgPC9nPgogICAgICA8L2c+CiAgICAgPC9nPgogICAgPC9nPgogICA8L2c+CiAgPC9nPgogPC9nPgo8L3N2Zz4=
+    mediatype: image/svg+xml
+  install:
+    spec:
+      clusterPermissions:
+      - rules:
+        - apiGroups:
+          - ""
+          resources:
+          - secrets
+          - pods
+          - pods/exec
+          - pods/log
+          - services
+          - services/finalizers
+          - endpoints
+          - persistentvolumeclaims
+          - events
+          - configmaps
+          - serviceaccounts
+          verbs:
+          - create
+          - delete
+          - get
+          - list
+          - patch
+          - update
+          - watch
+        - apiGroups:
+          - apps
+          resources:
+          - deployments
+          - deployments/scale
+          - daemonsets
+          - replicasets
+          - statefulsets
+          verbs:
+          - create
+          - delete
+          - get
+          - list
+          - patch
+          - update
+          - watch
+        - apiGroups:
+          - rbac.authorization.k8s.io
+          resources:
+          - roles
+          - rolebindings
+          verbs:
+          - create
+          - delete
+          - get
+          - list
+          - patch
+          - update
+          - watch
+        - apiGroups:
+          - policy
+          resources:
+          - poddisruptionbudgets
+          verbs:
+          - create
+          - delete
+          - get
+          - list
+          - patch
+          - update
+          - watch
+        - apiGroups:
+          - batch
+          resources:
+          - jobs
+          - cronjobs
+          verbs:
+          - create
+          - delete
+          - get
+          - list
+          - patch
+          - update
+          - watch
+        - apiGroups:
+          - route.openshift.io
+          resources:
+          - routes
+          - routes/custom-host
+          verbs:
+          - create
+          - delete
+          - get
+          - list
+          - patch
+          - update
+          - watch
+        - apiGroups:
+          - monitoring.coreos.com
+          resources:
+          - alertmanagers
+          - servicemonitors
+          - prometheuses
+          - prometheusrules
+          verbs:
+          - get
+          - list
+          - create
+          - update
+          - delete
+          - deletecollection
+          - watch
+          - patch
+        - apiGroups:
+          - apps
+          resourceNames:
+          - reportportal-operator
+          resources:
+          - deployments/finalizers
+          verbs:
+          - update
+        - apiGroups:
+          - rp5.reportportal.io
+          resources:
+          - reportportals
+          - reportportals/status
+          verbs:
+          - create
+          - delete
+          - get
+          - list
+          - patch
+          - update
+          - watch
+        - apiGroups:
+          - rp5.reportportal.io
+          resources:
+          - reportportalrestores
+          - reportportalrestores/status
+          verbs:
+          - create
+          - delete
+          - get
+          - list
+          - patch
+          - update
+          - watch
+        - apiGroups:
+          - rp5.reportportal.io
+          resources:
+          - serviceapiservicemonitors
+          - serviceapiservicemonitors/status
+          verbs:
+          - create
+          - delete
+          - get
+          - list
+          - patch
+          - update
+          - watch
+        - apiGroups:
+          - authentication.k8s.io
+          resources:
+          - tokenreviews
+          verbs:
+          - create
+        - apiGroups:
+          - authorization.k8s.io
+          resources:
+          - subjectaccessreviews
+          verbs:
+          - create
+        serviceAccountName: default
+      deployments:
+      - name: reportportal-operator-controller-manager
+        spec:
+          replicas: 1
+          selector:
+            matchLabels:
+              control-plane: controller-manager
+          strategy: {}
+          template:
+            metadata:
+              labels:
+                control-plane: controller-manager
+            spec:
+              containers:
+              - args:
+                - --metrics-addr=127.0.0.1:8080
+                - --enable-leader-election
+                - --leader-election-id=reportportal-operator
+                image: quay.io/waynesun09/rp5-operator:v0.0.5
+                name: manager
+                resources: {}
+              - args:
+                - --secure-listen-address=0.0.0.0:8443
+                - --upstream=http://127.0.0.1:8080/
+                - --logtostderr=true
+                - --v=10
+                image: gcr.io/kubebuilder/kube-rbac-proxy:v0.5.0
+                name: kube-rbac-proxy
+                ports:
+                - containerPort: 8443
+                  name: https
+                resources: {}
+              terminationGracePeriodSeconds: 10
+      permissions:
+      - rules:
+        - apiGroups:
+          - ""
+          resources:
+          - configmaps
+          verbs:
+          - get
+          - list
+          - watch
+          - create
+          - update
+          - patch
+          - delete
+        - apiGroups:
+          - ""
+          resources:
+          - events
+          verbs:
+          - create
+          - patch
+        serviceAccountName: default
+    strategy: deployment
+  installModes:
+  - supported: true
+    type: OwnNamespace
+  - supported: true
+    type: SingleNamespace
+  - supported: false
+    type: MultiNamespace
+  - supported: true
+    type: AllNamespaces
+  keywords:
+  - reportportal
+  - failure analysis
+  - test automation
+  links:
+  - name: Documentation
+    url: https://github.com/waynesun09/reportportal-operator/blob/master/README.md
+  - name: ReportPortal.io
+    url: https://reportportal.io
+  maintainers:
+  - email: gsun@redhat.com
+    name: Wayne Sun
+  maturity: alpha
+  provider:
+    name: waynesun09
+    url: https://github.com/waynesun09/reportportal-operator
+  replaces: reportportal-operator.v0.0.4
+  version: 0.0.5

@@ -4,6 +4,7 @@
   kind: ReportPortal
   role: /opt/ansible/roles/reportportal
   vars:
+    meta: '{{ ansible_operator_meta }}'
     deploy_rp: yes
     pg_recovery: no
     es_restore: no
@@ -13,24 +14,29 @@
     role: /opt/ansible/roles/reportportal-remove
     vars:
       remove_minio: no
+# +kubebuilder:scaffold:watch
 
 - version: v1
   group: rp5.reportportal.io
   kind: ReportPortalRestore
   role: /opt/ansible/roles/reportportal
   vars:
+    meta: '{{ ansible_operator_meta }}'
     deploy_rp: no
     enable_rp_service_api_servicemonitor: no
     pg_recovery: yes
     es_restore: yes
   manageStatus: false
+# +kubebuilder:scaffold:watch
 
 - version: v1
   group: rp5.reportportal.io
   kind: ServiceApiServiceMonitor
   role: /opt/ansible/roles/reportportal
   vars:
+    meta: '{{ ansible_operator_meta }}'
     deploy_rp: no
     pg_recovery: no
     es_restore: no
     enable_rp_service_api_servicemonitor: yes
+# +kubebuilder:scaffold:watch

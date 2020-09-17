@@ -1,0 +1,46 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: ClusterServiceVersion
+metadata:
+  annotations:
+    alm-examples: '[]'
+    capabilities: Basic Install
+    operators.operatorframework.io/builder: operator-sdk-v1.0.0
+    operators.operatorframework.io/project_layout: ansible.sdk.operatorframework.io/v1
+  name: reportportal-operator.vX.Y.Z
+  namespace: placeholder
+spec:
+  apiservicedefinitions: {}
+  customresourcedefinitions: {}
+  description: ReportPortal is a test automation analytics platform. ReportPortal Operator support instantiating the ReportPortal services and required dependencies. The Operator also support data backup & restore and metrics monitoring.
+  displayName: reportportal-operator
+  icon:
+  - base64data: ""
+    mediatype: ""
+  install:
+    spec:
+      deployments: null
+    strategy: ""
+  installModes:
+  - supported: true
+    type: OwnNamespace
+  - supported: true
+    type: SingleNamespace
+  - supported: false
+    type: MultiNamespace
+  - supported: true
+    type: AllNamespaces
+  keywords:
+  - reportportal
+  - failure analysis
+  - test automation
+  links:
+  - name: Reportportal Operator
+    url: https://reportportal-operator.domain
+  maintainers:
+  - email: gsun@redhat.com
+    name: Wayne Sun
+  maturity: alpha
+  provider:
+    name: waynesun09
+    url: https://github.com/waynesun09/reportportal-operator
+  version: 0.0.0

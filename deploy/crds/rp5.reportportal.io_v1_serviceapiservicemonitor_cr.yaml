@@ -1,7 +1,0 @@
-apiVersion: rp5.reportportal.io/v1
-kind: ServiceApiServiceMonitor
-metadata:
-  name: example-service-api-servicemonitor
-spec:
-  bearer_token_secret_name: 'rp-user-auth'
-  bearer_token_secret_key: 'token'

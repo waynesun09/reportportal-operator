@@ -1,0 +1,171 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: manager-role
+rules:
+  ##
+  ## Base operator rules
+  ##
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+      - pods
+      - pods/exec
+      - pods/log
+      - services
+      - services/finalizers
+      - endpoints
+      - persistentvolumeclaims
+      - events
+      - configmaps
+      - serviceaccounts
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - apps
+    resources:
+      - deployments
+      - deployments/scale
+      - daemonsets
+      - replicasets
+      - statefulsets
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+    - rbac.authorization.k8s.io
+    resources:
+    - roles
+    - rolebindings
+    verbs:
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+  - apiGroups:
+    - policy
+    resources:
+    - poddisruptionbudgets
+    verbs:
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+  - apiGroups:
+    - batch
+    resources:
+    - jobs
+    - cronjobs
+    verbs:
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+  - apiGroups:
+    - route.openshift.io
+    resources:
+    - routes
+    - routes/custom-host
+    verbs:
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+  - apiGroups:
+    - monitoring.coreos.com
+    resources:
+    - alertmanagers
+    - servicemonitors
+    - prometheuses
+    - prometheusrules
+    verbs:
+    - get
+    - list
+    - create
+    - update
+    - delete
+    - deletecollection
+    - watch
+    - patch
+  - apiGroups:
+    - apps
+    resourceNames:
+    - reportportal-operator
+    resources:
+    - deployments/finalizers
+    verbs:
+    - update
+  ##
+  ## Rules for rp5.reportportal.io/v1, Kind: ReportPortal
+  ##
+  - apiGroups:
+      - rp5.reportportal.io
+    resources:
+      - reportportals
+      - reportportals/status
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  ##
+  ## Rules for rp5.reportportal.io/v1, Kind: ReportPortalRestore
+  ##
+  - apiGroups:
+      - rp5.reportportal.io
+    resources:
+      - reportportalrestores
+      - reportportalrestores/status
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  ##
+  ## Rules for rp5.reportportal.io/v1, Kind: ServiceApiServiceMonitor
+  ##
+  - apiGroups:
+      - rp5.reportportal.io
+    resources:
+      - serviceapiservicemonitors
+      - serviceapiservicemonitors/status
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+# +kubebuilder:scaffold:rules

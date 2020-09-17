@@ -1,0 +1,20 @@
+# permissions for end users to view reportportalrestores.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: reportportalrestore-viewer-role
+rules:
+- apiGroups:
+  - rp5.reportportal.io
+  resources:
+  - reportportalrestores
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - rp5.reportportal.io
+  resources:
+  - reportportalrestores/status
+  verbs:
+  - get

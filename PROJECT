@@ -1,0 +1,14 @@
+domain: reportportal.io
+layout: ansible.sdk.operatorframework.io/v1
+projectName: reportportal-operator
+resources:
+- group: rp5
+  kind: ReportPortal
+  version: v1
+- group: rp5
+  kind: ReportPortalRestore
+  version: v1
+- group: rp5
+  kind: ServiceApiServiceMonitor
+  version: v1
+version: 3-alpha
