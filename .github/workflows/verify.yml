@@ -15,6 +15,6 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Run operator-sdk scorecard bundle test
-      run: curl -L https://github.com/operator-framework/operator-sdk/releases/download/${RELEASE_VERSION}/operator-sdk-${RELEASE_VERSION}-x86_64-linux-gnu -o operator-sdk && chmod +x operator-sdk && operator-sdk scorecard bundle
+      run: curl -L https://github.com/operator-framework/operator-sdk/releases/download/${RELEASE_VERSION}/operator-sdk-${RELEASE_VERSION}-x86_64-linux-gnu -o operator-sdk && chmod +x operator-sdk && ./operator-sdk scorecard bundle
       env:
         RELEASE_VERSION: v1.0.0
