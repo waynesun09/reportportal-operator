@@ -66,11 +66,35 @@ $ sudo docker push quay.io/waynesun09/wayne-index:1.0.4
 
 Then could create CatalogSource on your testing cluster to add the operator registry.
 
-## Run scorecard
+## Run bundle scorecard
 
-Check the .osdk-scorecard.yaml in the repo dir, update version and path if needed.
+Check the `bundle/tests/scorecard/config.yaml` in the repo dir, update version and path if needed.
 
 Run the corecard command, it'll test in your cluster env, so make sure you have connected to your cluster.
 ```console
-$ operator-sdk scorecard
+$ operator-sdk scorecard bundle
+```
+
+## Generate packagemanifest
+
+Default the operator is bundle format, if want to generate packagemanifest
+```console
+$ kustomize build config/manifests | operator-sdk generate packagemanifests -q --version 0.0.5
+
+$ tree packagemanifests/
+packagemanifests/
+├── 0.0.5
+│   ├── reportportal-operator.clusterserviceversion.yaml
+│   ├── reportportal-operator-metrics-reader_rbac.authorization.k8s.io_v1beta1_clusterrole.yaml
+│   ├── rp5.reportportal.io_reportportalrestores.yaml
+│   ├── rp5.reportportal.io_reportportals.yaml
+│   └── rp5.reportportal.io_serviceapiservicemonitors.yaml
+└── reportportal-operator.package.yaml
+
+1 directory, 6 files
+```
+
+As the default manifests base template is not fully supported with all the fields, so after generate simply replace the bundle CSV to the packagemanifests dir.
+```console
+$ cp bundle/manifests/reportportal-operator.clusterserviceversion.yaml packagemanifests/0.0.5/
 ```
