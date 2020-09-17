@@ -64,11 +64,14 @@ $ sudo docker push quay.io/waynesun09/wayne-index:1.0.0
 ```
 
 To add updated bundle image to the index:
-**Note:** Use sha256 rather than image tag to avoid cache problem
 
 ```console
 $ sudo opm index add --container-tool docker --bundles quay.io/waynesun09/rp5-bundle-operator@sha256:60985448712964fcb9ea2e22b82012b791c1647d27b18c34e1f7c5d376874188 --from-index quay.io/waynesun09/wayne-index:1.0.3 --tag quay.io/waynesun09/wayne-index:1.0.4
+```
 
+**Note:** Use sha256 rather than image tag to avoid cache problem
+
+```console
 $ sudo docker push quay.io/waynesun09/wayne-index:1.0.4
 The push refers to repository [quay.io/waynesun09/wayne-index]
 a3b7cbd3cadf: Pushed
