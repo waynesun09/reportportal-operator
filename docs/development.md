@@ -10,65 +10,41 @@ For your devel enviroment, you could start with [CodeReady](https://github.com/c
 
 ## Update Ansible Role
 
-For update the ansible role, check and update in `roles/reportportal`.
+For update the ansible role, check and update in `roles/` .
 
 Then follow the [Ansible user guide](https://sdk.operatorframework.io/docs/ansible/ "Ansible User Guide for Operator SDK") doc with build and test the operator.
 
 After role updated, create new operator image with:
 ```console
-$ buildah bud -f build/Dockerfile -t quay.io/waynesun09/rp5-operator:v0.0.5
+$ buildah bud -f Dockerfile -t quay.io/waynesun09/rp5-operator:v0.0.5
 $ buildah push quay.io/waynesun09/rp5-operator:v0.0.5
-```
-
-## Update CSV
-
-If need update CSV or update release version, follow guide [Generating a CSV](https://sdk.operatorframework.io/docs/olm-integration/generating-a-csv/) create the Operator manifest CSV package file, make sure to update new operator image and related changes.
-
-Run operator-sdk generate command
-```console
-$ operator-sdk generate csv --csv-version 0.0.3 --update-crds
 ```
 
 ## Generate bundle file
 
-Run operator-sdk bundle
+
+Run make bundle
 ```console
-$ operator-sdk bundle create --generate-only
+$ make bundle
 ```
+It will ask you to input interactively for some CSV fields.
 
-Make sure the version in annotations are same (alpha, stable, etc.) are same in csv.
+Not all part could be generated so far, the CRD spec is the part you need check and update manually.
 
-Then update the CSV descriptions, spec and validations.
+## Create bundle image and validate
 
-## Validate the bundle file
-
-```console
-$ operator-sdk bundle validate deploy/olm-catalog/reportportal-operator
-```
-
-## Test the bundle
-Check [Testing Operator Deployment with OLM](https://sdk.operatorframework.io/docs/olm-integration/olm-deployment/)
-
-```console
-$ operator-sdk run packagemanifests
-```
-
-## Create bundle image
 The default bundle create image builder is docker, make sure you have installed latest docker on you host and docker daemon is running.
 
 Podman did not support Docker v2.2 format yet, while v2.1 schema format is not supported by operator registry.
 
-```console
-$ sudo operator-sdk bundle create quay.io/waynesun09/rp5-bundle-operator:v0.0.5 --channels alpha
-```
-
-The channel must be same in the metadata/annotations.yaml
-
-Push the bundle image to quay.io
 
 ```console
+$ sudo docker build -f bundle.Dockerfile -t quay.io/waynesun09/rp5-bundle-operator:v0.0.5 .
+$ sudo operator-sdk bundle validate quay.io/waynesun09/rp5-bundle-operator:v0.0.5
 $ sudo docker push quay.io/waynesun09/rp5-bundle-operator:v0.0.5
 ```
+
+The channel must be same in the bundle/metadata/annotations.yaml and the bundle.Dockerfile.
 
 ## Build operator registry
 

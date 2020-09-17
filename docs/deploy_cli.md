@@ -17,7 +17,7 @@ Prepare a catalog source yaml:
       namespace: openshift-marketplace
     spec:
       sourceType: grpc
-      image: quay.io/waynesun09/wayne-index:1.0.2
+      image: quay.io/waynesun09/wayne-index:1.0.4
 
 The registry namespace is where the application is on quay.io.
 
@@ -27,9 +27,9 @@ Now add the source to the cluster:
 
 The `operator-marketplace` controller should successfully process this object:
 ```console
-$ oc get catalogsource wayne-manifests -n openshift-marketplace
+$ oc get catalogsource wayne-index -n openshift-marketplace
 NAME              DISPLAY   TYPE   PUBLISHER   AGE
-wayne-manifests             grpc               9m48s
+wayne-index                 grpc               9m48s
 ```
 
 ## Create an OperatorGroup
@@ -61,9 +61,9 @@ metadata:
   name: rp-subscription
   namespace: rp
 spec:
-  channel: stable
+  channel: alpha
   name: reportportal-operator
-  source: wayne-manifests
+  source: wayne-index
   sourceNamespace: openshift-marketplace
 ```
 In any case replace `<channel-name>` with the contents of `channel.name` in your `package.yaml` file.
@@ -77,7 +77,7 @@ Watch your Operator being deployed by OLM from the catalog source created by Ope
 ```console
 $ oc get Subscription
 NAME                      PACKAGE                 SOURCE            CHANNEL
-rp-subsription            reportportal-operator   wayne-manifests   alpha
+rp-subsription            reportportal-operator   wayne-index       alpha
 ```
 > The above command assumes you have created the `Subscription` in the `rp` namespace.
 If your Operator deployment (CSV) shows a `Succeeded` in the `InstallPhase` status, your Operator is deployed successfully. If that's not the case check the `ClusterServiceVersion` objects status for details.
@@ -90,7 +90,7 @@ $ oc get deployment -n rp
 
 Copy a CR yaml file
 ```console
-$ cp deploy/crds/rp5.reportportal.io_v1_reportportal_cr.yaml cr-test.yaml
+$ cp config/samples/rp5_v1_reportportal.yaml cr-test.yaml
 ```
 
 Update the app_domain with app route sub domain, e.g. apps-crc.testing.

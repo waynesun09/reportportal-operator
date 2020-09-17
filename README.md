@@ -6,7 +6,7 @@ This repo is built with Operator SDK and Ansible role.
 
 What services are included:
 
-    - Report Portal v5.2
+    - Report Portal v5.3
     - PostgreSQL
     - Elasticsearch
     - RabbitMQ
@@ -14,34 +14,56 @@ What services are included:
 
 By default all services will be installed in the same namespace and managed by the operator.
 
+Data backup support backup PostgreSQL WAL archive and Elasticsearch snapshot to Minio S3, recovery from the s3 WAL archive and restore from Elasticsearch snapshot are supported.
+
 ## Requirements
 
 - OpenShift Container Platform 4.x
 - operator-sdk
 - operator-registry opm client
 - oc client
+- kustomize
 
 ## Deploy without OLM
 
 User could deploy with crd and create CR instance.
 
-Create the CRD:
-
-    $ oc create -f deploy/crds/rp5.reportportal.io_reportportals_crd.yaml
+    $ make install
+    $ make deploy IMG=quay.io/waynesun09/rp5-operator:v0.0.5
 
     $ oc get crd |grep reportportal
-    reportportals.rp5.reportportal.io                           2020-04-23T21:35:24Z
+    reportportalrestores.rp5.reportportal.io                    2020-09-17T13:08:36Z
+    reportportals.rp5.reportportal.io                           2020-09-17T13:08:36Z
+    serviceapiservicemonitors.rp5.reportportal.io               2020-09-17T13:08:36Z
 
-Deploy the Operator:
+    $ oc get clusterrole |grep reportportal
+    reportportal-operator-metrics-reader                                   2020-09-17T12:50:44Z
+    reportportal-operator.v0.0.5-8c9f6475f                                 2020-09-17T13:08:38Z
+    reportportalrestores.rp5.reportportal.io-v1-admin                      2020-09-17T13:08:43Z
+    reportportalrestores.rp5.reportportal.io-v1-crdview                    2020-09-17T13:08:43Z
+    reportportalrestores.rp5.reportportal.io-v1-edit                       2020-09-17T13:08:43Z
+    reportportalrestores.rp5.reportportal.io-v1-view                       2020-09-17T13:08:43Z
+    reportportals.rp5.reportportal.io-v1-admin                             2020-09-17T13:08:43Z
+    reportportals.rp5.reportportal.io-v1-crdview                           2020-09-17T13:08:43Z
+    reportportals.rp5.reportportal.io-v1-edit                              2020-09-17T13:08:43Z
+    reportportals.rp5.reportportal.io-v1-view                              2020-09-17T13:08:43Z
+    serviceapiservicemonitors.rp5.reportportal.io-v1-admin                 2020-09-17T13:08:43Z
+    serviceapiservicemonitors.rp5.reportportal.io-v1-crdview               2020-09-17T13:08:43Z
+    serviceapiservicemonitors.rp5.reportportal.io-v1-edit                  2020-09-17T13:08:43Z
+    serviceapiservicemonitors.rp5.reportportal.io-v1-view                  2020-09-17T13:08:43Z
 
-    $ oc create -f deploy/service_account.yaml
-    $ oc create -f deploy/role.yaml
-    $ oc create -f deploy/role_bindg.yaml
-    $ oc create -f deploy/operator.yaml
+    $ oc get rolebindings |grep reportportal
+    reportportal-operator.v0.0.5-default-7c9bd8f688   Role/reportportal-operator.v0.0.5-default-7c9bd8f688   131m
+    $ oc get clusterrolebindings |grep reportportal
+    reportportal-operator.v0.0.5-8c9f6475f                                           ClusterRole/reportportal-operator.v0.0.5-8c9f6475f                                 131m
+
+    $ oc get deploy |grep reportportal
+    reportportal-operator-controller-manager   1/1     1            1           132m
+
 
 Prepare and update the CR yaml file:
 
-    $ cp deploy/crds/rp5.reportportal.io_v1_reportportal_cr.yaml cr_example.yaml
+    $ cp config/samples/rp5_v1_reportportal.yaml cr_example.yaml
 
     Update the CR file with the parameters
 
@@ -49,7 +71,7 @@ Prepare and update the CR yaml file:
     apiVersion: rp5.reportportal.io/v1
     kind: ReportPortal
     metadata:
-      name: example-reportportal
+      name: reportportal-sample
     spec:
       # You cluster default router hostname
       app_domain: apps.test-example.com
@@ -76,16 +98,29 @@ Create new CR instance:
 
     $ oc get ReportPortal
     NAME                   AGE
-    example-reportportal   1m
+    reportportal-sample    1m
 
 
 Check the deploy:
 
     $ oc get pods
-    reportportal-operator-848ff6fdd-svfj4   2/2     Running     2          3m
+    NAME                                                        READY   STATUS      RESTARTS   AGE
+    analyzer-0                                                  1/1     Running     0          132m
+    api-f6f95dcb8-klqgc                                         1/1     Running     6          125m
+    elasticsearch-master-0                                      1/1     Running     0          133m
+    elasticsearch-metrics-59b44b898f-8dmw7                      1/1     Running     0          132m
+    gateway-5585458445-chhz2                                    1/1     Running     0          125m
+    index-55cfc7696d-bq66n                                      1/1     Running     0          125m
+    migrations-rmv6h                                            0/1     Completed   0          132m
+    minio-0                                                     1/1     Running     0          133m
+    postgresql-0                                                2/2     Running     1          120m
+    rabbitmq-0                                                  1/1     Running     0          133m
+    reportportal-operator-controller-manager-5b96bcb959-txskb   2/2     Running     0          135m
+    uat-5d76864b4c-gs5kk                                        1/1     Running     5          125m
+    ui-56588cf499-22bjb                                         1/1     Running     0          125m
 
     Check operator logs with progress
-    $ oc logs reportportal-operator-848ff6fdd-svfj4 -c operator -f
+    $ oc logs reportportal-operator-controller-manager-5b96bcb959-txskb
 
 If found any error or warning, deploy might have failed which need be addressed accordingly.
 
@@ -107,11 +142,11 @@ Prepare a catalog source yaml:
     apiVersion: operators.coreos.com/v1
     kind: CatalogSource
     metadata:
-      name: wayne-manifests
+      name: wayne-index
       namespace: openshift-marketplace
     spec:
       sourceType: grpc
-      image: quay.io/waynesun09/wayne-index:1.0.2
+      image: quay.io/waynesun09/wayne-index:1.0.4
 
 In the OperatorHub choose openshift-marketplace namespace and select Provider type as Custom.
 
