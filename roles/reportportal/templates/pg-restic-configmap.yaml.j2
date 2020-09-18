@@ -174,7 +174,7 @@ data:
             postgresql_base_backup
         fi
         # Backup wal files which might be missing after wal archive started
-        is_boolean_yes "$ENABLE_RESTIC_BACKUP" && restic_wal_backup
+        is_boolean_yes "$ENABLE_RESTIC_BACKUP" && [[ -z $basebackup_id ]] && restic_wal_backup
     fi
     chmod 00700 -R "${POSTGRESQL_DATA_DIR}"
 kind: ConfigMap
