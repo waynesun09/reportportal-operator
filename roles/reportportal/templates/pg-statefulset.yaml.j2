@@ -74,11 +74,11 @@ spec:
             - /bin/sh
             - -c
             - exec pg_isready -U "{{ rp_db_user }}" -d "{{ rp_db }}" -h 127.0.0.1 -p {{ rp_db_port }}
-          failureThreshold: 6
-          initialDelaySeconds: 30
-          periodSeconds: 10
+          failureThreshold: 120
+          initialDelaySeconds: 60
+          periodSeconds: 20
           successThreshold: 1
-          timeoutSeconds: 5
+          timeoutSeconds: 30
         name: postgresql
         ports:
         - containerPort: {{ rp_db_port }}
