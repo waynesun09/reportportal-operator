@@ -57,7 +57,7 @@ data:
         file_array=$($RESTIC_BINARY_PATH -r s3:"$S3_ENDPOINT"/"$S3_BUCKET_NAME" snapshots | awk -F'/' '/pg_wal/ {print $NF}')
         for i in "${POSTGRESQL_DATA_DIR}"/pg_wal/*;do
             # Need fix the archive_status dir still match problem
-            if [[ ! " ${file_array[*]} " =~ $i ]] && [[ ! "${file_array[*]}" =~ .*archive_status ]]; then
+            if [[ ! " ${file_array[*]} " =~ $i ]] && [[ ! " ${file_array[*]} " =~ archive_status.* ]]; then
                 $RESTIC_BINARY_PATH -r s3:"$S3_ENDPOINT"/"$S3_BUCKET_NAME" backup "$i"
             fi
         done
@@ -166,8 +166,10 @@ data:
 
     is_boolean_yes "$ENABLE_RESTIC_RECOVERY" && postgresql_set_property "hot_standby" "off"
 
+    basebackup_id=$(${RESTIC_BINARY_PATH} -r s3:"${S3_ENDPOINT}"/"${S3_BUCKET_NAME}" snapshots | grep basebackup.tar.gz | awk -F' ' '{print $1}')
+
     if [[ "$POSTGRESQL_REPLICATION_MODE" = "master" ]]; then
-        if [[ ! -f ${POSTGRESQL_VOLUME_DIR}/basebackup.tar.gz ]] && is_boolean_yes "$ENABLE_RESTIC_BACKUP"; then
+        if [[ ! -f ${POSTGRESQL_VOLUME_DIR}/basebackup.tar.gz ]] && [[ -z $basebackup_id ]] && is_boolean_yes "$ENABLE_RESTIC_BACKUP"; then
             postgresql_info "Start base backup"
             postgresql_base_backup
         fi
