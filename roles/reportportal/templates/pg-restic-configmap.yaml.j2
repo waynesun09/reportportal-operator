@@ -165,8 +165,12 @@ data:
 
     # Download the basebackup tar package if it exist in the s3 backup storage
     basebackup_id=$(${RESTIC_BINARY_PATH} -r s3:"${S3_ENDPOINT}"/"${S3_BUCKET_NAME}" snapshots | grep basebackup.tar.gz | awk -F' ' '{print $1}')
-    if [[ ! -z $basebackup_id ]]; then
-        ${RESTIC_BINARY_PATH} -r s3:"$S3_ENDPOINT"/"$S3_BUCKET_NAME" restore "$basebackup_id" -t "${POSTGRESQL_VOLUME_DIR}"
+    if [[ -n $basebackup_id ]]; then
+        ${RESTIC_BINARY_PATH} -r s3:"$S3_ENDPOINT"/"$S3_BUCKET_NAME" restore "$basebackup_id" -t /tmp
+        file=$(find /tmp -regex '.*/basebackup.tar.gz')
+        if [[ -n $file ]]; then
+            cp "$file" "${POSTGRESQL_VOLUME_DIR}"
+        fi
     fi
 
     if [[ "$POSTGRESQL_REPLICATION_MODE" = "master" ]]; then
