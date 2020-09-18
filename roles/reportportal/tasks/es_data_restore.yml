@@ -1,4 +1,5 @@
 - name: Create elasticsearch snapshot restore job
   community.kubernetes.k8s:
     state: present
+    force: yes
     definition: "{{ lookup('template', 'es-snapshot-restore-job.yaml.j2') | from_yaml }}"
