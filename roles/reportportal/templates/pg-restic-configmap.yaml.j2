@@ -138,9 +138,6 @@ data:
         #         cp /tmp/00000001.history "${POSTGRESQL_DATA_DIR}"/pg_wal/
         #     fi
         # fi
-
-        # Backup wal files which might be missing before wal archive started
-        restic_wal_backup
     }
 
 
@@ -166,7 +163,11 @@ data:
 
     is_boolean_yes "$ENABLE_RESTIC_RECOVERY" && postgresql_set_property "hot_standby" "off"
 
+    # Download the basebackup tar package if it exist in the s3 backup storage
     basebackup_id=$(${RESTIC_BINARY_PATH} -r s3:"${S3_ENDPOINT}"/"${S3_BUCKET_NAME}" snapshots | grep basebackup.tar.gz | awk -F' ' '{print $1}')
+    if [[ ! -z $basebackup_id ]]; then
+        ${RESTIC_BINARY_PATH} -r s3:"$S3_ENDPOINT"/"$S3_BUCKET_NAME" restore "$basebackup_id" -t "${POSTGRESQL_VOLUME_DIR}"
+    fi
 
     if [[ "$POSTGRESQL_REPLICATION_MODE" = "master" ]]; then
         if [[ ! -f ${POSTGRESQL_VOLUME_DIR}/basebackup.tar.gz ]] && [[ -z $basebackup_id ]] && is_boolean_yes "$ENABLE_RESTIC_BACKUP"; then
@@ -174,6 +175,7 @@ data:
             postgresql_base_backup
         fi
         # Backup wal files which might be missing after wal archive started
+        # Don't backup the missing wal files if base backup package exist in s3
         is_boolean_yes "$ENABLE_RESTIC_BACKUP" && [[ -z $basebackup_id ]] && restic_wal_backup
     fi
     chmod 00700 -R "${POSTGRESQL_DATA_DIR}"
