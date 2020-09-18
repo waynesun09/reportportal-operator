@@ -28,9 +28,9 @@ spec:
             secretKeyRef:
               key: s3.client.default.secret_key
               name: s3-access-key
-        - name: ELASTIC_S3_BUCKET
+        - name: ES_S3_BUCKET
           value: {{ es_snapshot_bucket }}
-        - name: ELASTIC_S3_BACKUP_DIR
+        - name: ES_S3_BACKUP_DIR
           value: {{ es_s3_backup_dir }}
         name: restore
         image: quay.io/waynesun09/ubi8-minimal:s3cmd
