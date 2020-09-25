@@ -89,7 +89,7 @@ Prepare and update the CR yaml file:
       es_snapshot_bucket: es-snapshot-123123
       es_backup_schedule: '@daily'
 
-With the parameters, you could input your cluster router host name for app_domain which will be used to create your app route name.
+With the parameters, you could input your cluster router host name for `app_domain` which will be used to create your app route name.
 And also replicas for RP services components. All parameters descriptions could be in the `roles/reportportal/README.md`
 
 Create new CR instance:
@@ -124,7 +124,7 @@ Check the deploy:
 
 If found any error or warning, deploy might have failed which need be addressed accordingly.
 
-If you have specified the app_domain in your example, the ReportPortal instance should be available after all services have started and could be assess at:
+If you have specified the `app_domain` in your example, the ReportPortal instance should be available after all services have started and could be assess at:
 
     https://reportportal-{{ your_namespace }}.{{ app_domain }}
 
@@ -163,6 +163,81 @@ Update the app_domain to your cluster default apps sub domain address. Then pres
 ![alt text](docs/example_operators.png "Example Operator Operand")
 
 If you want deploy via CLI, check [Deploy with OLM via CLI](docs/deploy_cli.md)
+
+## Data backup and restore
+
+The Report Portal v5 data backup and restore in the operator include two parts, PostgreSQL database data and Elasticsearch index data. The Operator support automatically data backup and restore for both.
+
+### PostgreSQL database WAL archiving and recovery
+
+The Operator supports PostgreSQL WAL archiving and recovery point-in-time via Minio S3 using restic.
+
+#### WAL archiving
+
+When deploy Report Portal v5 instance, make sure `enable_pg_restic_backup` option is set as `yes`, then the WAL archiving will be enabled when initiate the database, the WAL archive data will be automatically backed up to S3 storage via Minio using restic command.
+
+So following restic related parameters also need be set if enable PG restic backup:
+
+    pg_restic_s3_bucket_init: yes
+    pg_s3_bucket_name: pgbackup-123123
+    pg_restic_password: rp_user
+
+`pg_restic_s3_bucket_init` is for init the bucket if not exist, `pg_s3_bucket_name` is the bucket name and `pg_restic_password` is the restic password for encryption.
+
+#### WAL recovery
+
+WAL archive recovery will download all WAL archive files to the Postgres container and restore point-in-time.
+
+To restore PostgreSQL database point-in-time, after operator have been installed on OLM Operator GUI select `ReportPortalRestore` under Provided APIs to create ReportPortalRestore operand.
+
+![alt text](docs/example_reportportalrestore_pg.png "PostgreSQL WAL archive recovery")
+
+Following parameters need be set for PG recovery:
+
+    pg_recovery: 'yes'
+    pg_recovery_target_time: '2020-08-07 00:00:00'
+    pg_restic_password: rp_user
+    pg_s3_bucket_name: pgbackup-123123
+
+The bucket name and restic password should be set as same where the databse WAL files are stored in WAL archiving at RP v5 instance create step.
+
+`pg_recovery` need be set as `yes` to enable PG WAL restore, and point-in-time recovery set with `pg_recovery_target_time`.
+
+After the ReportPortalRestore CR created, the PG WAL restore will get started, as restore time will base on the database size, the process will last for hours.
+
+**Note:** Current Postgres container liveless probe timeout is set as one hour in the postgresql statefulset, it might cause restore fail if restore time is longer than one hour, so it might need be adjusted to be longer.
+
+### Elasticsearch snapshot and restore
+
+The operator supports elasticsearch snapshot and restore with data saved in S3 bucket via Minio, the elasticsearch container have installed the s3 repository plugin.
+
+#### Snapshot
+
+When deploy Report Portal v5 instance, make sure following elasticsearch parameters are set:
+
+    es_s3_backup_dir: s3_backup
+    es_snapshot_bucket: es-snapshot-123123
+    es_backup_schedule: '@daily'
+
+`es_s3_backup_dir` is the elasticsearch snapshot dir, which could be accessed if the elasticsearch service have been exposed. The `es_snapshot_bucket` is the bucket name for elasticsearch snapshot, and `es_backup_schedule` is crontab format for the snapshot cronjob.
+
+#### Restore
+
+Restore elasticsearch support restore to certain date as default snapshot schedule is daily.
+
+To restore elasticsearch from snapshot, after operator have been installed on OLM Operator GUI select `ReportPortalRestore` under Provided APIs to create ReportPortalRestore operand.
+
+![alt text](docs/example_reportportalrestore_es.png "Elasticsearch snapshot restore")
+
+Following parameters need be set for ES restore:
+
+    es_restore: 'yes'
+    es_s3_backup_dir: s3_backup
+    es_snapshot_bucket: es-snapshot-123123
+    es_restore_date: '2020-08-07'
+
+The backup dir and bucket name should be same as set when create the RP instance, `es_restore` need set to `yes` to enable the restore and `es_restore_date` is the restore target date.
+The restore time will also be depend on the snapshot size.
 
 ## Development
 
