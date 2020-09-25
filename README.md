@@ -188,7 +188,7 @@ So following restic related parameters also need be set if enable PG restic back
 
 WAL archive recovery will download all WAL archive files to the Postgres container and restore point-in-time.
 
-To restore PostgreSQL database point-in-time, after operator have been installed on OLM Operator GUI select `ReportPortalRestore` under Provided APIs to create ReportPortalRestore operand.
+To restore PostgreSQL database point-in-time, on Operator UI select `ReportPortalRestore` under Provided APIs to create ReportPortalRestore operand.
 
 ![alt text](docs/example_reportportalrestore_pg.png "PostgreSQL WAL archive recovery")
 
@@ -199,11 +199,11 @@ Following parameters need be set for PG recovery:
     pg_restic_password: rp_user
     pg_s3_bucket_name: pgbackup-123123
 
-The bucket name and restic password should be set as same where the databse WAL files are stored in WAL archiving at RP v5 instance create step.
+The bucket name and restic password should be set as same in WAL archiving step when create RP v5 instance.
 
 `pg_recovery` need be set as `yes` to enable PG WAL restore, and point-in-time recovery set with `pg_recovery_target_time`.
 
-After the ReportPortalRestore CR created, the PG WAL restore will get started, as restore time will base on the database size, the process will last for hours.
+After the ReportPortalRestore CR created, the PG WAL restore will get started, as restore time will base on the database size, the process will last in minutes, hours or days.
 
 **Note:** Current Postgres container liveless probe timeout is set as one hour in the postgresql statefulset, it might cause restore fail if restore time is longer than one hour, so it might need be adjusted to be longer.
 
@@ -223,9 +223,9 @@ When deploy Report Portal v5 instance, make sure following elasticsearch paramet
 
 #### Restore
 
-Restore elasticsearch support restore to certain date as default snapshot schedule is daily.
+Elasticsearch restore support restore to certain date as default snapshot schedule is daily.
 
-To restore elasticsearch from snapshot, after operator have been installed on OLM Operator GUI select `ReportPortalRestore` under Provided APIs to create ReportPortalRestore operand.
+To restore elasticsearch from snapshot, on Operator UI select `ReportPortalRestore` under Provided APIs to create ReportPortalRestore operand.
 
 ![alt text](docs/example_reportportalrestore_es.png "Elasticsearch snapshot restore")
 
@@ -236,8 +236,42 @@ Following parameters need be set for ES restore:
     es_snapshot_bucket: es-snapshot-123123
     es_restore_date: '2020-08-07'
 
-The backup dir and bucket name should be same as set when create the RP instance, `es_restore` need set to `yes` to enable the restore and `es_restore_date` is the restore target date.
+The backup dir and bucket name should be same as when create the RP instance, `es_restore` need set to `yes` to enable the restore and `es_restore_date` is the restore target date.
 The restore time will also be depend on the snapshot size.
+
+## Metrics
+
+The operator by default have enabled metrics, the default ansible operator port 8080 is used for the operator container.
+
+All Report Portal v5 depended services, rabbitmq, minio, postgresql and elasticsearch have metrics enabled in this operator.
+
+The Report Portal gatway service have metrics enabled.
+
+By default several ServiceMonitors have been defined when deploy the Operator:
+
+    $ oc get servicemonitor
+    NAME                    AGE
+    elasticsearch-metrics   1d21h
+    gateway-metrics         1d21h
+    minio-metrics           1d21h
+    postgres-metrics        1d21h
+    rabbitmq-metrics        1d21h
+
+To export Report Portal v5 service-api metrics with ServiceMonitor, create a secret with RP user api token. The api access token could be found with login to Report Portal -> Click user icon -> Profile.
+
+Then select `ServiceApiServiceMonitor` to Create Instance on operator UI.
+
+![alt text](docs/example_serviceapiservicemonitor.png "Create service-api ServiceMonitor")
+
+Input the secret name and key name that have been created, and click create, a api-metrics servicemonitor will be created.
+
+    $ oc get servicemonitor api-metrics
+    NAME          AGE
+    api-metrics   1d22h
+
+To check the metrics, if [user workload monitoring](https://docs.openshift.com/container-platform/4.5/monitoring/monitoring-your-own-services.html) is enabled on the cluster, click to Monitoring on OpenShift UI and navigate to Metrics, where you could query the metrics.
+
+You could also deploy Promethues Operator in the current project and query via it.
 
 ## Development
 
