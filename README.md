@@ -203,7 +203,7 @@ The bucket name and restic password should be set as same in WAL archiving step 
 
 `pg_recovery` need be set as `yes` to enable PG WAL restore, and point-in-time recovery set with `pg_recovery_target_time`.
 
-After the ReportPortalRestore CR created, the PG WAL restore will get started, as restore time will base on the database size, the process will last in minutes, hours or days.
+After the ReportPortalRestore operand created, the PG WAL restore will get started, as restore time will base on the database size, the process will last in minutes, hours or days.
 
 **Note:** Current Postgres container liveless probe timeout is set as one hour in the postgresql statefulset, it might cause restore fail if restore time is longer than one hour, so it might need be adjusted to be longer.
 
@@ -247,7 +247,7 @@ All Report Portal v5 depended services, rabbitmq, minio, postgresql and elastics
 
 The Report Portal gatway service have metrics enabled.
 
-By default several ServiceMonitors have been defined when deploy the Operator:
+By default several ServiceMonitors have been defined when create ReportPortal v5 operand:
 
     $ oc get servicemonitor
     NAME                    AGE
@@ -257,9 +257,9 @@ By default several ServiceMonitors have been defined when deploy the Operator:
     postgres-metrics        1d21h
     rabbitmq-metrics        1d21h
 
-To export Report Portal v5 service-api metrics with ServiceMonitor, create a secret with RP user api token. The api access token could be found with login to Report Portal -> Click user icon -> Profile.
+To export Report Portal v5 service-api metrics with ServiceMonitor, create a `secret` with RP user api token. The api access token could be found with login to Report Portal -> Click user icon -> Profile.
 
-Then select `ServiceApiServiceMonitor` to Create Instance on operator UI.
+Then select `ServiceApiServiceMonitor` under Provided APIs to create instance on operator UI.
 
 ![alt text](docs/example_serviceapiservicemonitor.png "Create service-api ServiceMonitor")
 
