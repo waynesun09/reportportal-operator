@@ -76,11 +76,9 @@ data:
     postgresql_configure_archive_parameters() {
         postgresql_info "Configuring archive parameters"
         postgresql_set_property "archive_mode" "on"
-        if is_boolean_yes "$RESTIC_S3_BUCKET_INIT"; then
+        if is_boolean_yes "$RESTIC_S3_BUCKET_INIT" && [[ ! -f "${POSTGRESQL_VOLUME_DIR}/restic-${S3_BUCKET_NAME}-init.done" ]]; then
             postgresql_info "Run command restic -r s3:$S3_ENDPOINT/$S3_BUCKET_NAME init"
-            if ! $RESTIC_BINARY_PATH -r s3:"$S3_ENDPOINT"/"$S3_BUCKET_NAME" init > /dev/null; then
-                postgresql_warn "Failed to init new s3 bucket $S3_BUCKET_NAME"
-            fi
+            $RESTIC_BINARY_PATH -r s3:"$S3_ENDPOINT"/"$S3_BUCKET_NAME" init && touch "${POSTGRESQL_VOLUME_DIR}/restic-${S3_BUCKET_NAME}-init.done" || postgresql_warn "Failed to init new s3 bucket $S3_BUCKET_NAME"
         fi
         postgresql_set_property "archive_command" "${RESTIC_BINARY_PATH} -r s3:${S3_ENDPOINT}/${S3_BUCKET_NAME} backup %p"
     }
@@ -163,9 +161,16 @@ data:
 
     is_boolean_yes "$ENABLE_RESTIC_RECOVERY" && postgresql_set_property "hot_standby" "off"
 
-    # Download the basebackup tar package if it exist in the s3 backup storage
-    basebackup_id=$(${RESTIC_BINARY_PATH} -r s3:"${S3_ENDPOINT}"/"${S3_BUCKET_NAME}" snapshots | grep basebackup.tar.gz | awk -F' ' '{print $1}')
-    if [[ -n $basebackup_id ]]; then
+    postgresql_info "Check whether basebackup file exist on s3"
+    # Avoid shell pipeline fail with add || true
+    # TODO: Remove grep with update awk
+    output=$("${RESTIC_BINARY_PATH}" -r \
+        s3:"${S3_ENDPOINT}"/"${S3_BUCKET_NAME}" snapshots |
+        grep basebackup.tar.gz || true)
+    basebackup_id=$(echo "$output" | awk -F' ' '{print $1}')
+
+    postgresql_info "Download basebackup file from s3 if it dose not exist on local"
+    if [[ ! -f ${POSTGRESQL_VOLUME_DIR}/basebackup.tar.gz ]] && [[ -n "$basebackup_id" ]]; then
         ${RESTIC_BINARY_PATH} -r s3:"$S3_ENDPOINT"/"$S3_BUCKET_NAME" restore "$basebackup_id" -t /tmp
         file=$(find /tmp -regex '.*/basebackup.tar.gz')
         if [[ -n $file ]]; then
@@ -173,14 +178,15 @@ data:
         fi
     fi
 
+    postgresql_info "Start base backup process if basebackup file was not found on both local and s3"
     if [[ "$POSTGRESQL_REPLICATION_MODE" = "master" ]]; then
-        if [[ ! -f ${POSTGRESQL_VOLUME_DIR}/basebackup.tar.gz ]] && [[ -z $basebackup_id ]] && is_boolean_yes "$ENABLE_RESTIC_BACKUP"; then
+        if [[ ! -f ${POSTGRESQL_VOLUME_DIR}/basebackup.tar.gz ]] && [[ -z "$basebackup_id" ]] && is_boolean_yes "$ENABLE_RESTIC_BACKUP"; then
             postgresql_info "Start base backup"
             postgresql_base_backup
         fi
         # Backup wal files which might be missing after wal archive started
         # Don't backup the missing wal files if base backup package exist in s3
-        is_boolean_yes "$ENABLE_RESTIC_BACKUP" && [[ -z $basebackup_id ]] && restic_wal_backup
+        is_boolean_yes "$ENABLE_RESTIC_BACKUP" && [[ -z "$basebackup_id" ]] && restic_wal_backup
     fi
     chmod 00700 -R "${POSTGRESQL_DATA_DIR}"
 kind: ConfigMap
