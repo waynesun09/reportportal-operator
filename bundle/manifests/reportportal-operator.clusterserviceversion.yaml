@@ -57,7 +57,7 @@ metadata:
         }
       ]
     capabilities: Deep Insights
-    categories: Application Runtime
+    categories: Integration & Delivery
     certified: "false"
     containerImage: quay.io/waynesun09/rp5-operator:v0.0.5
     createdAt: "2020-09-17 09:45:00"
