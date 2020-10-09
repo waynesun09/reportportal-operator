@@ -1,6 +1,12 @@
+- name: Fetch ReportPortal Operand
+  set_fact:
+    rp_cr: "{{ query('k8s', kind='ReportPortal', api_version='rp5.reportportal.io/v1', namespace=meta.namespace) }}"
+
 - name: Deploy RP app services
   include: deploy_app.yml
-  when: deploy_rp | bool
+  when:
+    - deploy_rp | bool
+    - rp_cr[0].status is undefined or rp_cr[0].status.conditions[0].type != 'Paused'
 
 #- name: Remove RP app services
 #  include: remove_app.yml

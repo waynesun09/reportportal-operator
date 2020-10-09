@@ -1,3 +1,19 @@
+- name: Update ReportPortal Operand status
+  operator_sdk.util.k8s_status:
+    api_version: rp5.reportportal.io/v1
+    kind: ReportPortal
+    name: "{{ rp_cr[0].metadata.name }}"
+    namespace: "{{ meta.namespace }}"
+    force: true
+    status:
+      conditions:
+        - type: "Paused"
+          status: "True"
+          reason: "Successful"
+          message: "Deployment is paused by ReportPortalRestore"
+          LastTransitionTime: "{{ ansible_date_time.iso8601 }}"
+  when: rp_cr[0].metadata.name is defined
+
 - name: Fetch all RP deployments
   set_fact:
     rp_deployments: "{{ query('k8s', kind='Deployment', namespace=meta.namespace, label_selector='app=reportportal') }}"
@@ -22,7 +38,23 @@
   set_fact:
     op_message: "{% if (pg_recovery | bool) and (es_restore | bool) %}Postgres WAL recovery and Elasticsearch snapshot restore have finished{% elif pg_recovery | bool %}Postgres WAL recovery have finished{% elif es_restore | bool %}Elasticsearch snapshot restore have finished{% else %}Nothing have been restored{% endif %}"
 
-- name: Update ReportPortalRestore Operator status
+- name: Update ReportPortal Operand status back
+  operator_sdk.util.k8s_status:
+    api_version: rp5.reportportal.io/v1
+    kind: ReportPortal
+    name: "{{ rp_cr[0].metadata.name }}"
+    namespace: "{{ meta.namespace }}"
+    force: true
+    status:
+      conditions:
+        - type: "Running"
+          status: "True"
+          reason: "Successful"
+          message: "Updated status back to running"
+          LastTransitionTime: "{{ ansible_date_time.iso8601 }}"
+  when: rp_cr[0].metadata.name is defined
+
+- name: Update ReportPortalRestore Operand status
   operator_sdk.util.k8s_status:
     api_version: rp5.reportportal.io/v1
     kind: ReportPortalRestore
