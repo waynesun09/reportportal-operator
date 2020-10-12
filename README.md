@@ -32,7 +32,7 @@ Data backup support backup PostgreSQL WAL archive and Elasticsearch snapshot to 
 
 ## Deploy with OperatorHub GUI
 
-ReportPortal Operator have been added into [Community Operators](https://github.com/operator-framework/community-operators), now could be found under OperatorHub in OCP and OKD.
+ReportPortal Operator has been added into [Community Operators](https://github.com/operator-framework/community-operators), now it could be found under OperatorHub in OCP and OKD.
 
 In the OperatorHub select `Integration & Delivery` for category, then in the search box input `reportportal`, the operator will be the first choice.
 
@@ -44,7 +44,7 @@ Once the Reportportal Operator is available in the Installed Operators page, sel
 
 ![alt text](docs/installed_operators.png "Installed Operators")
 
-Update the app_domain to your cluster default apps sub domain address. Then could press Create and using default values for the rest parameters.
+Update the `app_domain` to your cluster default apps sub domain address. Then could press Create and using default values for the rest parameters.
 
 **Note:**: If you need access your internal LDAP, JIRA services etc., you might need to replace the `service-api` and `uat` images with self built ones that include your internal CA certs installed.
 
