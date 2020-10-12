@@ -1,3 +1,9 @@
+<img src="docs/static/reportportal_operator_logo.svg" height="125px"></img>
+
+[![Actions Status](https://github.com/waynesun09/reportportal-operator/workflows/CI/badge.svg)](https://github.com/waynesun09/reportportal-operator/actions)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0)
+[![GitHub release](https://img.shields.io/github/v/release/waynesun09/reportportal-operator)](https://github.com/waynesun09/reportportal-operator/releases/latest)
+
 # Reportportal Operator
 
 Umbrella Operator for ReportPortal and dependency services.
@@ -130,7 +136,7 @@ If you have specified the `app_domain` in your example, the ReportPortal instanc
 
 ## Deploy with OperatorHub GUI
 
-ReportPortal Operator have been added into [Community Operators]{https://github.com/operator-framework/community-operators}, now could be found under OperatorHub in OCP and OKD.
+ReportPortal Operator have been added into [Community Operators](https://github.com/operator-framework/community-operators), now could be found under OperatorHub in OCP and OKD.
 
 In the OperatorHub select `Integration & Delivery` for category, then in the search box input `reportportal`, the operator will be the first choice.
 
@@ -258,6 +264,19 @@ Input the secret name and key name that have been created, and click create, a a
 To check the metrics, if [user workload monitoring](https://docs.openshift.com/container-platform/4.5/monitoring/monitoring-your-own-services.html) is enabled on the cluster, click to Monitoring on OpenShift UI and navigate to Metrics, where you could query the metrics.
 
 You could also deploy Promethues Operator in the current project and query via it.
+
+## Contributing
+You can contribute by:
+
+- Raising any issues you find using ReportPortal Operator
+- Fixing issues by opening [Pull Requests](https://github.com/waynesun09/reportportal-operator/pulls)
+- Submitting a patch or opening a PR
+- Improving documentation
+- Talking about ReportPortal Operator
+
+All bugs, tasks or enhancements are tracked as [GitHub issues](https://github.com/waynesun09/reportportal-operator/issues).
+
+The [Development guide](doc/development.md) describes how to build the ReportPortal Operator and how to test your changes before submitting a patch or opening a PR.
 
 ## Development
 
