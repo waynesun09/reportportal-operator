@@ -86,6 +86,30 @@ Then could create CatalogSource on your testing cluster to add the operator regi
 
 **Note:** Use sha256 rather than image tag to avoid cache problem
 
+## Create CatalogSource
+
+Check the doc [Using the index with Operator Lifecycle Manager](https://github.com/operator-framework/operator-registry#using-the-index-with-operator-lifecycle-manager)
+
+The OLM operator bundle have been added to registry index image: https://quay.io/waynesun09/wayne-index in previous step.
+
+### Create the CatalogSource
+
+Prepare a catalog source yaml:
+
+    $ cat catalog-source.yaml
+    apiVersion: operators.coreos.com/v1
+    kind: CatalogSource
+    metadata:
+      name: wayne-index
+      namespace: openshift-marketplace
+    spec:
+      sourceType: grpc
+      image: quay.io/waynesun09/wayne-index:1.0.4
+
+In the OperatorHub choose openshift-marketplace namespace and select Provider type as `wayne-index` as defined in the catalog.
+
+![alt text](docs/operatorhub-catalogsource.png "OperatorHub")
+
 ## Run bundle scorecard
 
 Check the `bundle/tests/scorecard/config.yaml` in the repo dir, update version and path if needed.

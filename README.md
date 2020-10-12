@@ -130,25 +130,9 @@ If you have specified the `app_domain` in your example, the ReportPortal instanc
 
 ## Deploy with OperatorHub GUI
 
-Check the doc [Using the index with Operator Lifecycle Manager](https://github.com/operator-framework/operator-registry#using-the-index-with-operator-lifecycle-manager)
+ReportPortal Operator have been added into [Community Operators]{https://github.com/operator-framework/community-operators}, now could be found under OperatorHub in OCP and OKD.
 
-The OLM operator bundle have been added to registry index image: https://quay.io/waynesun09/wayne-index
-
-### Create the CatalogSource
-
-Prepare a catalog source yaml:
-
-    $ cat catalog-source.yaml
-    apiVersion: operators.coreos.com/v1
-    kind: CatalogSource
-    metadata:
-      name: wayne-index
-      namespace: openshift-marketplace
-    spec:
-      sourceType: grpc
-      image: quay.io/waynesun09/wayne-index:1.0.4
-
-In the OperatorHub choose openshift-marketplace namespace and select Provider type as Custom.
+In the OperatorHub select `Integration & Delivery` for category, then in the search box input `reportportal`, the operator will be the first choice.
 
 ![alt text](docs/operatorhub.png "OperatorHub")
 
@@ -158,7 +142,9 @@ Once the Reportportal Operator is available in the Installed Operators page, sel
 
 ![alt text](docs/installed_operators.png "Installed Operators")
 
-Update the app_domain to your cluster default apps sub domain address. Then press Create.
+Update the app_domain to your cluster default apps sub domain address. Then could press Create and using default values for the rest parameters.
+
+**Note:**: If you need access your internal LDAP, JIRA services etc., you might need to replace the `service-api` and `uat` images with self built ones that include your internal CA certs installed.
 
 ![alt text](docs/example_operators.png "Example Operator Operand")
 
@@ -275,7 +261,7 @@ You could also deploy Promethues Operator in the current project and query via i
 
 ## Development
 
-Check [Development Doc](docs/development.md)
+For develop, build, test and debug, please check [Development Doc](docs/development.md) for more info.
 
 ## CI
 
