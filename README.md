@@ -32,6 +32,8 @@ Data backup support backup PostgreSQL WAL archive and Elasticsearch snapshot to 
 
 ## Deploy with OperatorHub GUI
 
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/3hRGiXDW1tg/0.jpg)](https://www.youtube.com/watch?v=3hRGiXDW1tg)
+
 ReportPortal Operator has been added into [Community Operators](https://github.com/operator-framework/community-operators), now it could be found under OperatorHub in OCP and OKD.
 
 In the OperatorHub select `Integration & Delivery` for category, then in the search box input `reportportal`, the operator will be the first choice.
@@ -53,6 +55,8 @@ Update the `app_domain` to your cluster default apps sub domain address. Then co
 If you want deploy via CLI, check [Deploy with CLI](docs/deploy_cli.md)
 
 ## Data backup and restore
+
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/emUF-E48Tmo/0.jpg)](https://www.youtube.com/watch?v=emUF-E48Tmo)
 
 The Report Portal v5 data backup and restore in the operator include two parts, PostgreSQL database data and Elasticsearch index data. The Operator support automatically data backup and restore for both.
 
