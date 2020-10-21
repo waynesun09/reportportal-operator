@@ -176,7 +176,7 @@ You can contribute by:
 
 All bugs, tasks or enhancements are tracked as [GitHub issues](https://github.com/waynesun09/reportportal-operator/issues).
 
-The [Development guide](doc/development.md) describes how to build the ReportPortal Operator and how to test your changes before submitting a patch or opening a PR.
+The [Development guide](docs/development.md) describes how to build the ReportPortal Operator and how to test your changes before submitting a patch or opening a PR.
 
 ## Development
 
