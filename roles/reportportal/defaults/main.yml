@@ -93,24 +93,24 @@ index_image: reportportal/service-index:5.0.10
 
 # uat default values
 uat_replicas: 1
-uat_image: reportportal/service-authorization:5.3.0
+uat_image: reportportal/service-authorization:5.3.3
 
 # ui default values
 ui_replicas: 1
-ui_image: reportportal/service-ui:5.3.0
+ui_image: reportportal/service-ui:5.3.3
 
 # api default values
 api_replicas: 1
-api_image: quay.io/waynesun09/service-api:5.3.0-rootless
+api_image: quay.io/waynesun09/service-api:5.3.3-rootless
 rp_amqp_queues: 10
 rp_amqp_queuesperpod: 10
 
 # migration default values
-migration_image: reportportal/migrations:5.3.0
+migration_image: reportportal/migrations:5.3.3
 
 # analyzer default values
 analyzer_replicas: 1
-analyzer_image: reportportal/service-auto-analyzer:5.3.0
+analyzer_image: reportportal/service-auto-analyzer:5.3.3
 
 # Recovery related default values
 pg_recovery: no
