@@ -7,7 +7,7 @@ OCP by default is installed with OLM, but you could deploy it directly with crd 
 User could deploy with crd and create CR instance.
 
     $ make install
-    $ make deploy IMG=quay.io/waynesun09/rp5-operator:v0.0.5
+    $ make deploy IMG=quay.io/waynesun09/rp5-operator:v0.0.6
 
     $ oc get crd |grep reportportal
     reportportalrestores.rp5.reportportal.io                    2020-09-17T13:08:36Z
@@ -16,7 +16,7 @@ User could deploy with crd and create CR instance.
 
     $ oc get clusterrole |grep reportportal
     reportportal-operator-metrics-reader                                   2020-09-17T12:50:44Z
-    reportportal-operator.v0.0.5-8c9f6475f                                 2020-09-17T13:08:38Z
+    reportportal-operator.v0.0.6-8c9f6475f                                 2020-09-17T13:08:38Z
     reportportalrestores.rp5.reportportal.io-v1-admin                      2020-09-17T13:08:43Z
     reportportalrestores.rp5.reportportal.io-v1-crdview                    2020-09-17T13:08:43Z
     reportportalrestores.rp5.reportportal.io-v1-edit                       2020-09-17T13:08:43Z
@@ -31,9 +31,9 @@ User could deploy with crd and create CR instance.
     serviceapiservicemonitors.rp5.reportportal.io-v1-view                  2020-09-17T13:08:43Z
 
     $ oc get rolebindings |grep reportportal
-    reportportal-operator.v0.0.5-default-7c9bd8f688   Role/reportportal-operator.v0.0.5-default-7c9bd8f688   131m
+    reportportal-operator.v0.0.6-default-7c9bd8f688   Role/reportportal-operator.v0.0.6-default-7c9bd8f688   131m
     $ oc get clusterrolebindings |grep reportportal
-    reportportal-operator.v0.0.5-8c9f6475f                                           ClusterRole/reportportal-operator.v0.0.5-8c9f6475f                                 131m
+    reportportal-operator.v0.0.6-8c9f6475f                                           ClusterRole/reportportal-operator.v0.0.6-8c9f6475f                                 131m
 
     $ oc get deploy |grep reportportal
     reportportal-operator-controller-manager   1/1     1            1           132m

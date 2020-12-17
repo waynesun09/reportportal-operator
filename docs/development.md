@@ -16,8 +16,8 @@ Then follow the [Ansible user guide](https://sdk.operatorframework.io/docs/ansib
 
 After role updated, create new operator image with:
 ```console
-$ buildah bud -f Dockerfile -t quay.io/waynesun09/rp5-operator:v0.0.5
-$ buildah push quay.io/waynesun09/rp5-operator:v0.0.5
+$ buildah bud -f Dockerfile -t quay.io/waynesun09/rp5-operator:v0.0.6
+$ buildah push quay.io/waynesun09/rp5-operator:v0.0.6
 ```
 
 ## Generate bundle file
@@ -39,15 +39,15 @@ Podman did not support Docker v2.2 format yet, while v2.1 schema format is not s
 
 
 ```console
-$ sudo docker build -f bundle.Dockerfile -t quay.io/waynesun09/rp5-bundle-operator:v0.0.5 .
-$ sudo operator-sdk bundle validate quay.io/waynesun09/rp5-bundle-operator:v0.0.5
+$ sudo docker build -f bundle.Dockerfile -t quay.io/waynesun09/rp5-bundle-operator:v0.0.6 .
+$ sudo operator-sdk bundle validate quay.io/waynesun09/rp5-bundle-operator:v0.0.6
 
-$ sudo docker push quay.io/waynesun09/rp5-bundle-operator:v0.0.5
+$ sudo docker push quay.io/waynesun09/rp5-bundle-operator:v0.0.6
 The push refers to repository [quay.io/waynesun09/rp5-bundle-operator]
 4663510d6b4f: Pushed
 61235e66d899: Pushed
 35cd28174dce: Pushed
-v0.0.5: digest: sha256:60985448712964fcb9ea2e22b82012b791c1647d27b18c34e1f7c5d376874188 size: 940
+v0.0.6: digest: sha256:2b2be124605a513738a59db74ef3bed651d5b08d2e7f32c4bdd4f6d252f9b6c3 size: 940
 ```
 
 The channel must be same in the bundle/metadata/annotations.yaml and the bundle.Dockerfile.
@@ -66,20 +66,20 @@ $ sudo docker push quay.io/waynesun09/wayne-index:1.0.0
 To add updated bundle image to the index:
 
 ```console
-$ sudo opm index add --container-tool docker --bundles quay.io/waynesun09/rp5-bundle-operator@sha256:60985448712964fcb9ea2e22b82012b791c1647d27b18c34e1f7c5d376874188 --from-index quay.io/waynesun09/wayne-index:1.0.3 --tag quay.io/waynesun09/wayne-index:1.0.4
+$ sudo opm index add --container-tool docker --bundles quay.io/waynesun09/rp5-bundle-operator@sha256:60985448712964fcb9ea2e22b82012b791c1647d27b18c34e1f7c5d376874188 --from-index quay.io/waynesun09/wayne-index:1.0.4 --tag quay.io/waynesun09/wayne-index:1.0.5
 ```
 
 **Note:** Use sha256 rather than image tag to avoid cache problem
 
 ```console
-$ sudo docker push quay.io/waynesun09/wayne-index:1.0.4
+$ sudo docker push quay.io/waynesun09/wayne-index:1.0.5
 The push refers to repository [quay.io/waynesun09/wayne-index]
 a3b7cbd3cadf: Pushed
 dff05adcc153: Layer already exists
 61fc2d1936e1: Layer already exists
 4150c4f2e6df: Layer already exists
 50644c29ef5a: Layer already exists
-1.0.4: digest: sha256:240303dc7f4a904678948cc9c3f770ee21dbc9a4845a9815ed34f2002b5b252e size: 1371
+1.0.5: digest: sha256:5ef938574b293a04d25a19572534104ff92c1caa4ce07f40afbb002be856ed89 size: 1371
 ```
 
 Then could create CatalogSource on your testing cluster to add the operator registry.
@@ -119,26 +119,15 @@ Run the corecard command, it'll test in your cluster env, so make sure you have 
 $ operator-sdk scorecard bundle
 ```
 
-## Generate packagemanifest
+## Submit to Community Operators
 
-Default the operator is bundle format, if want to generate packagemanifest
-```console
-$ kustomize build config/manifests | operator-sdk generate packagemanifests -q --version 0.0.5
+Reportportal Operator switches from packagemanifest to bundle format start from v0.0.6, which make update the operator in Community Operator more easier as the operator is build with latest operator-sdk and bundle is the default format.
 
-$ tree packagemanifests/
-packagemanifests/
-├── 0.0.5
-│   ├── reportportal-operator.clusterserviceversion.yaml
-│   ├── reportportal-operator-metrics-reader_rbac.authorization.k8s.io_v1beta1_clusterrole.yaml
-│   ├── rp5.reportportal.io_reportportalrestores.yaml
-│   ├── rp5.reportportal.io_reportportals.yaml
-│   └── rp5.reportportal.io_serviceapiservicemonitors.yaml
-└── reportportal-operator.package.yaml
+When new version of operator have been build, in the [reportportal-operator](https://github.com/operator-framework/community-operators/tree/master/community-operators/reportportal-operator) dir, create new version dir, e.g. 0.0.6, and copy bundle/manifests bundle/metadata into the new version dir. Also copy the bundle.Dockerfile and rename as Dockerfile and update COPY steps to:
 
-1 directory, 6 files
-```
+       COPY manifests /manifests/
+       COPY metadata /metadata/
 
-As the default manifests base template is not fully supported with all the fields, so after generate simply replace the bundle CSV to the packagemanifests dir.
-```console
-$ cp bundle/manifests/reportportal-operator.clusterserviceversion.yaml packagemanifests/0.0.5/
-```
+**Note**: current bundle.Dockerfile is for build from project dir, while bundle build is from bundle dir, that's why need update the dir. Also the tests dir is deleted as for production.
+
+Create new PR request with the new bundle version and fix CI and review issues.
