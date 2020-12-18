@@ -13,6 +13,10 @@ metadata:
           "spec": {
             "api_image": "quay.io/waynesun09/service-api:5.3.3-rootless",
             "api_replicas": 1,
+            "ui_image": "reportportal/service-ui:5.3.3",
+            "index_image": "reportportal/service-index:5.0.10",
+            "migration_image": "reportportal/migrations:5.3.3",
+            "analyzer_image": "reportportal/service-auto-analyzer:5.3.3",
             "app_domain": "apps.test-example.com",
             "enable_pg_restic_backup": "yes",
             "es_backup_schedule": "@daily",
@@ -159,14 +163,14 @@ spec:
         path: app_domain
         x-descriptors:
         - urn:alm:descriptor:tectonic.ui:text
+      - description: service-ui container image url
+        displayName: service-ui container image
+        path: ui_image
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
       - description: Replicas number for service-ui component
         displayName: RP service-ui replicas
         path: ui_replicas
-        x-descriptors:
-        - urn:alm:descriptor:tectonic.ui:number
-      - description: Replicas number for service-api component
-        displayName: RP service-api replicas
-        path: api_replicas
         x-descriptors:
         - urn:alm:descriptor:tectonic.ui:number
       - description: service-api container image url
@@ -174,9 +178,29 @@ spec:
         path: api_image
         x-descriptors:
         - urn:alm:descriptor:tectonic.ui:text
+      - description: Replicas number for service-api component
+        displayName: RP service-api replicas
+        path: api_replicas
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:number
+      - description: migrations container image url
+        displayName: migrations container image
+        path: migration_image
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
       - description: service-authorization container image url
         displayName: service-authorization container image
         path: uat_image
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      - description: service-auto-analyzer container image url
+        displayName: service-auto-analyzer container image
+        path: analyzer_image
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      - description: service-index container image url
+        displayName: service-index container image
+        path: index_image
         x-descriptors:
         - urn:alm:descriptor:tectonic.ui:text
       - description: Replicas number for service-index component

@@ -43,11 +43,23 @@ spec:
               api_replicas:
                 description: Replicas number for service-api component
                 type: integer
+              ui_image:
+                description: service-ui container image url
+                type: string
               api_image:
                 description: service-api container image url
                 type: string
               uat_image:
                 description: service-authorization container image url
+                type: string
+              migration_image:
+                description: migrations container image url
+                type: string
+              analyzer_image:
+                description: service-auto-analyzer container image url
+                type: string
+              index_image:
+                description: service-index container image url
                 type: string
               index_replicas:
                 description: Replicas number for service-index component

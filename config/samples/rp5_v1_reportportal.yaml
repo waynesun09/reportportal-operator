@@ -7,8 +7,12 @@ spec:
   app_domain: apps.test-example.com
   ui_replicas: 1
   api_replicas: 1
-  api_image: quay.io/waynesun09/service-api:5.3.3-rootless
+  index_image: reportportal/service-index:5.0.10
   uat_image: reportportal/service-authorization:5.3.3
+  ui_image: reportportal/service-ui:5.3.3
+  api_image: quay.io/waynesun09/service-api:5.3.3-rootless
+  migration_image: reportportal/migrations:5.3.3
+  analyzer_image: reportportal/service-auto-analyzer:5.3.3
   index_replicas: 1
   gateway_replicas: 1
   enable_pg_restic_backup: 'yes'
