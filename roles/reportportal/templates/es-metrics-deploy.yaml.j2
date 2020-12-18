@@ -22,7 +22,7 @@ spec:
       - args:
         - --es.uri=http://{{ es_host }}:{{ es_port }}
         - --es.all
-        image: docker.io/bitnami/elasticsearch-exporter:1.1.0-debian-10-r109
+        image: quay.io/bitnami/elasticsearch-exporter:1.1.0-debian-10-r109
         livenessProbe:
           failureThreshold: 3
           httpGet:

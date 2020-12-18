@@ -35,7 +35,7 @@ ReportPortal dependency services values
 RabbitMQ deploy parameters:
 
     deploy_rabbitmq: yes
-    rabbitmq_image: docker.io/bitnami/rabbitmq:3.8.3-debian-10-r2
+    rabbitmq_image: quay.io/bitnami/rabbitmq:3.8.3-debian-10-r2
     rabbitmq_volume_size: 8Gi
     load_definition: "{{ lookup('template', 'load-definition.json') | to_json | string | b64encode }}"
 
@@ -58,7 +58,7 @@ PostgreSQL deploy parameters:
 
     deploy_postgresql: yes
     db_storage_size: 8Gi
-    pg_image: docker.io/bitnami/postgresql:11.7.0-debian-10-r9
+    pg_image: quay.io/bitnami/postgresql:11.7.0-debian-10-r9
 
 If deploy_postgresql is `yes`, PostgreSQL service will also be deployed in current project namespace and don't need update the following default values.
 
