@@ -122,7 +122,7 @@ spec:
               name: postgresql
         - name: DATA_SOURCE_USER
           value: {{ rp_db_user }}
-        image: docker.io/bitnami/postgres-exporter:0.8.0-debian-10-r28
+        image: quay.io/bitnami/postgres-exporter:0.8.0-debian-10-r28
         imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 6
@@ -156,7 +156,7 @@ spec:
         - -c
         - if [ -d "/bitnami/postgresql/data" ]; then chmod 700 /bitnami/postgresql/data;
           fi
-        image: busybox
+        image: quay.io/prometheus/busybox
         imagePullPolicy: Always
         name: update-bitnami-data-dir-mode
         resources: {}
