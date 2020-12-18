@@ -54,8 +54,8 @@ Prepare and update the CR yaml file:
       app_domain: apps.test-example.com
       ui_replicas: 1
       api_replicas: 1
-      api_image: quay.io/waynesun09/service-api:5.3.0-rootless
-      uat_image: reportportal/service-authorization:5.3.0
+      api_image: quay.io/waynesun09/service-api:5.3.3-rootless
+      uat_image: reportportal/service-authorization:5.3.3
       index_replicas: 1
       gateway_replicas: 1
       enable_pg_restic_backup: yes
