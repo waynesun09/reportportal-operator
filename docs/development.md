@@ -22,6 +22,7 @@ $ buildah push quay.io/waynesun09/rp5-operator:v0.0.6
 
 ## Generate bundle file
 
+Update Makefile with target ${VERSION}
 
 Run make bundle
 ```console
