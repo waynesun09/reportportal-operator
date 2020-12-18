@@ -1,6 +1,7 @@
 ---
 # RP gateway values
 # app_domain: apps.ocp.test.example.com
+traefik_image: quay.io/waynesun09/traefik:2.3.6
 
 # RP deploy enablement
 deploy_rp: yes
