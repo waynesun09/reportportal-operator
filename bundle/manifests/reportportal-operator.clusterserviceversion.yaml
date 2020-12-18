@@ -13,10 +13,10 @@ metadata:
           "spec": {
             "api_image": "quay.io/waynesun09/service-api:5.3.3-rootless",
             "api_replicas": 1,
-            "ui_image": "reportportal/service-ui:5.3.3",
-            "index_image": "reportportal/service-index:5.0.10",
-            "migration_image": "reportportal/migrations:5.3.3",
-            "analyzer_image": "reportportal/service-auto-analyzer:5.3.3",
+            "ui_image": "quay.io/waynesun09/service-ui:5.3.3",
+            "index_image": "quay.io/waynesun09/service-index:5.0.10",
+            "migration_image": "quay.io/waynesun09/migrations:5.3.3",
+            "analyzer_image": "quay.io/waynesun09/service-auto-analyzer:5.3.3",
             "app_domain": "apps.test-example.com",
             "enable_pg_restic_backup": "yes",
             "es_backup_schedule": "@daily",
@@ -27,7 +27,7 @@ metadata:
             "pg_restic_password": "rp_user",
             "pg_restic_s3_bucket_init": "yes",
             "pg_s3_bucket_name": "pgbackup-123123",
-            "uat_image": "reportportal/service-authorization:5.3.3",
+            "uat_image": "quay.io/waynesun09/service-authorization:5.3.3",
             "ui_replicas": 1
           }
         },
