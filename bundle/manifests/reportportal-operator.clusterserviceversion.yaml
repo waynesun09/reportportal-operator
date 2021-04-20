@@ -63,13 +63,13 @@ metadata:
     capabilities: Deep Insights
     categories: Integration & Delivery
     certified: "false"
-    containerImage: quay.io/waynesun09/rp5-operator:v0.0.6
-    createdAt: "2020-09-17 09:45:00"
+    containerImage: quay.io/waynesun09/rp5-operator:v0.0.7
+    createdAt: "2021-04-20 16:48:00"
     repository: https://github.com/waynesun09/reportportal-operator
     support: waynesun09
-    operators.operatorframework.io/builder: operator-sdk-v1.2.0
+    operators.operatorframework.io/builder: operator-sdk-v2.0.0+git
     operators.operatorframework.io/project_layout: ansible.sdk.operatorframework.io/v1
-  name: reportportal-operator.v0.0.6
+  name: reportportal-operator.v0.0.7
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
@@ -570,7 +570,10 @@ spec:
                 - --metrics-addr=127.0.0.1:8080
                 - --enable-leader-election
                 - --leader-election-id=reportportal-operator
-                image: quay.io/waynesun09/rp5-operator:v0.0.6
+                env:
+                - name: ANSIBLE_GATHERING
+                  value: explicit
+                image: quay.io/waynesun09/rp5-operator:v0.0.7
                 name: manager
                 resources: {}
               - args:
@@ -632,4 +635,4 @@ spec:
   maturity: alpha
   provider:
     name: Red Hat CCIT
-  version: 0.0.6
+  version: 0.0.7

@@ -1,5 +1,5 @@
 # Current Operator version
-VERSION ?= 0.0.6
+VERSION ?= 0.0.7
 DEFAULT_CHANNEL = alpha
 # Default bundle image tag
 BUNDLE_IMG ?= controller-bundle:$(VERSION)
