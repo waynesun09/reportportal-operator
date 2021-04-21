@@ -11,12 +11,12 @@ metadata:
             "name": "reportportal-sample"
           },
           "spec": {
-            "api_image": "quay.io/waynesun09/service-api:5.3.3-rootless",
+            "api_image": "quay.io/waynesun09/service-api:5.3.5-rootless",
             "api_replicas": 1,
-            "ui_image": "quay.io/waynesun09/service-ui:5.3.3",
+            "ui_image": "quay.io/waynesun09/service-ui:5.3.5",
             "index_image": "quay.io/waynesun09/service-index:5.0.10",
-            "migration_image": "quay.io/waynesun09/migrations:5.3.3",
-            "analyzer_image": "quay.io/waynesun09/service-auto-analyzer:5.3.3",
+            "migration_image": "quay.io/waynesun09/migrations:5.3.5",
+            "analyzer_image": "quay.io/waynesun09/service-auto-analyzer:5.3.5",
             "app_domain": "apps.test-example.com",
             "enable_pg_restic_backup": "yes",
             "es_backup_schedule": "@daily",
@@ -27,7 +27,7 @@ metadata:
             "pg_restic_password": "rp_user",
             "pg_restic_s3_bucket_init": "yes",
             "pg_s3_bucket_name": "pgbackup-123123",
-            "uat_image": "quay.io/waynesun09/service-authorization:5.3.3",
+            "uat_image": "quay.io/waynesun09/service-authorization:5.3.5",
             "ui_replicas": 1
           }
         },

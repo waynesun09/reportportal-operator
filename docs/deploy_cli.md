@@ -55,11 +55,11 @@ Prepare and update the CR yaml file:
       ui_replicas: 1
       api_replicas: 1
       index_image: quay.io/waynesun09/service-index:5.0.10
-      uat_image: quay.io/waynesun09/service-authorization:5.3.3
-      ui_image: quay.io/waynesun09/service-ui:5.3.3
-      api_image: quay.io/waynesun09/service-api:5.3.3-rootless
-      migration_image: quay.io/waynesun09/migrations:5.3.3
-      analyzer_image: quay.io/waynesun09/service-auto-analyzer:5.3.3
+      uat_image: quay.io/waynesun09/service-authorization:5.3.5
+      ui_image: quay.io/waynesun09/service-ui:5.3.5
+      api_image: quay.io/waynesun09/service-api:5.3.5-rootless
+      migration_image: quay.io/waynesun09/migrations:5.3.5
+      analyzer_image: quay.io/waynesun09/service-auto-analyzer:5.3.5
       index_replicas: 1
       gateway_replicas: 1
       enable_pg_restic_backup: 'yes'
