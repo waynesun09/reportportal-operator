@@ -41,7 +41,6 @@ Podman did not support Docker v2.2 format yet, while v2.1 schema format is not s
 
 ```console
 $ sudo docker build -f bundle.Dockerfile -t quay.io/waynesun09/rp5-bundle-operator:v0.0.7 .
-$ sudo operator-sdk bundle validate quay.io/waynesun09/rp5-bundle-operator:v0.0.7
 
 $ sudo docker push quay.io/waynesun09/rp5-bundle-operator:v0.0.7
 The push refers to repository [quay.io/waynesun09/rp5-bundle-operator]
@@ -49,6 +48,8 @@ The push refers to repository [quay.io/waynesun09/rp5-bundle-operator]
 61235e66d899: Pushed
 35cd28174dce: Pushed
 v0.0.7: digest: sha256:2b2be124605a513738a59db74ef3bed651d5b08d2e7f32c4bdd4f6d252f9b6c3 size: 940
+
+$ sudo operator-sdk bundle validate quay.io/waynesun09/rp5-bundle-operator:v0.0.7
 ```
 
 The channel must be same in the bundle/metadata/annotations.yaml and the bundle.Dockerfile.
@@ -66,21 +67,23 @@ $ sudo docker push quay.io/waynesun09/wayne-index:1.0.0
 
 To add updated bundle image to the index:
 
+Replace sha256 value of the bundle image at follow opm index command:
+
 ```console
-$ sudo opm index add --container-tool docker --bundles quay.io/waynesun09/rp5-bundle-operator@sha256:60985448712964fcb9ea2e22b82012b791c1647d27b18c34e1f7c5d376874188 --from-index quay.io/waynesun09/wayne-index:1.0.4 --tag quay.io/waynesun09/wayne-index:1.0.5
+$ sudo opm index add --container-tool docker --bundles quay.io/waynesun09/rp5-bundle-operator@sha256:c2aa752b16fd66ef66b3e955863a772b03d46c1cc4499c302f0fec1425f50ec4 --from-index quay.io/waynesun09/wayne-index:1.0.5 --tag quay.io/waynesun09/wayne-index:1.0.6
 ```
 
 **Note:** Use sha256 rather than image tag to avoid cache problem
 
 ```console
-$ sudo docker push quay.io/waynesun09/wayne-index:1.0.5
+$ sudo docker push quay.io/waynesun09/wayne-index:1.0.6
 The push refers to repository [quay.io/waynesun09/wayne-index]
 a3b7cbd3cadf: Pushed
 dff05adcc153: Layer already exists
 61fc2d1936e1: Layer already exists
 4150c4f2e6df: Layer already exists
 50644c29ef5a: Layer already exists
-1.0.5: digest: sha256:5ef938574b293a04d25a19572534104ff92c1caa4ce07f40afbb002be856ed89 size: 1371
+1.0.6: digest: sha256:5ef938574b293a04d25a19572534104ff92c1caa4ce07f40afbb002be856ed89 size: 1371
 ```
 
 Then could create CatalogSource on your testing cluster to add the operator registry.
@@ -105,7 +108,7 @@ Prepare a catalog source yaml:
       namespace: openshift-marketplace
     spec:
       sourceType: grpc
-      image: quay.io/waynesun09/wayne-index:1.0.4
+      image: quay.io/waynesun09/wayne-index:1.0.6
 
 In the OperatorHub choose openshift-marketplace namespace and select Provider type as `wayne-index` as defined in the catalog.
 
