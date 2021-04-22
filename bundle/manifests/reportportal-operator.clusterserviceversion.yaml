@@ -11,23 +11,23 @@ metadata:
             "name": "reportportal-sample"
           },
           "spec": {
+            "analyzer_image": "quay.io/waynesun09/service-auto-analyzer:5.3.5",
             "api_image": "quay.io/waynesun09/service-api:5.3.5-rootless",
             "api_replicas": 1,
-            "ui_image": "quay.io/waynesun09/service-ui:5.3.5",
-            "index_image": "quay.io/waynesun09/service-index:5.0.10",
-            "migration_image": "quay.io/waynesun09/migrations:5.3.5",
-            "analyzer_image": "quay.io/waynesun09/service-auto-analyzer:5.3.5",
             "app_domain": "apps.test-example.com",
             "enable_pg_restic_backup": "yes",
             "es_backup_schedule": "@daily",
             "es_s3_backup_dir": "s3_backup",
             "es_snapshot_bucket": "es-snapshot-123123",
             "gateway_replicas": 1,
+            "index_image": "quay.io/waynesun09/service-index:5.0.10",
             "index_replicas": 1,
+            "migration_image": "quay.io/waynesun09/migrations:5.3.5",
             "pg_restic_password": "rp_user",
             "pg_restic_s3_bucket_init": "yes",
             "pg_s3_bucket_name": "pgbackup-123123",
             "uat_image": "quay.io/waynesun09/service-authorization:5.3.5",
+            "ui_image": "quay.io/waynesun09/service-ui:5.3.5",
             "ui_replicas": 1
           }
         },
@@ -64,7 +64,7 @@ metadata:
     categories: Integration & Delivery
     certified: "false"
     containerImage: quay.io/waynesun09/rp5-operator:v0.0.7
-    createdAt: "2021-04-20 16:48:00"
+    createdAt: "2021-04-22 14:39:00"
     repository: https://github.com/waynesun09/reportportal-operator
     support: waynesun09
     operators.operatorframework.io/builder: operator-sdk-v2.0.0+git
@@ -567,6 +567,17 @@ spec:
             spec:
               containers:
               - args:
+                - --secure-listen-address=0.0.0.0:8443
+                - --upstream=http://127.0.0.1:8080/
+                - --logtostderr=true
+                - --v=10
+                image: gcr.io/kubebuilder/kube-rbac-proxy:v0.8.0
+                name: kube-rbac-proxy
+                ports:
+                - containerPort: 8443
+                  name: https
+                resources: {}
+              - args:
                 - --health-probe-bind-address=:6789
                 - --metrics-bind-address=127.0.0.1:8080
                 - --leader-elect
@@ -591,17 +602,6 @@ spec:
                 resources: {}
                 securityContext:
                   allowPrivilegeEscalation: false
-              - args:
-                - --secure-listen-address=0.0.0.0:8443
-                - --upstream=http://127.0.0.1:8080/
-                - --logtostderr=true
-                - --v=10
-                image: gcr.io/kubebuilder/kube-rbac-proxy:v0.5.0
-                name: kube-rbac-proxy
-                ports:
-                - containerPort: 8443
-                  name: https
-                resources: {}
               securityContext:
                 runAsNonRoot: true
               serviceAccountName: reportportal-operator-controller-manager
@@ -610,8 +610,10 @@ spec:
       - rules:
         - apiGroups:
           - ""
+          - coordination.k8s.io
           resources:
           - configmaps
+          - leases
           verbs:
           - get
           - list
