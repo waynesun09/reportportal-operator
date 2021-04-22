@@ -575,8 +575,22 @@ spec:
                 - name: ANSIBLE_GATHERING
                   value: explicit
                 image: quay.io/waynesun09/rp5-operator:v0.0.7
+                livenessProbe:
+                  httpGet:
+                    path: /healthz
+                    port: 6789
+                  initialDelaySeconds: 15
+                  periodSeconds: 20
                 name: manager
+                readinessProbe:
+                  httpGet:
+                    path: /readyz
+                    port: 6789
+                  initialDelaySeconds: 5
+                  periodSeconds: 10
                 resources: {}
+                securityContext:
+                  allowPrivilegeEscalation: false
               - args:
                 - --secure-listen-address=0.0.0.0:8443
                 - --upstream=http://127.0.0.1:8080/
@@ -588,6 +602,8 @@ spec:
                 - containerPort: 8443
                   name: https
                 resources: {}
+              securityContext:
+                runAsNonRoot: true
               terminationGracePeriodSeconds: 10
       permissions:
       - rules:
