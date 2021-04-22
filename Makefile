@@ -37,7 +37,7 @@ IMAGE_TAG_BASE ?= reportportal.io/reportportal-operator
 BUNDLE_IMG ?= $(IMAGE_TAG_BASE)-bundle:v$(VERSION)
 
 # Image URL to use all building/pushing image targets
-IMG ?= controller:latest
+IMG ?= quay.io/waynesun09/rp5-operator:v0.0.7
 
 all: docker-build
 
