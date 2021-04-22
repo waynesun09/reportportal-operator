@@ -602,6 +602,7 @@ spec:
                 resources: {}
                 securityContext:
                   allowPrivilegeEscalation: false
+                  runAsUser: 65532
               securityContext:
                 runAsNonRoot: true
               serviceAccountName: reportportal-operator-controller-manager
