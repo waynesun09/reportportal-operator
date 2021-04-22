@@ -16,8 +16,8 @@ Then follow the [Ansible user guide](https://sdk.operatorframework.io/docs/ansib
 
 After role updated, create new operator image with:
 ```console
-$ buildah bud -f Dockerfile -t quay.io/waynesun09/rp5-operator:v0.0.6
-$ buildah push quay.io/waynesun09/rp5-operator:v0.0.6
+$ buildah bud -f Dockerfile -t quay.io/waynesun09/rp5-operator:v0.0.7
+$ buildah push quay.io/waynesun09/rp5-operator:v0.0.7
 ```
 
 ## Generate bundle file
@@ -40,15 +40,15 @@ Podman did not support Docker v2.2 format yet, while v2.1 schema format is not s
 
 
 ```console
-$ sudo docker build -f bundle.Dockerfile -t quay.io/waynesun09/rp5-bundle-operator:v0.0.6 .
-$ sudo operator-sdk bundle validate quay.io/waynesun09/rp5-bundle-operator:v0.0.6
+$ sudo docker build -f bundle.Dockerfile -t quay.io/waynesun09/rp5-bundle-operator:v0.0.7 .
+$ sudo operator-sdk bundle validate quay.io/waynesun09/rp5-bundle-operator:v0.0.7
 
-$ sudo docker push quay.io/waynesun09/rp5-bundle-operator:v0.0.6
+$ sudo docker push quay.io/waynesun09/rp5-bundle-operator:v0.0.7
 The push refers to repository [quay.io/waynesun09/rp5-bundle-operator]
 4663510d6b4f: Pushed
 61235e66d899: Pushed
 35cd28174dce: Pushed
-v0.0.6: digest: sha256:2b2be124605a513738a59db74ef3bed651d5b08d2e7f32c4bdd4f6d252f9b6c3 size: 940
+v0.0.7: digest: sha256:2b2be124605a513738a59db74ef3bed651d5b08d2e7f32c4bdd4f6d252f9b6c3 size: 940
 ```
 
 The channel must be same in the bundle/metadata/annotations.yaml and the bundle.Dockerfile.
@@ -124,7 +124,7 @@ $ operator-sdk scorecard bundle
 
 Reportportal Operator switches from packagemanifest to bundle format start from v0.0.6, which make update the operator in Community Operator more easier as the operator is build with latest operator-sdk and bundle is the default format.
 
-When new version of operator have been build, in the [reportportal-operator](https://github.com/operator-framework/community-operators/tree/master/community-operators/reportportal-operator) dir, create new version dir, e.g. 0.0.6, and copy bundle/manifests bundle/metadata into the new version dir. Also copy the bundle.Dockerfile and rename as Dockerfile and update COPY steps to:
+When new version of operator have been build, in the [reportportal-operator](https://github.com/operator-framework/community-operators/tree/master/community-operators/reportportal-operator) dir, create new version dir, e.g. 0.0.7, and copy bundle/manifests bundle/metadata into the new version dir. Also copy the bundle.Dockerfile and rename as Dockerfile and update COPY steps to:
 
        COPY manifests /manifests/
        COPY metadata /metadata/
