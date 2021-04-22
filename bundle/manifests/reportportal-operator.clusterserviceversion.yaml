@@ -551,7 +551,7 @@ spec:
           - subjectaccessreviews
           verbs:
           - create
-        serviceAccountName: default
+        serviceAccountName: reportportal-operator-controller-manager
       deployments:
       - name: reportportal-operator-controller-manager
         spec:
@@ -604,6 +604,7 @@ spec:
                 resources: {}
               securityContext:
                 runAsNonRoot: true
+              serviceAccountName: reportportal-operator-controller-manager
               terminationGracePeriodSeconds: 10
       permissions:
       - rules:
@@ -626,7 +627,7 @@ spec:
           verbs:
           - create
           - patch
-        serviceAccountName: default
+        serviceAccountName: reportportal-operator-controller-manager
     strategy: deployment
   installModes:
   - supported: true
