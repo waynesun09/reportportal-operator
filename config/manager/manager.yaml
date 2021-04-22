@@ -27,7 +27,7 @@ spec:
       containers:
       - args:
         - --leader-elect
-        - --leader-election-id=memcached-operator
+        - --leader-election-id=reportportal-operator
         image: controller:latest
         name: manager
         env:
