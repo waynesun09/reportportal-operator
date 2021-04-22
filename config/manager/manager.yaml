@@ -25,7 +25,7 @@ spec:
       containers:
         - name: manager
           args:
-            - "--enable-leader-election"
+            - "--leader-elect"
             - "--leader-election-id=reportportal-operator"
           env:
             - name: ANSIBLE_GATHERING
