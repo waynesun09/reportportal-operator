@@ -35,7 +35,6 @@ spec:
           value: explicit
         securityContext:
           allowPrivilegeEscalation: false
-          runAsUser: 65532
         livenessProbe:
           httpGet:
             path: /healthz
