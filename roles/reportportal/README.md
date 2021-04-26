@@ -75,7 +75,7 @@ If deploy_postgresql is `no`, the values need be updated to use existing Postgre
 Minio deploy parameters:
 
     deploy_minio: yes
-    minio_image: minio/minio:RELEASE.2019-08-07T01-59-21Z
+    minio_image:  quay.io/waynesun09/minio:RELEASE.2021-04-22T15-44-28Z
     minio_storage_size: 10Gi
     cloud_replicas: 4
 
@@ -86,7 +86,7 @@ Mino service default values:
     minio_endpoint: http://minio:9000
     accesskey: AKIAIOSFODNN7EXAMPLE
     secretkey: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
-    config_path: "/data/.minio"
+    certs_path: "/data/.certs"
     config_pathmc: "/data/.mc"
     mount_path: "/export"
 

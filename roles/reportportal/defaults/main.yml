@@ -46,7 +46,7 @@ pg_s3_bucket_name: pgbackup-123123
 
 # Minio deploy parameters
 deploy_minio: yes
-minio_image: minio/minio:RELEASE.2019-08-07T01-59-21Z
+minio_image: quay.io/waynesun09/minio:RELEASE.2021-04-22T15-44-28Z
 minio_storage_size: 10Gi
 cloud_replicas: 4
 
@@ -55,8 +55,8 @@ cloud_replicas: 4
 minio_endpoint: http://minio:9000
 accesskey: AKIAIOSFODNN7EXAMPLE
 secretkey: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
-config_path: "/data/.minio"
 config_pathmc: "/data/.mc"
+certs_path: "/data/.certs"
 mount_path: "/export"
 
 s3_enabled: false

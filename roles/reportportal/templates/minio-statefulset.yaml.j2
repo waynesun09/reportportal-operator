@@ -29,15 +29,15 @@ spec:
         - /bin/sh
         - -ce
 {% if s3_enabled %}
-        - /usr/bin/docker-entrypoint.sh minio -C {{ config_path }} gateway s3 {{ s3_endpoint}}
+        - /usr/bin/docker-entrypoint.sh minio -S {{ certs_path }} gateway s3 {{ s3_endpoint}}
 {% elif azure_enabled %}
-        - /usr/bin/docker-entrypoint.sh minio -C {{ config_path }} gateway azure
+        - /usr/bin/docker-entrypoint.sh minio -S {{ certs_path }} gateway azure
 {% elif gcs_enabled %}
-        - /usr/bin/docker-entrypoint.sh minio -C {{ config_path }} gateway gcs {{ gcs_projectid}}
+        - /usr/bin/docker-entrypoint.sh minio -S {{ certs_path }} gateway gcs {{ gcs_projectid}}
 {% elif oss_enabled %}
-        - /usr/bin/docker-entrypoint.sh minio -C {{ config_path }} gateway oss {{ oss_endpoint}}
+        - /usr/bin/docker-entrypoint.sh minio -S {{ certs_path }} gateway oss {{ oss_endpoint}}
 {% else %}
-        - /usr/bin/docker-entrypoint.sh minio -C {{ config_path }} server {{ mount_path }}
+        - /usr/bin/docker-entrypoint.sh minio -S {{ certs_path }} server {{ mount_path }}
 {% endif %}
         env:
         - name: MINIO_ACCESS_KEY
@@ -50,6 +50,8 @@ spec:
             secretKeyRef:
               key: secretkey
               name: minio
+        - name: MINIO_API_READY_DEADLINE
+          value: 5s
         - name: MINIO_BROWSER
           value: "on"
         image: {{ minio_image }}
