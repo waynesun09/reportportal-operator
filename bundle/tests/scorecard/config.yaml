@@ -40,10 +40,10 @@ stages:
     labels:
       suite: olm
       test: olm-spec-descriptors-test
-#  - entrypoint:
-#    - scorecard-test
-#    - olm-status-descriptors
-#    image: quay.io/operator-framework/scorecard-test:master
-#    labels:
-#      suite: olm
-#      test: olm-status-descriptors-test
+  - entrypoint:
+    - scorecard-test
+    - olm-status-descriptors
+    image: quay.io/operator-framework/scorecard-test:master
+    labels:
+      suite: olm
+      test: olm-status-descriptors-test

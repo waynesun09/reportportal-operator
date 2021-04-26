@@ -1,4 +1,5 @@
 resources:
+- bases/reportportal-operator.clusterserviceversion.yaml
 - ../default
 - ../samples
 - ../scorecard
