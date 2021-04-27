@@ -95,7 +95,9 @@ spec:
           mountPath: "/etc/credentials"
           readOnly: true
 {% endif %}
-        - mountPath: /data/.minio/
+        - mountPath: {{ certs_path }}
+          name: minio-certs-dir
+        - mountPath: {{ config_pathmc }}
           name: minio-config-dir
       serviceAccountName: minio
       volumes:
@@ -105,6 +107,8 @@ spec:
           secretName: minio
       - emptyDir: {}
         name: minio-config-dir
+      - emptyDir: {}
+        name: minio-certs-dir
   volumeClaimTemplates:
   - metadata:
       labels:
