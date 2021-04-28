@@ -27,6 +27,9 @@ data:
           index-router:
             rule: "Path(`/`)"
             service: "index"
+          composite-router:
+            rule: "Path(`/composite/info`)"
+            service: "index"
           ui-router:
             rule: "PathPrefix(`/ui`)"
             middlewares:
