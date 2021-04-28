@@ -1,0 +1,10 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+    name: reportportal-service-reader
+    namespace: '{{ meta.namespace }}'
+rules:
+    - apiGroups:
+        - ""
+      resources: ["pods","services"]
+      verbs: ["get", "list", "watch"]

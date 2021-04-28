@@ -14,6 +14,21 @@
   include: deploy_es.yml
   when: deploy_elasticsearch | bool
 
+- name: Create reportportal service account
+  community.kubernetes.k8s:
+    state: present
+    definition: "{{ lookup('template', 'reportportal-serviceaccount.yaml.j2') | from_yaml }}"
+
+- name: Create reportportal role
+  community.kubernetes.k8s:
+    state: present
+    definition: "{{ lookup('template', 'reportportal-role.yaml.j2') | from_yaml }}"
+
+- name: Create reportportal rolebinding
+  community.kubernetes.k8s:
+    state: present
+    definition: "{{ lookup('template', 'reportportal-rolebinding.yaml.j2') | from_yaml }}"
+
 - name: Create index deployment
   community.kubernetes.k8s:
     state: present
