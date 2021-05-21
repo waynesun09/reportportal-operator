@@ -32,11 +32,7 @@ metadata:
             "s3_endpoint": null,
             "uat_image": "quay.io/waynesun09/service-authorization:5.3.5",
             "ui_image": "quay.io/waynesun09/service-ui:5.3.5",
-            "ui_replicas": 1,
-            "s3_enabled": false,
-            "s3_endpoint": "",
-            "default_bucket_name": ""
-            "bucket_prefix": ""
+            "ui_replicas": 1
           }
         },
         {
@@ -639,9 +635,19 @@ spec:
       - rules:
         - apiGroups:
           - ""
-          - coordination.k8s.io
           resources:
           - configmaps
+          verbs:
+          - get
+          - list
+          - watch
+          - create
+          - update
+          - patch
+          - delete
+        - apiGroups:
+          - coordination.k8s.io
+          resources:
           - leases
           verbs:
           - get
