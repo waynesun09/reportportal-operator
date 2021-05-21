@@ -22,3 +22,7 @@ spec:
   es_s3_backup_dir: s3_backup
   es_snapshot_bucket: es-snapshot-123123
   es_backup_schedule: '@daily'
+  s3_enabled: false
+  s3_endpoint:
+  default_bucket_name:
+  bucket_prefix:

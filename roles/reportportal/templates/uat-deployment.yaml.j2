@@ -41,6 +41,14 @@ spec:
           value: {{ accesskey }}
         - name: RP_BINARYSTORE_MINIO_SECRETKEY
           value: {{ secretkey }}
+        {% if bucket_prefix|length %}
+        - name: RP_BINARYSTORE_MINIO_BUCKETPREFIX
+          value: {{ bucket_prefix }}
+        {% endif %}
+        {% if default_bucket_name|length %}
+        - name: RP_BINARYSTORE_MINIO_DEFAULTBUCKETNAME
+          value: {{ default_bucket_name }}
+        {% endif %}
         image: {{ uat_image }}
         name: uat
         ports:

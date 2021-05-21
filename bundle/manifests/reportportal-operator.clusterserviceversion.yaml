@@ -28,7 +28,11 @@ metadata:
             "pg_s3_bucket_name": "pgbackup-123123",
             "uat_image": "quay.io/waynesun09/service-authorization:5.3.5",
             "ui_image": "quay.io/waynesun09/service-ui:5.3.5",
-            "ui_replicas": 1
+            "ui_replicas": 1,
+            "s3_enabled": false,
+            "s3_endpoint": "",
+            "default_bucket_name": ""
+            "bucket_prefix": ""
           }
         },
         {
@@ -249,6 +253,27 @@ spec:
           format
         displayName: Elasticsearch snapshot to s3 bucket schedule
         path: es_backup_schedule
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      - description: Enable S3 gateway for minio
+        displayName: Enable S3 gateway for minio
+        path: s3_enabled
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:checkbox
+        default: false
+      - description: S3 endpoint for minio gateway, default empty for AWS S3
+        displayName: S3 endpoint for minio gateway
+        path: s3_endpoint
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      - description: S3 bucket prefix, set a unique prefix to indentify different RP data
+        displayName: S3 bucket prefix
+        path: bucket_prefix
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      - description: S3 default bucket name, use a unique name for s3 bucket
+        displayName: S3 default bucket name
+        path: default_bucket_name
         x-descriptors:
         - urn:alm:descriptor:tectonic.ui:text
       statusDescriptors:
