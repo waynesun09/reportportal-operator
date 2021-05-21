@@ -15,6 +15,8 @@ metadata:
             "api_image": "quay.io/waynesun09/service-api:5.3.5-rootless",
             "api_replicas": 1,
             "app_domain": "apps.test-example.com",
+            "bucket_prefix": null,
+            "default_bucket_name": null,
             "enable_pg_restic_backup": "yes",
             "es_backup_schedule": "@daily",
             "es_s3_backup_dir": "s3_backup",
@@ -26,6 +28,8 @@ metadata:
             "pg_restic_password": "rp_user",
             "pg_restic_s3_bucket_init": "yes",
             "pg_s3_bucket_name": "pgbackup-123123",
+            "s3_enabled": false,
+            "s3_endpoint": null,
             "uat_image": "quay.io/waynesun09/service-authorization:5.3.5",
             "ui_image": "quay.io/waynesun09/service-ui:5.3.5",
             "ui_replicas": 1,
@@ -67,13 +71,13 @@ metadata:
     capabilities: Deep Insights
     categories: Integration & Delivery
     certified: "false"
-    containerImage: quay.io/waynesun09/rp5-operator:v0.0.7
+    containerImage: quay.io/waynesun09/rp5-operator:v0.0.8
     createdAt: "2021-04-22 14:39:00"
     repository: https://github.com/waynesun09/reportportal-operator
     support: waynesun09
-    operators.operatorframework.io/builder: operator-sdk-v2.0.0+git
+    operators.operatorframework.io/builder: operator-sdk-v1.7.1+git
     operators.operatorframework.io/project_layout: ansible.sdk.operatorframework.io/v1
-  name: reportportal-operator.v0.0.7
+  name: reportportal-operator.v0.0.8
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
@@ -610,7 +614,7 @@ spec:
                 env:
                 - name: ANSIBLE_GATHERING
                   value: explicit
-                image: quay.io/waynesun09/rp5-operator:v0.0.7
+                image: quay.io/waynesun09/rp5-operator:v0.0.8
                 livenessProbe:
                   httpGet:
                     path: /healthz
@@ -680,4 +684,4 @@ spec:
   maturity: alpha
   provider:
     name: Red Hat CCIT
-  version: 0.0.7
+  version: 0.0.8
