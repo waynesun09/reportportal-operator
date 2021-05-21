@@ -40,6 +40,12 @@ spec:
               app_domain:
                 description: Clustser default sub domain hostname for the apps, if specified route will be created with $namespace-reportportal.$app_domain
                 type: string
+              bucket_prefix:
+                description: Set s3 bucket unique prefix to avoid name collision
+                type: string
+              default_bucket_name:
+                description: The s3 bucket name to be used
+                type: string
               enable_pg_restic_backup:
                 description: Whether to enable Postgres backup via restic, yes or no
                 type: string
@@ -73,6 +79,12 @@ spec:
               pg_s3_bucket_name:
                 description: The s3 Postgres bucket name, need be unique and valid bucket name
                 type: string
+              s3_enabled:
+                description: If set minio will use gateway connect to S3
+                type: boolean
+              s3_endpoint:
+                description: Set s3 endpoint for minio gateway connect to S3
+                type: string
               uat_image:
                 description: service-authorization container image url
                 type: string
@@ -82,18 +94,6 @@ spec:
               ui_replicas:
                 description: Replicas number for service-ui component
                 type: integer
-              s3_enabled:
-                description: If set minio will use gateway connect to S3
-                type: boolean
-              s3_endpoint:
-                description: Set s3 endpoint for minio gateway connect to S3
-                type: string
-              bucket_prefix:
-                description: Set s3 bucket unique prefix to avoid name collision
-                type: string
-              default_bucket_name:
-                description: The s3 bucket name to be used
-                type: string
             type: object
           status:
             description: Status defines the observed state of ReportPortal
