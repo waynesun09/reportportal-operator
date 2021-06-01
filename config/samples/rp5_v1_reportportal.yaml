@@ -23,6 +23,9 @@ spec:
   es_snapshot_bucket: es-snapshot-123123
   es_backup_schedule: '@daily'
   s3_enabled: false
+  accesskey: AKIAIOSFODNN7EXAMPLE
+  secretkey: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
   s3_endpoint:
   default_bucket_name:
   bucket_prefix:
+  integration_salt_path:

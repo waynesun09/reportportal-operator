@@ -49,6 +49,10 @@ spec:
         - name: RP_BINARYSTORE_MINIO_DEFAULTBUCKETNAME
           value: {{ default_bucket_name }}
         {% endif %}
+        {% if integration_salt_path|length %}
+        - name: RP_INTEGRATION_SALT_PATH
+          value: {{ integration_salt_path }}
+        {% endif %}
         image: {{ uat_image }}
         name: uat
         ports:

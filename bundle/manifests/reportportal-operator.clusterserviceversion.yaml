@@ -11,6 +11,7 @@ metadata:
             "name": "reportportal-sample"
           },
           "spec": {
+            "accesskey": "AKIAIOSFODNN7EXAMPLE",
             "analyzer_image": "quay.io/waynesun09/service-auto-analyzer:5.3.5",
             "api_image": "quay.io/waynesun09/service-api:5.3.5-rootless",
             "api_replicas": 1,
@@ -24,12 +25,14 @@ metadata:
             "gateway_replicas": 1,
             "index_image": "quay.io/waynesun09/service-index:5.0.10",
             "index_replicas": 1,
+            "integration_salt_path": null,
             "migration_image": "quay.io/waynesun09/migrations:5.3.5",
             "pg_restic_password": "rp_user",
             "pg_restic_s3_bucket_init": "yes",
             "pg_s3_bucket_name": "pgbackup-123123",
             "s3_enabled": false,
             "s3_endpoint": null,
+            "secretkey": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
             "uat_image": "quay.io/waynesun09/service-authorization:5.3.5",
             "ui_image": "quay.io/waynesun09/service-ui:5.3.5",
             "ui_replicas": 1
@@ -266,6 +269,16 @@ spec:
         path: s3_endpoint
         x-descriptors:
         - urn:alm:descriptor:tectonic.ui:text
+      - description: S3 accesskey for minio gateway, please update the exmaple key if s3_enabled is true
+        displayName: S3 accesskey
+        path: accesskey
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      - description: S3 secretkey for minio gateway, please update the eaxmple key if s3_enabled is true
+        displayName: S3 secretkey
+        path: secretkey
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
       - description: S3 bucket prefix, set a unique prefix to indentify different RP data
         displayName: S3 bucket prefix
         path: bucket_prefix
@@ -274,6 +287,11 @@ spec:
       - description: S3 default bucket name, use a unique name for s3 bucket
         displayName: S3 default bucket name
         path: default_bucket_name
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      - description: S3 bucket name for uat and api salt, use a unique name for s3 bucket
+        displayName: S3 bucket name for uat and api salt
+        path: integration_salt_path
         x-descriptors:
         - urn:alm:descriptor:tectonic.ui:text
       statusDescriptors:
