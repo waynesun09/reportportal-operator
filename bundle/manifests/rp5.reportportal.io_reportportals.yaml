@@ -41,10 +41,10 @@ spec:
                 description: Clustser default sub domain hostname for the apps, if specified route will be created with $namespace-reportportal.$app_domain
                 type: string
               bucket_prefix:
-                description: Set s3 bucket unique prefix to avoid name collision
+                description: S3 bucket prefix, e.g. unique-s3-bucket-09a7b9-, set a unique prefix to indentify different RP data
                 type: string
               default_bucket_name:
-                description: The s3 bucket name to be used
+                description: The s3 bucket name to be created
                 type: string
               integration_salt_path:
                 description: Set unique s3 bucket name for uat and api salt to avoid name collision

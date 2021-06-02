@@ -265,7 +265,7 @@ spec:
         - urn:alm:descriptor:tectonic.ui:checkbox
         default: false
       - description: S3 endpoint for minio gateway, default empty for AWS S3
-        displayName: S3 endpoint for minio gateway
+        displayName: S3 endpoint for minio gateway, default empty for AWS S3
         path: s3_endpoint
         x-descriptors:
         - urn:alm:descriptor:tectonic.ui:text
@@ -279,13 +279,13 @@ spec:
         path: secretkey
         x-descriptors:
         - urn:alm:descriptor:tectonic.ui:text
-      - description: S3 bucket prefix, set a unique prefix to indentify different RP data
+      - description: S3 bucket prefix, e.g. unique-s3-bucket-09a7b9-, set a unique prefix to indentify different RP data
         displayName: S3 bucket prefix
         path: bucket_prefix
         x-descriptors:
         - urn:alm:descriptor:tectonic.ui:text
       - description: S3 default bucket name, use a unique name for s3 bucket
-        displayName: S3 default bucket name
+        displayName: S3 default bucket name to be created
         path: default_bucket_name
         x-descriptors:
         - urn:alm:descriptor:tectonic.ui:text

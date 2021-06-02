@@ -101,10 +101,10 @@ spec:
                 description: Set s3 endpoint for minio gateway connect to S3
                 type: string
               bucket_prefix:
-                description: Set s3 bucket unique prefix to avoid name collision
+                description: S3 bucket prefix, e.g. unique-s3-bucket-09a7b9-, set a unique prefix to indentify different RP data
                 type: string
               default_bucket_name:
-                description: The s3 bucket name to be used
+                description: The s3 bucket name to be created
                 type: string
               integration_salt_path:
                 description: Set unique s3 bucket name for uat and api salt to avoid name collision
