@@ -68,18 +68,18 @@ spec:
           value: {{ accesskey }}
         - name: RP_BINARYSTORE_MINIO_SECRETKEY
           value: {{ secretkey }}
-        {% if bucket_prefix|length %}
+{% if bucket_prefix|length %}
         - name: RP_BINARYSTORE_MINIO_BUCKETPREFIX
           value: {{ bucket_prefix }}
-        {% endif %}
-        {% if default_bucket_name|length %}
+{% endif %}
+{% if default_bucket_name|length %}
         - name: RP_BINARYSTORE_MINIO_DEFAULTBUCKETNAME
           value: {{ default_bucket_name }}
-        {% endif %}
-        {% if integration_salt_path|length %}
+{% endif %}
+{% if integration_salt_path|length %}
         - name: RP_INTEGRATION_SALT_PATH
           value: {{ integration_salt_path }}
-        {% endif %}
+{% endif %}
         image: {{ api_image }}
         imagePullPolicy: IfNotPresent
         name: api
