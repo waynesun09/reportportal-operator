@@ -54,6 +54,26 @@ Update the `app_domain` to your cluster default apps sub domain address. Then co
 
 If you want deploy via CLI, check [Deploy with CLI](docs/deploy_cli.md)
 
+## Minio S3 Gateway
+
+Minio is one of the dependencies for RP services, [New in 0.0.8] the S3 Gateway setting are exposed on the ReportPortal CRD and CR.
+
+Users could specify the S3 storage with Minio Gateway for RP data, before 0.0.8 the data is stored on minio local PVC storage.
+
+To enable Minio S3 Gateway, update following parameters when create ReportPortal CR:
+
+    s3_enabled: true                  <-- Set to true
+    accesskey:                        <-- S3 accesskey
+    secretkey:                        <-- S3 secretkey
+    s3_endpoint:                      <-- S3 endpoint, default to None for AWS S3
+    bucket_prefix:                    <-- Unique prefix name, e.g. unique-s3-bucket-09a7b9-, to identify different RP data
+    default_bucket_name:              <-- The s3 bucket name to be created
+    integration_salt_path:            <-- Unique s3 bucket name for uat and api salt to avoid name collision
+
+**Note:**: Currently RP DO NOT SUPPORT using existing buckets, so new buckets will be created for new instances
+
+The PostgreSQL WAL archive and Elasticsearch snapshots will also use the same bucket_prefix and create new buckets on S3 target to store the backup data.
+
 ## Data backup and restore
 
 [![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/emUF-E48Tmo/0.jpg)](https://www.youtube.com/watch?v=emUF-E48Tmo)
