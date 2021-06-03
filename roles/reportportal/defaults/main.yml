@@ -55,6 +55,9 @@ cloud_replicas: 4
 minio_endpoint: http://minio:9000
 accesskey: AKIAIOSFODNN7EXAMPLE
 secretkey: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+bucket_prefix: ""
+default_bucket_name: ""
+integration_salt_path: ""
 config_pathmc: "/data/.mc"
 certs_path: "/data/.certs"
 mount_path: "/export"

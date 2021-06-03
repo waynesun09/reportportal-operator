@@ -53,7 +53,11 @@ spec:
         - name: S3_ENDPOINT
           value: {{ minio_endpoint }}
         - name: S3_BUCKET_NAME
-          value: {{ pg_s3_bucket_name }}
+{% if bucket_prefix|length %}
+          value: "{{ bucket_prefix }}{{ pg_s3_bucket_name }}"
+{% else %}
+          value: "{{ pg_s3_bucket_name }}"
+{% endif %}
         - name: AWS_ACCESS_KEY_ID
           valueFrom:
             secretKeyRef:

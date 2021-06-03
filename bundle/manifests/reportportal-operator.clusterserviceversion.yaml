@@ -11,10 +11,13 @@ metadata:
             "name": "reportportal-sample"
           },
           "spec": {
+            "accesskey": "AKIAIOSFODNN7EXAMPLE",
             "analyzer_image": "quay.io/waynesun09/service-auto-analyzer:5.3.5",
             "api_image": "quay.io/waynesun09/service-api:5.3.5-rootless",
             "api_replicas": 1,
             "app_domain": "apps.test-example.com",
+            "bucket_prefix": null,
+            "default_bucket_name": null,
             "enable_pg_restic_backup": "yes",
             "es_backup_schedule": "@daily",
             "es_s3_backup_dir": "s3_backup",
@@ -22,10 +25,14 @@ metadata:
             "gateway_replicas": 1,
             "index_image": "quay.io/waynesun09/service-index:5.0.10",
             "index_replicas": 1,
+            "integration_salt_path": null,
             "migration_image": "quay.io/waynesun09/migrations:5.3.5",
             "pg_restic_password": "rp_user",
             "pg_restic_s3_bucket_init": "yes",
             "pg_s3_bucket_name": "pgbackup-123123",
+            "s3_enabled": false,
+            "s3_endpoint": null,
+            "secretkey": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
             "uat_image": "quay.io/waynesun09/service-authorization:5.3.5",
             "ui_image": "quay.io/waynesun09/service-ui:5.3.5",
             "ui_replicas": 1
@@ -63,13 +70,13 @@ metadata:
     capabilities: Deep Insights
     categories: Integration & Delivery
     certified: "false"
-    containerImage: quay.io/waynesun09/rp5-operator:v0.0.7
+    containerImage: quay.io/waynesun09/rp5-operator:v0.0.8
     createdAt: "2021-04-22 14:39:00"
     repository: https://github.com/waynesun09/reportportal-operator
     support: waynesun09
-    operators.operatorframework.io/builder: operator-sdk-v2.0.0+git
+    operators.operatorframework.io/builder: operator-sdk-v1.7.1+git
     operators.operatorframework.io/project_layout: ansible.sdk.operatorframework.io/v1
-  name: reportportal-operator.v0.0.7
+  name: reportportal-operator.v0.0.8
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
@@ -249,6 +256,42 @@ spec:
           format
         displayName: Elasticsearch snapshot to s3 bucket schedule
         path: es_backup_schedule
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      - description: Enable S3 gateway for minio
+        displayName: Enable S3 gateway for minio
+        path: s3_enabled
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:checkbox
+        default: false
+      - description: S3 endpoint for minio gateway, default empty for AWS S3
+        displayName: S3 endpoint for minio gateway, default empty for AWS S3
+        path: s3_endpoint
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      - description: S3 accesskey for minio gateway, please update the exmaple key if s3_enabled is true
+        displayName: S3 accesskey
+        path: accesskey
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      - description: S3 secretkey for minio gateway, please update the eaxmple key if s3_enabled is true
+        displayName: S3 secretkey
+        path: secretkey
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      - description: S3 bucket prefix, e.g. unique-s3-bucket-09a7b9-, set a unique prefix to indentify different RP data
+        displayName: S3 bucket prefix
+        path: bucket_prefix
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      - description: S3 default bucket name, use a unique name for s3 bucket
+        displayName: S3 default bucket name to be created
+        path: default_bucket_name
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      - description: S3 bucket name for uat and api salt, use a unique name for s3 bucket
+        displayName: S3 bucket name for uat and api salt
+        path: integration_salt_path
         x-descriptors:
         - urn:alm:descriptor:tectonic.ui:text
       statusDescriptors:
@@ -585,7 +628,7 @@ spec:
                 env:
                 - name: ANSIBLE_GATHERING
                   value: explicit
-                image: quay.io/waynesun09/rp5-operator:v0.0.7
+                image: quay.io/waynesun09/rp5-operator:v0.0.8
                 livenessProbe:
                   httpGet:
                     path: /healthz
@@ -610,9 +653,19 @@ spec:
       - rules:
         - apiGroups:
           - ""
-          - coordination.k8s.io
           resources:
           - configmaps
+          verbs:
+          - get
+          - list
+          - watch
+          - create
+          - update
+          - patch
+          - delete
+        - apiGroups:
+          - coordination.k8s.io
+          resources:
           - leases
           verbs:
           - get
@@ -655,4 +708,4 @@ spec:
   maturity: alpha
   provider:
     name: Red Hat CCIT
-  version: 0.0.7
+  version: 0.0.8
