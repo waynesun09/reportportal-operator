@@ -3,6 +3,10 @@ kind: ReportPortalRestore
 metadata:
   name: reportportalrestore-sample
 spec:
+  accesskey: AKIAIOSFODNN7EXAMPLE
+  secretkey: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+  s3_endpoint:
+  bucket_prefix:
   pg_recovery: 'yes'
   pg_recovery_target_time: '2020-08-07 00:00:00'
   pg_s3_bucket_name: pgbackup-123123

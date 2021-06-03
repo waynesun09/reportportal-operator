@@ -45,6 +45,8 @@ metadata:
             "name": "reportportalrestore-sample"
           },
           "spec": {
+            "accesskey": "AKIAIOSFODNN7EXAMPLE",
+            "bucket_prefix": null,
             "es_restore": "yes",
             "es_restore_date": "2020-08-07",
             "es_s3_backup_dir": "s3_backup",
@@ -52,7 +54,9 @@ metadata:
             "pg_recovery": "yes",
             "pg_recovery_target_time": "2020-08-07 00:00:00",
             "pg_restic_password": "rp_user",
-            "pg_s3_bucket_name": "pgbackup-123123"
+            "pg_s3_bucket_name": "pgbackup-123123",
+            "s3_endpoint": null,
+            "secretkey": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
           }
         },
         {
@@ -97,6 +101,11 @@ spec:
         name: reportportalrestores.rp5.reportportal.io
         version: v1
       specDescriptors:
+      - description: S3 bucket prefix, e.g. unique-s3-bucket-09a7b9-, use the same prefix when a ReportPortal CR is created or leave empty and use full bucket name in pg_s3_bucket_name and es_snapshot_bucket
+        displayName: S3 bucket prefix
+        path: bucket_prefix
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
       - description: Enable Postgres recovery, need be 'yes' or 'no'
         displayName: Enable Postgres recovery
         path: pg_recovery
@@ -108,7 +117,7 @@ spec:
         path: pg_recovery_target_time
         x-descriptors:
         - urn:alm:descriptor:tectonic.ui:text
-      - description: The s3 Postgres bucket name, need be unique and valid bucket
+      - description: The s3 Postgres bucket name, need be valid bucket name where WAL files are backed up, use the same bucket name when a ReportPortal CR is created or use a full bucket name with the bucket_prefix included
           name
         displayName: The s3 Postgres bucket name
         path: pg_s3_bucket_name
@@ -138,6 +147,21 @@ spec:
       - description: The elasticsearch snapshot restore date, need be unique and valid time, e.g. '2020-08-05'
         displayName: Elasticsearch snapshot restore date
         path: es_restore_date
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      - description: S3 endpoint for minio gateway, default empty for AWS S3
+        displayName: S3 endpoint for minio gateway, default empty for AWS S3
+        path: s3_endpoint
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      - description: S3 accesskey for minio gateway, please update the exmaple key if s3_enabled is true
+        displayName: S3 accesskey
+        path: accesskey
+        x-descriptors:
+        - urn:alm:descriptor:tectonic.ui:text
+      - description: S3 secretkey for minio gateway, please update the eaxmple key if s3_enabled is true
+        displayName: S3 secretkey
+        path: secretkey
         x-descriptors:
         - urn:alm:descriptor:tectonic.ui:text
     - kind: ReportPortal

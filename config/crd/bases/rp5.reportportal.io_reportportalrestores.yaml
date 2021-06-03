@@ -38,7 +38,7 @@ spec:
                 description: Enable Postgres recovery, need be 'yes' or 'no'
                 type: string
               pg_s3_bucket_name:
-                description: The s3 Postgres bucket name, need be unique and valid bucket name
+                description: The s3 Postgres bucket name, need be valid bucket name where WAL files are backed up, use the same bucket name when a ReportPortal CR is created or use a full bucket name with the bucket_prefix included
                 type: string
               pg_recovery_target_time:
                 description: The Postgres recovery target time, need be unique and valid time, e.g. '2020-08-05 08:20:00 UTC'
@@ -57,6 +57,18 @@ spec:
                 type: string
               es_snapshot_bucket:
                 description: The Elasticsearch snapshot s3 bucket name
+                type: string
+              accesskey:
+                description: The s3 accesskey
+                type: string
+              secretkey:
+                description: The s3 secretkey
+                type: string
+              s3_endpoint:
+                description: Set s3 endpoint for minio gateway connect to S3
+                type: string
+              bucket_prefix:
+                description: S3 bucket prefix, e.g. unique-s3-bucket-09a7b9-, use the same prefix when a ReportPortal CR is created or leave empty and use full bucket name in pg_s3_bucket_name and es_snapshot_bucket
                 type: string
           status:
             description: Status defines the observed state of ReportPortalRestore
