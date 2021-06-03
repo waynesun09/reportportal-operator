@@ -11,7 +11,6 @@
           status: "True"
           reason: "Successful"
           message: "Deployment is paused by ReportPortalRestore"
-          LastTransitionTime: "{{ ansible_date_time.iso8601 }}"
   when: rp_cr[0].metadata.name is defined
 
 - name: Fetch all RP deployments
@@ -51,7 +50,6 @@
           status: "True"
           reason: "Successful"
           message: "Updated status back to running"
-          LastTransitionTime: "{{ ansible_date_time.iso8601 }}"
   when: rp_cr[0].metadata.name is defined
 
 - name: Update ReportPortalRestore Operand status
@@ -66,4 +64,3 @@
           status: "True"
           reason: "Successful"
           message: "{{ op_message }}"
-          LastTransitionTime: "{{ ansible_date_time.iso8601 }}"
